@@ -1,13 +1,18 @@
 from django.db import models
-
+from django.forms import ModelForm
 # Create your models here.
 
-class users(models.Model):
-	pid = models.AutoField(primary_key=True)
 
 class factories(models.Model):
 	fid = models.AutoField(primary_key=True)
 	fcode = models.CharField(max_length=100)
+
+class users(models.Model):
+	pid = models.AutoField(primary_key=True)
+	name = models.CharField(max_length=150)
+	email = models.EmailField()
+	factory = models.ForeignKey(factories, null=True)
+
 
 class retailers(models.Model):
 	rid = models.AutoField(primary_key=True)
@@ -42,3 +47,7 @@ class factory_factory(models.Model):
 	fac2 = models.ForeignKey(factories, related_name="opponent")
 
 
+class userForm(ModelForm):
+    class Meta:
+        model = users
+        fields = ['name', 'email']
