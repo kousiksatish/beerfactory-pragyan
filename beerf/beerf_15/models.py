@@ -1,11 +1,13 @@
 from django.db import models
 from django.forms import ModelForm
+import uuid
 # Create your models here.
 
 
 class factories(models.Model):
 	fid = models.AutoField(primary_key=True)
-	fcode = models.CharField(max_length=100)
+	fcode = models.CharField(max_length=100, blank=True, unique=True, default = uuid.uuid4)
+	money = models.IntegerField()
 
 class users(models.Model):
 	pid = models.AutoField(primary_key=True)
@@ -16,7 +18,7 @@ class users(models.Model):
 
 class retailers(models.Model):
 	rid = models.AutoField(primary_key=True)
-	rcode = models.CharField(max_length=100)
+	rcode = models.CharField(max_length=100, blank=True, unique=True, default = uuid.uuid4)
 
 class factory_order(models.Model):
 	ord_id = models.AutoField(primary_key = True)
