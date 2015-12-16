@@ -10,4 +10,6 @@ Game for Pragyan
     - `export DB_USER = <user>` 
     - `export DB_PASSWORD = <password>` 
     - `export DB_NAME = <name>`
-6. Change directory to beerf and run `python manage.py runserver` to start local development server
+6. Change directory to beerf 
+7. Run `python manage.py migrate` to initiate the database
+8. Run `python manage.py runserver` to start local development server
