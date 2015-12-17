@@ -1,0 +1,15 @@
+<html>
+	<head>
+	<h1>This is your turn {{ turnno }}</h1>
+	</head>
+	<body>
+	<p>
+	<form method="post" action="./order">
+	{% csrf_token %}
+	<label>Enter order quantity</label>
+	<input type="number" name="order_qty"><br>
+	<input type="submit">
+	</form>
+	</p>
+	</body>
+</html>

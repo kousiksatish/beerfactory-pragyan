@@ -1,0 +1,26 @@
+<html>
+	<head>
+
+	<title>
+	ddd
+	</title>
+	<h1>Demand for turn {{ turnno}}</h1>
+	</head>
+
+	<body>
+		<form method="post" action="./supply">
+		{% csrf_token %}
+		{% for fr in fr_maps %}
+		<p>
+			Factory - {{fr.fid.fid}}
+			Retailer - {{fr.rid.rid}}
+			The demand is : {{fr.demand.quantity}}<br>
+			<label>Supply quantity : </label>
+			<input type="number" name="sup{{fr.frid}}">
+		</p>
+		{%endfor %}
+		<input type="submit">
+		</form>
+	</body>
+
+</html>

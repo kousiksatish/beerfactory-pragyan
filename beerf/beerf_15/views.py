@@ -5,6 +5,50 @@ from django.http import HttpResponseRedirect
 
 from .models import *
 
+def get_retailer_demand(fr, turnno):
+	return 5000
+
+
+
+def user_turn_supply(request, userid, turnno):
+	if request.method == 'POST':
+		userid = int(userid)
+		turnno = int(turnno)
+		user = users.objects.get(pid=userid)
+		fac = user.factory
+		print fac
+		fac_ret_maps = factory_retailer.objects.filter(fid=fac)
+		for fr in fac_ret_maps:
+			supply_qty = request.POST.get('sup'+unicode(fr.frid))
+			frs = fac_ret_supply(frid = fr, turn = turnno, quantity = supply_qty)
+			frs.save()
+		turnno = turnno+1
+		return HttpResponseRedirect('/user/'+unicode(userid)+'/turn/'+unicode(turnno)+'/order')
+
+	userid = int(userid)
+	turnno = int(turnno)
+	user = users.objects.get(pid=userid)
+	fac = user.factory
+	print fac
+	fac_ret_maps = factory_retailer.objects.filter(fid=fac)
+	for fr in fac_ret_maps:
+		frd = fac_ret_demand(frid = fr, turn= turnno, quantity = get_retailer_demand(fr, turnno))
+		frd.save()
+		fr.demand = frd
+		
+	return render(request, "demand.html", {"fr_maps" : fac_ret_maps, "frd" : frd, "turnno" : turnno})
+	# return render(request, "thanks.html")
+
+def user_turn_order(request, userid, turnno):
+	if request.method=='POST':
+		order_qty = request.POST.get("order_qty")
+		user = users.objects.get(pid=userid)
+		fac = user.factory
+		order = factory_order(fid=fac, turn=turnno, quantity=order_qty)
+		order.save()
+		return HttpResponseRedirect('/user/'+userid+'/turn/'+turnno+'/supply')
+	return render(request, "placeorder.html", {"userid" : userid, "turnno" : turnno})
+
 def retailer_allocate(fac1, fac2):
 	print 'retailer_allocate called'
 	ret1 = retailers() #create retailer 1
@@ -57,12 +101,12 @@ def register(request):
 		if form.is_valid():
 			new_user = form.save()
 			factory_allocate(new_user.pid)
-			return HttpResponseRedirect('/thanks/')
+			return HttpResponseRedirect('/thanks/user/'+unicode(new_user.pid))
 
 	else:
 		form = userForm()
 
 	return render(request, "register.html", {"form" : form})
 
-def thanks(request):
-	return render(request, "thanks.html")
+def thanks(request, userid):
+	return render(request, "thanks.html", {"userid": userid})

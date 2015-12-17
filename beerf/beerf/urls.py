@@ -21,5 +21,7 @@ from beerf_15 import views
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^register/', views.register),
-    url(r'^thanks/', views.thanks)
+    url(r'^thanks/user/([0-9]+)$', views.thanks),
+    url(r'^user/([0-9]+)/turn/([0-9]+)/order$', views.user_turn_order),
+    url(r'^user/([0-9]+)/turn/([0-9]+)/supply$', views.user_turn_supply)
 ]
