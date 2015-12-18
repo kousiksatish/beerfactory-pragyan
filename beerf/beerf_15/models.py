@@ -68,3 +68,9 @@ class userForm(ModelForm):
     class Meta:
         model = users
         fields = ['name', 'email']
+
+class userLoginForm(ModelForm):
+	class Meta:
+		model = users
+		fields = ['email']
+

@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>Home - Beer Factory</title>
+</head>
+<body>
+<h1>Hi {{name}}, Welcome</h1>
+<button id="assign_factories">Click me to allocate factory and retailers.</button>
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'beerf_15/jquery.min.js' %}"></script>
+<script type="text/javascript">
+	var base_url = "{{ request.META.HTTP_NAME }}";
+	$("#assign_factories").click(AssignFactories);
+	function AssignFactories() {
+	    console.log("Assign Factory is working!")
+	    $.ajax({
+	        url : base_url + "/assign_factory", 
+	        type : "POST",
+	        data : {"csrfmiddlewaretoken":"{{ csrf_token }}"},
+	        success : function(json) {
+	           alert(json.status);
+	        },
+	        error : function(xhr,errmsg,err) {
+	           alert(err);
+	           console.log(xhr.status + ": " + xhr.responseText);
+	        }
+	    });
+	}
+</script>
+</body>
+</html>
