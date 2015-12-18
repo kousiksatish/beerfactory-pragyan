@@ -1,24 +1,33 @@
 from django.db import models
 from django.forms import ModelForm
 import uuid
+from django.utils.encoding import python_2_unicode_compatible
 # Create your models here.
 
 
+@python_2_unicode_compatible
 class factories(models.Model):
 	fid = models.AutoField(primary_key=True)
 	fcode = models.CharField(max_length=100, blank=True, unique=True, default = uuid.uuid4)
 	money = models.IntegerField()
+	def __str__(self):
+		return str(self.fid) + " (" + self.fcode + ")"
 
+@python_2_unicode_compatible
 class users(models.Model):
 	pid = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=150)
 	email = models.EmailField()
 	factory = models.ForeignKey(factories, null=True)
+	def __str__(self):
+		return str(self.name) + " (" + self.email + ")"
 
-
+@python_2_unicode_compatible
 class retailers(models.Model):
 	rid = models.AutoField(primary_key=True)
 	rcode = models.CharField(max_length=100, blank=True, unique=True, default = uuid.uuid4)
+	def __str__(self):
+		return str(self.rid) + " (" + self.rcode + ")"
 
 class factory_order(models.Model):
 	ord_id = models.AutoField(primary_key = True)
@@ -26,10 +35,13 @@ class factory_order(models.Model):
 	turn = models.IntegerField()
 	quantity = models.IntegerField()
 
+@python_2_unicode_compatible
 class factory_retailer(models.Model):
 	frid = models.AutoField(primary_key = True)
 	fid = models.ForeignKey(factories)
 	rid = models.ForeignKey(retailers)
+	def __str__(self):
+		return str(self.frid) + " ( Factory-id: " + self.fid + " - Retailer-id: "+self.rid+")"
 
 class fac_ret_demand(models.Model):
 	did = models.AutoField(primary_key=True)
@@ -43,10 +55,13 @@ class fac_ret_supply(models.Model):
 	turn = models.IntegerField()
 	quantity = models.IntegerField()
 
+@python_2_unicode_compatible
 class factory_factory(models.Model):
 	mid = models.AutoField(primary_key=True)
 	fac1 = models.ForeignKey(factories, related_name="his_factory")
 	fac2 = models.ForeignKey(factories, related_name="opponent")
+	def __str__(self):
+		return str(self.mid) + " ( Factory-id: " + self.fac1 + " - OppFactory-id: "+self.fac2+")"
 
 
 class userForm(ModelForm):
