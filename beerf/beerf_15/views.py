@@ -51,6 +51,53 @@ def logout(request):
 	form = userLoginForm()
 	return render(request, "login.html", {"form" : form,"error" : "logged out"})
 
+#creates a retailer for factory fac1 and its opponent factory
+def retailer_allocate(fac1):
+	#create the retailer
+	ret = retailers()
+	ret.save()
+
+	fac_fac_relation = factory_factory.objects.get(fac1=fac1)
+	fac2 = fac_fac_relation.fac2
+
+	#create the factory-retailer link
+	fac_ret_relation = factory_retailer(fid = fac1, rid = ret)
+	fac_ret_relation.save()
+
+	fac_ret_relation = factory_retailer(fid = fac2, rid = ret)
+	fac_ret_relation.save()
+
+
 @decorator_from_middleware(middleware.UserAuth)
 def assign(request):
-	return JsonResponse({"status":"SUCCESS"})
+	id = request.POST.get("user_id")
+	try:
+		user  = users.objects.get(pk=id)
+	except users.DoesNotExist:
+		user = None
+	if id and user:
+		#the user is logged in
+		if not(user.factory_id):
+			#The user's factory has not been set
+			#create user's factory with money=10000
+			fac1 = factories(money = 10000)
+			fac1.save()
+			#link the factory with the user
+			user.factory = fac1
+			user.save()
+			#create user's opponent factory with money=10000
+			fac2 = factories(money = 10000)
+			fac2.save()
+			#link the factories
+			fac_fac_relation = factory_factory(fac1 = fac1, fac2 = fac2)
+			fac_fac_relation.save()
+			#calling the retailer_allocate function 3 times to create 3 retailers and map to fac1 and fac2
+			for i in range(0,3):
+				retailer_allocate(fac1) 
+			return JsonResponse({"status":"200","data":"Successfully allocated Factories and Retailers"})
+		else:
+			#The facrtory has been set already
+			return JsonResponse({"status":"101","data":"Factory and Retailers have already been Allocated for "+user.email})
+	else:
+		#The user is not authorized or logged in.
+		return JsonResponse({"status":"100","data":"Unauthorized Request. Please Login"})

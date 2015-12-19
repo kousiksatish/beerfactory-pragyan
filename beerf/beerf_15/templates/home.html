@@ -5,22 +5,33 @@
 <body>
 <h1>Hi {{name}}, Welcome</h1>
 <button id="assign_factories">Click me to allocate factory and retailers.</button>
+<a href="{% url 'logout' %}"><button>Logout</button></a>
+<p id="status"></p>
+<p id="msg"></p>
 {% load staticfiles %}
 <script type="text/javascript" src="{% static 'beerf_15/jquery.min.js' %}"></script>
 <script type="text/javascript">
-	var base_url = "{{ request.META.HTTP_NAME }}";
+	var url = "{% url 'assign_factory' %}";
 	$("#assign_factories").click(AssignFactories);
 	function AssignFactories() {
 	    console.log("Assign Factory is working!")
+	    var id = "{{request.session.user_id}}";
 	    $.ajax({
-	        url : base_url + "/assign_factory", 
+	        url : url, 
 	        type : "POST",
-	        data : {"csrfmiddlewaretoken":"{{ csrf_token }}"},
+	        data : {"csrfmiddlewaretoken":"{{ csrf_token }}","user_id":id},
 	        success : function(json) {
-	           alert(json.status);
+	        	var status;
+	        	if(json.status == "200")
+	        		status = "Success !!";
+	        	else if(json.status == "100" || json.status == "101")
+	        		status = "Error !!";
+	           	$("#status").html(status);
+	           	$("#msg").html(json.data);
 	        },
 	        error : function(xhr,errmsg,err) {
-	           alert(err);
+	           $("#status").html("ERROR");
+	           $("#msg").html(err);
 	           console.log(xhr.status + ": " + xhr.responseText);
 	        }
 	    });
