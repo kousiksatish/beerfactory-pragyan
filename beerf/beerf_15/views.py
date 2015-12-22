@@ -94,10 +94,10 @@ def assign(request):
 			#calling the retailer_allocate function 3 times to create 3 retailers and map to fac1 and fac2
 			for i in range(0,3):
 				retailer_allocate(fac1) 
-			return JsonResponse({"status":"200","data":"Successfully allocated Factories and Retailers"})
+			return JsonResponse({"status":"200","data":{"description":"Successfully allocated Factories and Retailers"}})
 		else:
 			#The facrtory has been set already
-			return JsonResponse({"status":"101","data":"Factory and Retailers have already been Allocated for "+user.email})
+			return JsonResponse({"status":"101","data":{"description":"Factory and Retailers have already been Allocated for "+user.email}})
 	else:
 		#The user is not authorized or logged in.
-		return JsonResponse({"status":"100","data":"Unauthorized Request. Please Login"})
+		return JsonResponse({"status":"100","data":{"description":"Unauthorized Request. Please Login"}})
