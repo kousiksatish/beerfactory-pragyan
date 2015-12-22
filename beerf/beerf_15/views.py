@@ -101,3 +101,7 @@ def assign(request):
 	else:
 		#The user is not authorized or logged in.
 		return JsonResponse({"status":"100","data":{"description":"Unauthorized Request. Please Login"}})
+
+
+def testhome(request):
+	return render(request, "index.html")
