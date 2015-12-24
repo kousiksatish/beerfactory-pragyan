@@ -22,10 +22,16 @@ class users(models.Model):
 	def __str__(self):
 		return str(self.name) + " (" + self.email + ")"
 
+class status(models.Model):
+	pid = models.OneToOneField(users)
+	turn = models.IntegerField()
+	stage = models.IntegerField()
+
 @python_2_unicode_compatible
 class retailers(models.Model):
 	rid = models.AutoField(primary_key=True)
 	rcode = models.CharField(max_length=100, blank=True, unique=True, default = uuid.uuid4)
+	zone = models.IntegerField(null=True)
 	def __str__(self):
 		return str(self.rid) + " (" + self.rcode + ")"
 
@@ -40,8 +46,21 @@ class factory_retailer(models.Model):
 	frid = models.AutoField(primary_key = True)
 	fid = models.ForeignKey(factories)
 	rid = models.ForeignKey(retailers)
+	popularity = models.DecimalField(null=True,max_digits=11, decimal_places=10)
 	def __str__(self):
-		return str(self.frid) + " ( Factory-id: " + self.fid + " - Retailer-id: "+self.rid+")"
+		return str(self.frid) + " ( Factory-id: " + str(self.fid) + " - Retailer-id: "+str(self.rid)+")"
+
+class capacity(models.Model):
+	cid = models.AutoField(primary_key = True)
+	fid = models.ForeignKey(factories)
+	turn = models.IntegerField()
+	capacity = models.IntegerField()
+
+class selling_price(models.Model):
+	spid = models.AutoField(primary_key = True)
+	frid = models.ForeignKey(factory_retailer)
+	turn = models.IntegerField()
+	selling_price = models.IntegerField()
 
 class fac_ret_demand(models.Model):
 	did = models.AutoField(primary_key=True)
