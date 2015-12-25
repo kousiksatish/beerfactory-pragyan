@@ -117,10 +117,10 @@ def getStatus(request):
 		try:
 			user  = users.objects.get(pk=id)
 		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
 			user = None
 		if id and user:
 			stat = status.objects.get(pid=user)
-			#return JsonResponse({"status":"100","data":{"description":"Unauthorized Request. Please Login"}})
 			return JsonResponse({"status":"200", "data":{"description":"Success", "turn":str(stat.turn), "stage":str(stat.stage)}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
