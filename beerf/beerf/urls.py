@@ -25,4 +25,6 @@ urlpatterns = [
     url(r'^assign_factory$', views.assign, name="assign_factory"),
     url(r'^logout$', views.logout, name="logout"),
     url(r'^testhome$', views.testhome, name="testhome"),
+
+    url(r'^getStatus$', views.getStatus, name="getStatus")
 ]

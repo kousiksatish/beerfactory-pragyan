@@ -6,6 +6,7 @@ import beerf_15
 from django.utils.decorators import decorator_from_middleware
 from beerf_15.models import *
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def register(request):
 	if 'user_id' in request.session:
@@ -107,3 +108,19 @@ def assign(request):
 
 def testhome(request):
 	return render(request, "index.html")
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def getStatus(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			user = None
+		if id and user:
+			stat = status.objects.get(pid=user)
+			#return JsonResponse({"status":"100","data":{"description":"Unauthorized Request. Please Login"}})
+			return JsonResponse({"status":"200", "data":{"description":"Success", "turn":str(stat.turn), "stage":str(stat.stage)}})
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
