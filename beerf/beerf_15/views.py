@@ -137,7 +137,48 @@ def fac_details(request):
 			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
 			user = None
 		if id and user:
-			stat = status.objects.get(pid=user)
-			return JsonResponse({"status":"200", "data":{"description":"Success", "turn":str(stat.turn), "stage":str(stat.stage)}})
+			turn = status.objects.get(pid = id).turn
+			factory1 = user.factory
+			factory2 = factory_factory.objects.get(fac1=factory1).fac2
+			
+			capacity1 = capacity.objects.get(fid = factory1.fid,turn = turn)
+			capacity2 = capacity.objects.get(fid = factory2.fid,turn = turn)
+			
+			fac_ret_1 = factory_retailer.objects.filter(fid = factory1).values_list('frid', flat = True)
+			fac_ret_2 = factory_retailer.objects.filter(fid = factory2).values_list('frid', flat = True)
+			
+			sp1 = selling_price.objects.filter(frid__in = fac_ret_1,turn=turn)
+			sp2 = selling_price.objects.filter(frid__in = fac_ret_2,turn=turn)
+			json = {}
+			json["status"] ="200"
+			data = {}
+			fact1={}
+			fact2={}
+			fact1['fcode'] = factory1.fcode
+			fact1["money"] = factory1.money
+			fact1["capacity"] = capacity1.capacity
+			rcodes = []
+			sps = []
+			for sp in sp1:
+				rcode = sp.frid.rid.rcode
+				rcodes.append(rcode)
+				sps.append(sp.selling_price)
+			fact1["rcodes"] = rcodes
+			fact1["selling_price"] = sps
+			data["factory_1"] = fact1
+			fact2['fcode'] = factory2.fcode
+			fact2["money"] = factory2.money
+			fact2["capacity"] = capacity2.capacity
+			rcodes = []
+			sps = []
+			for sp in sp2:
+				rcode = sp.frid.rid.rcode
+				rcodes.append(rcode)
+				sps.append(sp.selling_price)
+			fact2["rcodes"] = rcodes
+			fact2["selling_price"] = sps
+			data["factory_2"] = fact2
+			json["data"] = data
+			return JsonResponse(json)
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
