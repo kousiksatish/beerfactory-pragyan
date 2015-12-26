@@ -70,15 +70,16 @@ def retailer_allocate(fac1):
 	fac_ret_relation = factory_retailer(fid = fac2, rid = ret)
 	fac_ret_relation.save()
 
-
-@decorator_from_middleware(middleware.UserAuth)
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def assign(request):
-	id = request.POST.get("user_id")
-	try:
-		user  = users.objects.get(pk=id)
-	except users.DoesNotExist:
-		user = None
-	if id and user:
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+
 		#the user is logged in
 		if not(user.factory_id):
 			#The user's factory has not been set
@@ -103,7 +104,7 @@ def assign(request):
 			return JsonResponse({"status":"101","data":{"description":"Factory and Retailers have already been Allocated for "+user.email}})
 	else:
 		#The user is not authorized or logged in.
-		return JsonResponse({"status":"100","data":{"description":"Unauthorized Request. Please Login"}})
+		return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
 
 
 def testhome(request):
@@ -112,6 +113,22 @@ def testhome(request):
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
 def getStatus(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		if id and user:
+			stat = status.objects.get(pid=user)
+			return JsonResponse({"status":"200", "data":{"description":"Success", "turn":str(stat.turn), "stage":str(stat.stage)}})
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def fac_details(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
 		try:

@@ -26,5 +26,6 @@ urlpatterns = [
     url(r'^logout$', views.logout, name="logout"),
     url(r'^testhome$', views.testhome, name="testhome"),
 
-    url(r'^getStatus$', views.getStatus, name="getStatus")
+    url(r'^getStatus$', views.getStatus, name="getStatus"),
+    url(r'^fac_details$', views.fac_details, name="fac_details")
 ]
