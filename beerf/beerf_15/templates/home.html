@@ -27,7 +27,7 @@
 	        	else if(json.status == "100" || json.status == "101")
 	        		status = "Error !!";
 	           	$("#status").html(status);
-	           	$("#msg").html(json.data);
+	           	$("#msg").html(json.data.description);
 	        },
 	        error : function(xhr,errmsg,err) {
 	           $("#status").html("ERROR");

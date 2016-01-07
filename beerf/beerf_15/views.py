@@ -6,6 +6,7 @@ import beerf_15
 from django.utils.decorators import decorator_from_middleware
 from beerf_15.models import *
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def register(request):
 	if 'user_id' in request.session:
@@ -14,6 +15,8 @@ def register(request):
 		form = userForm(request.POST)
 		if form.is_valid():
 			new_user = form.save()
+			stat = status(pid = new_user,turn = 0,stage=0)
+			stat.save()
 			request.session["user_id"] = new_user.pid
 			return redirect(beerf_15.views.home)
 	else:
@@ -94,10 +97,30 @@ def assign(request):
 			#calling the retailer_allocate function 3 times to create 3 retailers and map to fac1 and fac2
 			for i in range(0,3):
 				retailer_allocate(fac1) 
-			return JsonResponse({"status":"200","data":"Successfully allocated Factories and Retailers"})
+			return JsonResponse({"status":"200","data":{"description":"Successfully allocated Factories and Retailers"}})
 		else:
 			#The facrtory has been set already
-			return JsonResponse({"status":"101","data":"Factory and Retailers have already been Allocated for "+user.email})
+			return JsonResponse({"status":"101","data":{"description":"Factory and Retailers have already been Allocated for "+user.email}})
 	else:
 		#The user is not authorized or logged in.
-		return JsonResponse({"status":"100","data":"Unauthorized Request. Please Login"})
+		return JsonResponse({"status":"100","data":{"description":"Unauthorized Request. Please Login"}})
+
+
+def testhome(request):
+	return render(request, "index.html")
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def getStatus(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		if id and user:
+			stat = status.objects.get(pid=user)
+			return JsonResponse({"status":"200", "data":{"description":"Success", "turn":str(stat.turn), "stage":str(stat.stage)}})
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
