@@ -12,6 +12,8 @@ class SessionPIDAuth(object):
 		if 'user_id' not in request.session:
 			id = request.session.get("user_id")
 			return JsonResponse({"status":"101", "data":{"description":"Failed! Session not set"}})
+		if 'user_id' not in request.POST:
+			return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong Request"}})
 		if(int(request.session.get('user_id')) != int(request.POST.get("user_id"))):
 		 	return JsonResponse({"status":"102", "data":{"description":"Failed! Session mismatch"}})
 		return None
