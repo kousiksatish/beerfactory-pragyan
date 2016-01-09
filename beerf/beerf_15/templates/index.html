@@ -66,6 +66,7 @@ console.log('url is', factoryDetailsUrl);
 		<ul class="list-group">
 			<li ng-repeat="product in store.products" > 
 					<section ng-controller="PanelController as panel">
+
 			<ul class="nav nav-pills">
 				<li ng-class="{active:panel.istab(1)}"> <a href ng-click="panel.settab(1)"> Orders </a> </li>
 				<li ng-class="{active:panel.istab(2)}"> <a href ng-click="panel.settab(2)"> Inventory </a> </li>
@@ -137,10 +138,39 @@ console.log('url is', factoryDetailsUrl);
 	 			</table>
 			</div>
 			<div class="panel" ng-show="panel.istab(4)">
+					<p> {$ store.factoryDetails $} </p>
 			</div>
 		</section>
 			</li>
 		</ul>
+	</div>
+
+	<div class="container">
+		<h3> Factory details </h3>
+		<table class = "table table-bordered table-striped table-responsive">
+			
+			<tr>
+				<th> </th>
+				<th> Factory Code </th>
+				<th> Money </th>
+				<th> Capacity </th>
+			</tr>
+
+			<tr>
+				<td> Factory 1 </td>
+				<td> {$ store.factoryDetails.data.factory_1.fcode $} </td>
+				<td> {$ store.factoryDetails.data.factory_1.money $} </td>
+				<td> {$ store.factoryDetails.data.factory_1.capacity $} </td>
+			</tr>
+
+			<tr>
+				<td> Factory 2 </td>
+				<td> {$ store.factoryDetails.data.factory_2.fcode $} </td>
+				<td> {$ store.factoryDetails.data.factory_2.money $} </td>
+				<td> {$ store.factoryDetails.data.factory_2.capacity $} </td>
+			</tr>
+
+		</table>
 	</div>
 </div>
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>

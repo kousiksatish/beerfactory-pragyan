@@ -71,6 +71,7 @@ app.controller('StoreController', ['fac_details', function(fac_details){
 		}
 		]
 	}];
+
 	vm.factoryDetails = {};
 
 	fac_details.success(function(json){
