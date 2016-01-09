@@ -9,10 +9,12 @@ var app = angular.module('store',[]).config(function($interpolateProvider) {
 //  CONTROLLERS
 
 
+//controller for the data inside tabs
+app.controller('StoreController', ['fac_details', function(fac_details){					
 
-app.controller('storec', ['fac_details', function(fac_details){					//controller for the data inside tabs
+	var vm = this;
 
-	this.products = [{
+	vm.products = [{
 		orders: [
 		{	
 			from:"R1",
@@ -69,36 +71,34 @@ app.controller('storec', ['fac_details', function(fac_details){					//controller
 		}
 		]
 	}];
-
-	var vm = this;
+	vm.factoryDetails = {};
 
 	fac_details.success(function(json){
 		vm.factoryDetails = json;
+		console.log('factory details', vm.factoryDetails);
 	});
 
 }]);
 
-
-app.controller('panelp',function(){         							       // controller for the panel
+// controller for the panel
+app.controller('PanelController',function(){         							       
 	this.tab=1;
 	this.settab = function(a) { this.tab = a; };
 	this.istab = function(a) { return this.tab === a;};
 });
 
 
-
-
 //   SERVICES 
 
-
+// service that gets factory details
 app.factory('fac_details', ['$http', function($http){
 
 	console.log('id from app.js', id);
-	console.log('url from app.js', url);
+	console.log('url from app.js', factoryDetailsUrl);
 
 	return $http({
    		 	method: 'POST',
-    		url: url,
+    		url: factoryDetailsUrl,
     		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
     		transformRequest: function(obj) {
     		    var str = [];

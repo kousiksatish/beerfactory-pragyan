@@ -56,94 +56,92 @@ function unfact2()
 var id = "{{request.session.user_id}}";
 console.log('user id is', id);
 
-var url = "{% url 'fac_details' %}";
-console.log('url is', url);
+var factoryDetailsUrl = "{% url 'fac_details' %}";
+console.log('url is', factoryDetailsUrl);
 
 </script>
 
-<div id="right_half" ng-controller="storec as store">
-<div class="container">
-	<ul class="list-group">
-		<li ng-repeat="product in store.products" > 
-				<section ng-controller="panelp as panel">
-		<ul class="nav nav-pills">
-			<li ng-class="{active:panel.istab(1)}"> <a href ng-click="panel.settab(1)"> Orders </a> </li>
-			<li ng-class="{active:panel.istab(2)}"> <a href ng-click="panel.settab(2)"> Inventory </a> </li>
-			<li ng-class="{active:panel.istab(3)}"> <a href ng-click="panel.settab(3)"> Backlog </a> </li>
-			<li ng-class="{active:panel.istab(4)}"> <a href ng-click="panel.settab(4)"> BUY NOW! </a> </li>
+<div id="right_half" ng-controller="StoreController as store">
+	<div class="container">
+		<ul class="list-group">
+			<li ng-repeat="product in store.products" > 
+					<section ng-controller="PanelController as panel">
+			<ul class="nav nav-pills">
+				<li ng-class="{active:panel.istab(1)}"> <a href ng-click="panel.settab(1)"> Orders </a> </li>
+				<li ng-class="{active:panel.istab(2)}"> <a href ng-click="panel.settab(2)"> Inventory </a> </li>
+				<li ng-class="{active:panel.istab(3)}"> <a href ng-click="panel.settab(3)"> Backlog </a> </li>
+				<li ng-class="{active:panel.istab(4)}"> <a href ng-click="panel.settab(4)"> BUY NOW! </a> </li>
+			</ul>
+			<div class="panel" ng-show="panel.istab(1)">
+				<table class="table table-bordered table-striped"> <thead>
+					<tr> 
+						<th class="col-md-1"> RETAILER </th>
+						<th class="col-md-1"> ORDER <br> AMOUNT </th>
+						<th class="col-md-1"> AMOUNT TO <br> DELIVER </th>
+						<th class="col-md-1"> TRANSPORT <br> MODE </th>
+						<th class="col-md-1" >  </th>
+
+	 				</tr>
+	 				</thead>
+	 				<tbody>
+	 				<tr ng-repeat="order in product.orders">
+	 					<td class="col-md-1"> {$order.from$}</td>
+	 					<td class="col-md-1"> {$order.order_no$}</td>
+	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
+	 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
+	 					<td class="col-md-1"> <input type="submit" value="Send!" class="col-sm-12"/> </td>
+	 				</tr>
+	 				</tbody>
+	 			</table>
+
+
+			</div>
+			<div class="panel" ng-show="panel.istab(2)">
+				<table class="table table-bordered table-striped"> <thead>
+					<tr> 
+						<th > DAY </th>
+						<th > PRODUCED <br> AMOUNT </th>
+						<th> AMOUNT<br> SOLD </th>
+						<th > INVENTORY </th>
+	 				</tr>
+	 				</thead>
+	 				<tbody>
+	 				<tr ng-repeat="inv in product.inventory">
+	 					<td > {$inv.day$}</td>
+	 					<td > {$inv.no_produced$}</td>
+	 					<td> {$inv.no_sold$}</td>
+	 					<td > {$inv.no_inv$}</td>
+	 				</tr>
+	 				</tbody>
+	 			</table>
+			</div>
+			<div class="panel" ng-show="panel.istab(3)">
+				<table class="table table-bordered table-striped"> <thead>
+					<tr > 
+						<th> DAY </th>
+						<th> PRODUCED<br> AMOUNT </th>
+						<th> AMOUNT<br> ORDERED </th>
+						<th> AMOUNT <br>SENT </th>
+						<th> BACKLOG <br>AMOUNT </th>
+	 				</tr>
+	 				</thead>
+	 				<tbody>
+	 				<tr ng-repeat="backlog in product.backlog">
+	 					<td> {$backlog.day$}</td>
+	 					<td> {$backlog.no_produced$}</td>
+	 					<td> {$backlog.no_ord$}</td>
+	 					<td> {$backlog.no_to$}</td>
+	 					<td> {$backlog.no_back$}</td>
+	 				</tr>
+	 				</tbody>
+	 			</table>
+			</div>
+			<div class="panel" ng-show="panel.istab(4)">
+			</div>
+		</section>
+			</li>
 		</ul>
-		<div class="panel" ng-show="panel.istab(1)">
-			<table class="table table-bordered table-striped"> <thead>
-				<tr> 
-					<th class="col-md-1"> RETAILER </th>
-					<th class="col-md-1"> ORDER <br> AMOUNT </th>
-					<th class="col-md-1"> AMOUNT TO <br> DELIVER </th>
-					<th class="col-md-1"> TRANSPORT <br> MODE </th>
-					<th class="col-md-1" >  </th>
-
- 				</tr>
- 				</thead>
- 				<tbody>
- 				<tr ng-repeat="order in product.orders">
- 					<td class="col-md-1"> {$order.from$}</td>
- 					<td class="col-md-1"> {$order.order_no$}</td>
- 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
- 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
- 					<td class="col-md-1"> <input type="submit" value="Send!" class="col-sm-12"/> </td>
- 				</tr>
- 				</tbody>
- 			</table>
-
-
-		</div>
-		<div class="panel" ng-show="panel.istab(2)">
-			<table class="table table-bordered table-striped"> <thead>
-				<tr> 
-					<th > DAY </th>
-					<th > PRODUCED <br> AMOUNT </th>
-					<th> AMOUNT<br> SOLD </th>
-					<th > INVENTORY </th>
- 				</tr>
- 				</thead>
- 				<tbody>
- 				<tr ng-repeat="inv in product.inventory">
- 					<td > {$inv.day$}</td>
- 					<td > {$inv.no_produced$}</td>
- 					<td> {$inv.no_sold$}</td>
- 					<td > {$inv.no_inv$}</td>
- 				</tr>
- 				</tbody>
- 			</table>
-		</div>
-		<div class="panel" ng-show="panel.istab(3)">
-			<table class="table table-bordered table-striped"> <thead>
-				<tr > 
-					<th> DAY </th>
-					<th> PRODUCED<br> AMOUNT </th>
-					<th> AMOUNT<br> ORDERED </th>
-					<th> AMOUNT <br>SENT </th>
-					<th> BACKLOG <br>AMOUNT </th>
- 				</tr>
- 				</thead>
- 				<tbody>
- 				<tr ng-repeat="backlog in product.backlog">
- 					<td> {$backlog.day$}</td>
- 					<td> {$backlog.no_produced$}</td>
- 					<td> {$backlog.no_ord$}</td>
- 					<td> {$backlog.no_to$}</td>
- 					<td> {$backlog.no_back$}</td>
- 				</tr>
- 				</tbody>
- 			</table>
-		</div>
-		<div class="panel" ng-show="panel.istab(4)">
-		</div>
-	</section>
-		</li>
-	</ul>
-	
-</div>
+	</div>
 </div>
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>
-	
 </html>
