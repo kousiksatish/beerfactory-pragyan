@@ -252,6 +252,31 @@ def map(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def supply(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		if id and user:
+
+			quantity = request.POST.getlist("quantity")
+			turn = request.POST.get("turn")
+			stage = request.POST.get("stage")
+
+			stat = status.objects.get(pid=user)
+
+			if stat.turn == turn and stat.stage == 2 :
+				
+				 
+
+
+
 
 
 	
