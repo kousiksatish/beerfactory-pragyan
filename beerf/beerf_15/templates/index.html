@@ -57,6 +57,9 @@ function unfact2()
 var id = "{{request.session.user_id}}";
 console.log('user id is', id);
 
+var url = "{% url 'fac_details' %}";
+console.log('url is', url);
+
 </script>
 
 <div id="right_half" ng-controller="storec as store">

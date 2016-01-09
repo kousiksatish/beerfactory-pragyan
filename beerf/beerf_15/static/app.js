@@ -92,17 +92,29 @@ app.controller('panelp',function(){         							       // controller for the 
 app.factory('fac_details', ['$http', function($http){
 
 	console.log('id from app.js', id);
+	console.log('url from app.js', url);
 
-	return $http.post('http://127.0.0.1:8000/fac_details',
-				 {"user_id": id}
-				) 
-  				.success(function(json) {
+	return $http({
+   		 	method: 'POST',
+    		url: url,
+    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    		transformRequest: function(obj) {
+    		    var str = [];
+        		for(var p in obj)
+        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        		return str.join("&");
+    		},
+    		data: {user_id: id}
+			})
+			.success(function(json) {
     					return json;
   					})
-  				.error(function(err) {
+  			.error(function(err) {
     					return err;
   					});
 
 }]);
+
+
 
 })();
