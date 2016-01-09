@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>Home - Beer Factory</title>
+</head>
+<body>
+<h1>Hi {{name}}, Welcome</h1>
+<button id="assign_factories">Click me to allocate factory and retailers.</button>
+<a href="{% url 'logout' %}"><button>Logout</button></a>
+<p id="status"></p>
+<p id="msg"></p>
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript">
+	var url = "{% url 'assign_factory' %}";
+	$("#assign_factories").click(AssignFactories);
+	function AssignFactories() {
+	    console.log("Assign Factory is working!")
+	    var id = "{{request.session.user_id}}";
+	    $.ajax({
+	        url : url, 
+	        type : "POST",
+	        data : {"user_id":id},
+	        success : function(json) {
+	        	var status;
+	        	if(json.status == "200")
+	        		status = "Success !!";
+	        	else if(json.status == "100" || json.status == "101")
+	        		status = "Error !!";
+	           	$("#status").html(status);
+	           	$("#msg").html(json.data.description);
+	        },
+	        error : function(xhr,errmsg,err) {
+	           $("#status").html("ERROR");
+	           $("#msg").html(err);
+	           console.log(xhr.status + ": " + xhr.responseText);
+	        }
+	    });
+	}
+</script>
+</body>
+</html>

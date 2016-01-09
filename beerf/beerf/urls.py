@@ -15,7 +15,21 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from beerf_15 import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^register/$',views.register, name="register"),
+    url(r'^login$', views.login, name="login"),
+    url(r'^home$', views.home, name="home"),
+    url(r'^assign_factory$', views.assign, name="assign_factory"),
+    url(r'^logout$', views.logout, name="logout"),
+    url(r'^testhome$', views.testhome, name="testhome"),
+
+    url(r'^getStatus$', views.getStatus, name="getStatus"),
+    url(r'^fac_details$', views.fac_details, name="fac_details"),
+    url(r'^getSellingPrice$', views.get_selling_price, name="get_selling_price"),
+    url(r'^getDemand$', views.get_demand, name="get_demand"),
+    url(r'^map$', views.map, name="map"),
+    url(r'^testmap$', views.testmap, name="testmap")
 ]
