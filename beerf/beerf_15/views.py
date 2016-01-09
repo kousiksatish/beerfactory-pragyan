@@ -298,3 +298,6 @@ def map(request):
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
+
+def testmap(request):
+	return render(request, "map_test.html")

@@ -1,10 +1,12 @@
+{% load staticfiles %}
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>ImageMapster Beginner 2</title>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script src="scripts/jquery.imagemapster.js"></script>
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> -->
+<script src="{% static "js/jquery.min.js" %}"></script>
+<script src="{% static "scripts/jquery.imagemapster.js" %}"></script>
 <style>
 #container {
 	width : 100%;
@@ -25,7 +27,7 @@
 
  
 <div id="image">
-<img style="width:1150px;height:1150px;border:0;" id="map1" src="images/map1.gif" alt="map1" usemap="#map1">
+<img style="width:1150px;height:1150px;border:0;" id="map1" src="{% static "images/map1.gif" %}" alt="map1" usemap="#map1">
  </div>
 </div>
 
