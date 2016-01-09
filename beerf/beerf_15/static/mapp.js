@@ -5,10 +5,31 @@
         ret1: "<input type='text' value='r1'>name</input>",
         ret2: "<input type='text' value='r2'>name</input>"
     };
-    
+
+    var path='static/images/map1.gif' ;
+
+
+function myFunction(level) {
+    switch(level){
+        case 1: //path="{% static "images/map1.gif" %}" ;
+        path = 'static/images/map1.gif';
+            break;
+        case 2: path='static/images/map2.gif' ;
+            break;
+        case 3: path='static/images/map3.gif';
+            break;
+        case 4: path='static/images/map4.gif' ;
+            break;
+        
+    }
+    mapp();
+}
+
     var hovered = "fact1";
     var image = $('#map1');
 var newToolTip = "default";
+
+function mapp(){
     image.mapster(
     {
         fillOpacity: 0.4,
@@ -20,6 +41,9 @@ var newToolTip = "default";
         singleSelect: true,
         mapKey: 'name',
         listKey: 'name',
+        staticState : true,
+
+    render_select : { altImage : path},
         onMouseover: function(x) {
  hovered = x.key;
 
@@ -37,3 +61,5 @@ var newToolTip = "default";
             $('#selections').html(xref[e.key]);
         }
 });
+}
+mapp();
