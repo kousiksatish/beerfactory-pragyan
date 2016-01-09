@@ -208,4 +208,34 @@ def get_selling_price(request):
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def placeOrder(request):
+	if request.method == 'POST':
+		id = request.POST.get('user_id')
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
 
+		if id and user:
+			cur_status = status.objects.get(pid = id)
+			turn = cur_status.turn							# turn number as stored in DB
+			stage = cur_status.stage 						# stage number as stored in DB
+			valid_turn_and_stage = (turn == request.POST.get('turn') and stage == request.POST.get('stage'))
+			if not valid_turn_and_stage:
+				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
+			fid = user.factory.fid
+			quantity = request.POST.get('quantity')
+			new_order = factory_order(fid=fid,turn=turn,quantity=quantity)
+			new_order.save()
+
+			cur_status.stage += 1
+			cur_status.save()
+			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
+
+		else:
+			return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
+	else:
+		return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
