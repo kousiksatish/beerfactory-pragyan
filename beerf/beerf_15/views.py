@@ -78,6 +78,13 @@ def get_initial_money():
 def get_initial_capacity():
 	return 200
 
+#function for returning the base price and range
+def get_sp_details():
+	sp_details={}
+	sp_details["base"] = 50
+	sp_details["range"] = 5
+	return sp_details
+
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
@@ -319,4 +326,56 @@ def map(request):
 
 def testmap(request):
 	return render(request, "map_test.html")
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def updateSellingPrice(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		if id and user:
+			turn = request.POST.get("turn")
+			stage = request.POST.get("stage")
+			sp = request.POST.get("selling_price")
+			if(not (stage) or not (turn) or not(sp)):
+				return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn,stage,selling prices should be provided."}})
+			else:
+				if((turn != str(status.objects.get(pid = id).turn)) or (stage != str(status.objects.get(pid = id).stage)) or stage!="4"):
+					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
+				else:
+					sp_list1 = sp.split(',')
+					sp_list2 = [s for s in sp_list1 if s.isdigit()]
+					sp_list2 = [int(s) for s in sp_list2]
+					sp_details = get_sp_details()
+					sp_range = range(sp_details["base"]-sp_details["range"],sp_details["base"]+sp_details["range"]+1)
+					sp_list2 = [s for s in sp_list2 if s in sp_range]
+					sp_length1 = len(sp_list1)
+					sp_length2 = len(sp_list2)
+					factory = user.factory
+					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
+					frid_length = len(frids)
+					if(sp_length1 != frid_length or sp_length2 !=frid_length):
+						return JsonResponse({"status":"106", "data":{"description":"Invalid Selling Prices Array."}})
+					for i in range(0,sp_length2):
+						fr = factory_retailer.objects.get(pk = frids[i])
+						sp = selling_price(frid = fr,turn = turn,selling_price = sp_list2[i])
+						sp.save()
+					json = {}
+					json["status"] = 200
+					data = {}
+					data["description"] = "Successfully Updated Selling Prices for all retailers"
+					json["data"] = data
+
+					# increment the stage of the user
+					stat = status.objects.get(pid = id)
+					stat.stage = stat.stage+1
+					stat.save()
+					return JsonResponse(json)
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
 
