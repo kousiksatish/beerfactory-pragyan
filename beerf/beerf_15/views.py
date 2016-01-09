@@ -222,6 +222,10 @@ def get_selling_price(request):
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
+
+def mapp(request):
+	return render(request,"map_test.html")
+
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
 def get_demand(request):
@@ -315,3 +319,4 @@ def map(request):
 
 def testmap(request):
 	return render(request, "map_test.html")
+
