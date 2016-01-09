@@ -255,3 +255,46 @@ def get_demand(request):
 
 def calculate_demand(frid,turn):
 	return 100
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def map(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		if id and user:
+			user_fac = factories.objects.get(pk=user.factory_id)
+			
+			opponents = factory_factory.objects.filter(fac1_id=user.factory_id)
+			fcode = []
+			fcode.append(user_fac.fcode)
+			for opponent in opponents:
+				opponent_fac = factories.objects.get(pk=opponent.fac2_id)
+				fcode.append(opponent_fac.fcode) 
+
+			retailers1 = factory_retailer.objects.filter(fid_id=user.factory_id)
+			rcode = []
+			zone = []
+			for retailer in retailers1:
+				retailer_details = retailers.objects.get(pk=retailer.rid_id)
+				rcode.append(retailer_details.rcode)
+				zone.append(retailer_details.zone)
+			
+			json={}
+			json["status"] = "200"
+			data = {}
+			data["fcode"] = fcode
+			data["rcode"] = rcode
+			json["data"] = data
+			json["zone"] = zone
+			return JsonResponse(json)
+
+			
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
