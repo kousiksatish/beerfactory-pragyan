@@ -70,6 +70,15 @@ def retailer_allocate(fac1):
 	fac_ret_relation = factory_retailer(fid = fac2, rid = ret)
 	fac_ret_relation.save()
 
+#function for returning the initial money for the factory at start of game
+def get_initial_money():
+	return 10000
+
+#function for returning the initial capacity fir the factory at start of the game
+def get_initial_capacity():
+	return 200
+
+
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
 def assign(request):
@@ -84,14 +93,19 @@ def assign(request):
 		if not(user.factory_id):
 			#The user's factory has not been set
 			#create user's factory with money=10000
-			fac1 = factories(money = 10000)
+			fac1 = factories(money = get_initial_money())
 			fac1.save()
+
+			cap1 = capacity(fid=fac1, turn=0, capacity=get_initial_capacity())
+			cap1.save()
 			#link the factory with the user
 			user.factory = fac1
 			user.save()
 			#create user's opponent factory with money=10000
-			fac2 = factories(money = 10000)
+			fac2 = factories(money = get_initial_money())
 			fac2.save()
+			cap2 = capacity(fid=fac2, turn=0, capacity=get_initial_capacity())
+			cap2.save()
 			#link the factories
 			fac_fac_relation = factory_factory(fac1 = fac1, fac2 = fac2)
 			fac_fac_relation.save()
