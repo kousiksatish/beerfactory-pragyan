@@ -211,6 +211,9 @@ def get_selling_price(request):
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
 def placeOrder(request):
+	'''
+		Places order to produce beer for a particular factory at the second stage, i.e, stage == 1
+	'''
 	if request.method == 'POST':
 		id = request.POST.get('user_id')
 		try:
@@ -219,22 +222,34 @@ def placeOrder(request):
 			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
 			user = None
 
+		# after user verification is done
 		if id and user:
 			cur_status = status.objects.get(pid = id)
-			turn = cur_status.turn							# turn number as stored in DB
-			stage = cur_status.stage 						# stage number as stored in DB
-			valid_turn_and_stage = (turn == request.POST.get('turn') and stage == request.POST.get('stage'))
+			turn = int(cur_status.turn)						# turn number as stored in DB
+			stage = int(cur_status.stage) 					# stage number as stored in DB
+			if stage != 1:									# current stage should be == 1
+				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
+
+			try:
+				quantity = int(request.POST['quantity'])
+				valid_turn_and_stage = (turn == int(request.POST['turn']) and stage == int(request.POST['stage']))
+			except KeyError:
+				return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
+
 			if not valid_turn_and_stage:
 				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
-			fid = user.factory.fid
-			quantity = request.POST.get('quantity')
-			new_order = factory_order(fid=fid,turn=turn,quantity=quantity)
-			new_order.save()
 
+			factory = user.factory
+			cur_capacity = int(capacity.objects.get(fid=factory,turn=turn).capacity)
+			if quantity > cur_capacity:
+				return JsonResponse({"status":"106","data":{"description":"Quantity exceeded capacity of the factory"}})
+			# create the new order in the DB
+			new_order = factory_order(fid=factory,turn=turn,quantity=quantity)
+			new_order.save()
+			# move to next stage of the current turn
 			cur_status.stage += 1
 			cur_status.save()
 			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
-
 		else:
 			return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
 	else:
