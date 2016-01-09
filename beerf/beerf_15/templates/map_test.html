@@ -6,7 +6,7 @@
 <title>ImageMapster Beginner 2</title>
 <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> -->
 <script src="{% static "js/jquery.min.js" %}"></script>
-<script src="{% static "scripts/jquery.imagemapster.js" %}"></script>
+<script src="{% static "js/jquery.imagemapster.js" %}"></script>
 <style>
 #container {
 	width : 100%;
@@ -26,12 +26,28 @@
 <body>
 
 <div style="clear: both; width: 500px; height: 50px; border: 1px solid black;" id="selections"></div>
+
+<button onclick="myFunction(1)">Try it</button>
+<button onclick="myFunction(2)">Try it</button>
+<button onclick="myFunction(3)">Try it</button>
+<button onclick="myFunction(4)">Try it</button>
+ 
 <div id="image">
 
 
 <img style="width:1150px;height:1150px;border:0;" id="map1" src="{% static "images/map1.gif" %}" alt="map1" usemap="#map1">
  </div>
 </div>
+
+
+
+
+
+
+
+
+
+
 
 
 <map name="map1">
