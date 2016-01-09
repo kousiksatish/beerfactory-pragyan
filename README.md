@@ -13,3 +13,4 @@ Game for Pragyan
     - `DB_NAME=<name>`
 7. Run `python manage.py migrate` to initiate the database
 8. Run `python manage.py runserver` to start local development server
+n

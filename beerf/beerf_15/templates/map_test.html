@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>ImageMapster Beginner 2</title>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script src="scripts/jquery.imagemapster.js"></script>
 <style>
 #container {
 	width : 100%;
@@ -23,30 +21,35 @@
 </head>
 <body>
 
- 
+<div style="clear: both; width: 500px; height: 50px; border: 1px solid black;" id="selections"></div>
 <div id="image">
-<img style="width:1150px;height:1150px;border:0;" id="map1" src="images/map1.gif" alt="map1" usemap="#map1">
+    {% load staticfiles %}
+<img style="width:1150px;height:1150px;border:0;" id="map1" src="{% static "images/map1.gif" %}" alt="map1" usemap="#map1">
  </div>
 </div>
 
 
 <map name="map1">
-    <area alt="" title="fact1" href="#" shape="poly" coords="197,119,385,117,386,260,198,259" />
-    <area alt="" title="fact2" href="#" shape="poly" coords="612,111,613,248,815,247,814,107" />
-    <area alt="" title="ret1" href="#" shape="poly" coords="161,320,69,409,162,495,256,409" />
-    <area alt="" title="ret2" href="#" shape="poly" coords="546,337,470,415,547,492,624,418" />
-    <area alt="" title="ret3" href="#" shape="poly" coords="768,319,692,379,768,439,844,379" />
-    <area alt="" title="ret4" href="#" shape="poly" coords="998,284,896,382,998,478,1099,382" />
-    <area alt="" title="ret5" href="#" shape="poly" coords="309,471,219,553,308,635,398,553" />
-    <area alt="" title="ret6" href="#" shape="poly" coords="646,561,748,657,852,561,748,467" />
-    <area alt="" title="ret7" href="#" shape="poly" coords="1024,557,934,651,1023,739,1112,650" />
-    <area alt="" title="ret8" href="#" shape="poly" coords="148,649,60,727,148,807,235,728" />
-    <area alt="" title="ret9" href="#" shape="poly" coords="583,637,484,727,582,814,680,726" />
-    <area alt="" title="ret10" href="#" shape="poly" coords="872,737,736,840,874,942,1011,839" />
-    <area alt="" title="ret11" href="#" shape="poly" coords="314,738,218,820,313,902,411,818" />
-    <area alt="" title="ret12" href="#" shape="poly" coords="167,869,68,955,166,1040,266,956" />
-    <area alt="" title="ret13" href="#" shape="poly" coords="388,953,316,1025,390,1096,462,1025" />
-    <area alt="" title="ret14" href="#" shape="poly" coords="598,1097,484,1004,598,907,711,1002" />
-    <area alt="" title="ret15" href="#" shape="poly" coords="870,960,794,1036,870,1112,950,1033" />
+    <area alt="" title="fact1" name="fact1" href="#" shape="poly" coords="197,119,385,117,386,260,198,259" />
+    <area alt="" title="fact2" name="fact2" href="#" shape="poly" coords="612,111,613,248,815,247,814,107" />
+    <area alt="" title="ret1" name="ret1" href="#" shape="poly" coords="161,320,69,409,162,495,256,409" />
+    <area alt="" title="ret2" name="ret2" href="#" shape="poly" coords="546,337,470,415,547,492,624,418" />
+    <area alt="" title="ret3" name="ret3" href="#" shape="poly" coords="768,319,692,379,768,439,844,379" />
+    <area alt="" title="ret4" name="ret4" href="#" shape="poly" coords="998,284,896,382,998,478,1099,382" />
+    <area alt="" title="ret5" name="ret5" href="#" shape="poly" coords="309,471,219,553,308,635,398,553" />
+    <area alt="" title="ret6" name="ret6" href="#" shape="poly" coords="646,561,748,657,852,561,748,467" />
+    <area alt="" title="ret7" name="ret7" href="#" shape="poly" coords="1024,557,934,651,1023,739,1112,650" />
+    <area alt="" title="ret8" name="ret8" href="#" shape="poly" coords="148,649,60,727,148,807,235,728" />
+    <area alt="" title="ret9" name="ret9" href="#" shape="poly" coords="583,637,484,727,582,814,680,726" />
+    <area alt="" title="ret10" name="ret10" href="#" shape="poly" coords="872,737,736,840,874,942,1011,839" />
+    <area alt="" title="ret11" name="ret11" href="#" shape="poly" coords="314,738,218,820,313,902,411,818" />
+    <area alt="" title="ret12" name="ret12" href="#" shape="poly" coords="167,869,68,955,166,1040,266,956" />
+    <area alt="" title="ret13" name="ret13" href="#" shape="poly" coords="388,953,316,1025,390,1096,462,1025" />
+    <area alt="" title="ret14" name="ret14" href="#" shape="poly" coords="598,1097,484,1004,598,907,711,1002" />
+    <area alt="" title="ret15" name="ret15" href="#" shape="poly" coords="870,960,794,1036,870,1112,950,1033" />
 </map>
+{% load staticfiles %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="{% static "jquery.imagemapster.js" %}"></script>
+<script type="text/javascript" src="{% static "mapp.js" %}"></script>
 </body>

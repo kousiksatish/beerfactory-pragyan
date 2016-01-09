@@ -1,5 +1,5 @@
 (function(){
-var app = angular.module('store',[]);
+var app = angular.module('beer',[]);
 
 app.controller('storec',function(){
 this.products=gems;

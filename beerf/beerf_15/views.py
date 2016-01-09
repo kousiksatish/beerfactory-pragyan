@@ -208,4 +208,6 @@ def get_selling_price(request):
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
+def mapp(request):
+	return render(request,"map_test.html")
 
