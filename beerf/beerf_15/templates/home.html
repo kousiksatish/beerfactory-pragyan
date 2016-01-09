@@ -19,7 +19,7 @@
 	    $.ajax({
 	        url : url, 
 	        type : "POST",
-	        data : {"csrfmiddlewaretoken":"{{ csrf_token }}","user_id":id},
+	        data : {"user_id":id},
 	        success : function(json) {
 	        	var status;
 	        	if(json.status == "200")
