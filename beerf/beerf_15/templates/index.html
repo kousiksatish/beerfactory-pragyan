@@ -1,117 +1,15 @@
 {% load staticfiles %}
-<html ng-app="beer">
+<html ng-app="store">
 <title>The Beer Factory</title>
 <head> 
+	<script type="text/javascript" src="{% static "angular/angular.min.js" %}"> </script>
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
+	<link rel="stylesheet" type="text/css" href="{% static "css/left.css" %}" />
 
 </head>
-<style type="text/css">
-#left_half
-{
-	position:absolute;
-	left:0%;
-	width:50%;
-	height:100%;
-}
-#right_half
-{
-	position:absolute;
-	left:50%;
-	width:50%;
-	height:100%;
-}
-
-#main
-{
-	background-color: green;
-	width:100%;
-	height:100%;
-
-}
-
-.f,.i
-{
-	/*background-color: yellow;*/
-	width:5%;
-	height:30%;
-
-}
-#i1
-{
-	display: none;
-	background: yellow;
-	position: absolute;
-	left:7%;
-	width:15%;
-	top:50%;
-	margin-bottom: -15%;
-}
-#i2
-{
-	display: none;
-	background: yellow;
-	position: absolute;
-	right:7%;
-	width:15%;
-	bottom:50%;
-	margin-top: -15%;
-}
-#f1
-{
-	background-image: url("/static/left.jpg");
-	background-size: 100% 100%;
-	position: absolute;
-	left:0%;
-	top:50%;
-	margin-bottom: -15%;
-
-}
-#f2
-{
-	background-image: url("/static/right.jpg");
-	background-size: 100% 100%;
-	background-color: blue;
-	position: absolute;
-	right:0%;
-	bottom:50%;
-	margin-top: -15%;
-
-}
-
-.r
-{
-	background-image: url("/static/beer.jpeg");
-	background-size: 100% 100%;
-	position: absolute;
-	width:10%;
-	height:10%;
-	left:50%;
-	margin-left: -5%;
-}
-#r1
-{
-	top:0%;
-}
-#r2
-{
-	position: absolute;
-	top:50%;
-	margin-top:-2.5%;
-}
-#r3
-{
-	bottom:0%;
-}
-</style>
-
-
 
 <!-- LEFTTTT -->
-
-
-
-
 
 <div id="left_half">
 <div id="main">
@@ -155,98 +53,124 @@ function unfact2()
 	i2.style.display="none";
 	
 }
+var id = "{{request.session.user_id}}";
+console.log('user id is', id);
 
+var factoryDetailsUrl = "{% url 'fac_details' %}";
+console.log('url is', factoryDetailsUrl);
 
 </script>
 
-<div id="right_half" ng-controller="storec as store">
-<div class="container">
-	<ul class="list-group">
-		<li ng-repeat="product in store.products" > 
-				<section ng-controller="panelp as panel">
-		<ul class="nav nav-pills">
-			<li ng-class="{active:panel.istab(1)}"> <a href ng-click="panel.settab(1)"> Orders </a> </li>
-			<li ng-class="{active:panel.istab(2)}"> <a href ng-click="panel.settab(2)"> Inventory </a> </li>
-			<li ng-class="{active:panel.istab(3)}"> <a href ng-click="panel.settab(3)"> Backlog </a> </li>
-			<li ng-class="{active:panel.istab(4)}"> <a href ng-click="panel.settab(4)"> BUY NOW! </a> </li>
+<div id="right_half" ng-controller="StoreController as store">
+	<div class="container">
+		<ul class="list-group">
+			<li ng-repeat="product in store.products" > 
+					<section ng-controller="PanelController as panel">
+
+			<ul class="nav nav-pills">
+				<li ng-class="{active:panel.istab(1)}"> <a href ng-click="panel.settab(1)"> Orders </a> </li>
+				<li ng-class="{active:panel.istab(2)}"> <a href ng-click="panel.settab(2)"> Inventory </a> </li>
+				<li ng-class="{active:panel.istab(3)}"> <a href ng-click="panel.settab(3)"> Backlog </a> </li>
+				<li ng-class="{active:panel.istab(4)}"> <a href ng-click="panel.settab(4)"> BUY NOW! </a> </li>
+			</ul>
+			<div class="panel" ng-show="panel.istab(1)">
+				<table class="table table-bordered table-striped"> <thead>
+					<tr> 
+						<th class="col-md-1"> RETAILER </th>
+						<th class="col-md-1"> ORDER <br> AMOUNT </th>
+						<th class="col-md-1"> AMOUNT TO <br> DELIVER </th>
+						<th class="col-md-1"> TRANSPORT <br> MODE </th>
+						<th class="col-md-1" >  </th>
+
+	 				</tr>
+	 				</thead>
+	 				<tbody>
+	 				<tr ng-repeat="order in product.orders">
+	 					<td class="col-md-1"> {$order.from$}</td>
+	 					<td class="col-md-1"> {$order.order_no$}</td>
+	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
+	 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
+	 					<td class="col-md-1"> <input type="submit" value="Send!" class="col-sm-12"/> </td>
+	 				</tr>
+	 				</tbody>
+	 			</table>
+
+
+			</div>
+			<div class="panel" ng-show="panel.istab(2)">
+				<table class="table table-bordered table-striped"> <thead>
+					<tr> 
+						<th > DAY </th>
+						<th > PRODUCED <br> AMOUNT </th>
+						<th> AMOUNT<br> SOLD </th>
+						<th > INVENTORY </th>
+	 				</tr>
+	 				</thead>
+	 				<tbody>
+	 				<tr ng-repeat="inv in product.inventory">
+	 					<td > {$inv.day$}</td>
+	 					<td > {$inv.no_produced$}</td>
+	 					<td> {$inv.no_sold$}</td>
+	 					<td > {$inv.no_inv$}</td>
+	 				</tr>
+	 				</tbody>
+	 			</table>
+			</div>
+			<div class="panel" ng-show="panel.istab(3)">
+				<table class="table table-bordered table-striped"> <thead>
+					<tr > 
+						<th> DAY </th>
+						<th> PRODUCED<br> AMOUNT </th>
+						<th> AMOUNT<br> ORDERED </th>
+						<th> AMOUNT <br>SENT </th>
+						<th> BACKLOG <br>AMOUNT </th>
+	 				</tr>
+	 				</thead>
+	 				<tbody>
+	 				<tr ng-repeat="backlog in product.backlog">
+	 					<td> {$backlog.day$}</td>
+	 					<td> {$backlog.no_produced$}</td>
+	 					<td> {$backlog.no_ord$}</td>
+	 					<td> {$backlog.no_to$}</td>
+	 					<td> {$backlog.no_back$}</td>
+	 				</tr>
+	 				</tbody>
+	 			</table>
+			</div>
+			<div class="panel" ng-show="panel.istab(4)">
+			</div>
+		</section>
+			</li>
 		</ul>
-		<div class="panel" ng-show="panel.istab(1)">
-			<table class="table table-bordered"> <thead>
-				<tr> 
-					<th class="col-md-1"> RETAILER </th>
-					<th class="col-md-1"> ORDER <br> AMOUNT </th>
-					<th class="col-md-1"> AMOUNT TO <br> DELIVER </th>
-					<th class="col-md-1"> TRANSPORT <br> MODE </th>
-					<th class="col-md-1" >  </th>
+	</div>
 
- 				</tr>
- 				</thead>
- 				<tbody>
- 				<tr ng-repeat="product in product[0].orders">
- 					<td class="col-md-1"> {{product.from}}</td>
- 					<td class="col-md-1"> {{product.order_no}}</td>
- 					<td class="col-md-1"> <input type="number" value="{{product.to_no}}" class="col-sm-12">  </input></td>
- 					<td class="col-md-1"> <input type="text" value="{{product.transport}}" class="col-sm-12">  </input></td>
- 					<td class="col-md-1"> <input type="submit" value="Send!" class="col-sm-12"/> </td>
- 				</tr>
- 				</tbody>
- 			</table>
+	<div class="container">
+		<h3> Factory details </h3>
+		<table class = "table table-bordered table-striped table-responsive">
+			
+			<tr>
+				<th> </th>
+				<th> Factory Code </th>
+				<th> Money </th>
+				<th> Capacity </th>
+			</tr>
 
+			<tr>
+				<td> Factory 1 </td>
+				<td> {$ store.factoryDetails.data.factory_1.fcode $} </td>
+				<td> {$ store.factoryDetails.data.factory_1.money $} </td>
+				<td> {$ store.factoryDetails.data.factory_1.capacity $} </td>
+			</tr>
 
-		</div>
-		<div class="panel" ng-show="panel.istab(2)">
-			<table class="table table-bordered"> <thead>
-				<tr> 
-					<th > DAY </th>
-					<th > PRODUCED <br> AMOUNT </th>
-					<th> AMOUNT<br> SOLD </th>
-					<th > INVENTORY </th>
- 				</tr>
- 				</thead>
- 				<tbody>
- 				<tr ng-repeat="product in product[0].inventory">
- 					<td > {{product.day}}</td>
- 					<td > {{product.no_produced}}</td>
- 					<td> {{product.no_sold}}</td>
- 					<td > {{product.no_inv}}</td>
- 				</tr>
- 				</tbody>
- 			</table>
-		</div>
-		<div class="panel" ng-show="panel.istab(3)">
-			<table class="table table-bordered"> <thead>
-				<tr > 
-					<th> DAY </th>
-					<th> PRODUCED<br> AMOUNT </th>
-					<th> AMOUNT<br> ORDERED </th>
-					<th> AMOUNT <br>SENT </th>
-					<th> BACKLOG <br>AMOUNT </th>
- 				</tr>
- 				</thead>
- 				<tbody>
- 				<tr ng-repeat="product in product[0].backlog">
- 					<td> {{product.day}}</td>
- 					<td> {{product.no_produced}}</td>
- 					<td> {{product.no_ord}}</td>
- 					<td> {{product.no_to}}</td>
- 					<td> {{product.no_back}}</td>
- 				</tr>
- 				</tbody>
- 			</table>
-		</div>
-		<div class="panel" ng-show="panel.istab(4)">
-			Details about buying stuff
-		</div>
-	</section>
-		</li>
-	</ul>
+			<tr>
+				<td> Factory 2 </td>
+				<td> {$ store.factoryDetails.data.factory_2.fcode $} </td>
+				<td> {$ store.factoryDetails.data.factory_2.money $} </td>
+				<td> {$ store.factoryDetails.data.factory_2.capacity $} </td>
+			</tr>
 
-		<!-- <p> {{product.description}} </p>
-		<button ng-show="product.canPurchase"> Add to Cart </button>
-	</div> -->	
-	<script type="text/javascript" src="{% static "angular/angular.min.js" %}"> </script>
+		</table>
+	</div>
+</div>
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>
-</div>
-</div>
-
 </html>
