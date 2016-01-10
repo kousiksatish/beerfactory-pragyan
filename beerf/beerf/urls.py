@@ -25,11 +25,14 @@ urlpatterns = [
     url(r'^assign_factory$', views.assign, name="assign_factory"),
     url(r'^logout$', views.logout, name="logout"),
     url(r'^testhome$', views.testhome, name="testhome"),
-
+    url(r'^mapp$', views.mapp, name="mapp"),
     url(r'^getStatus$', views.getStatus, name="getStatus"),
     url(r'^fac_details$', views.fac_details, name="fac_details"),
     url(r'^getSellingPrice$', views.get_selling_price, name="get_selling_price"),
+
     url(r'^getDemand$', views.get_demand, name="get_demand"),
     url(r'^map$', views.map, name="map"),
-    url(r'^testmap$', views.testmap, name="testmap")
+    url(r'^testmap$', views.testmap, name="testmap"),
+    url(r'^updateSellingPrice$', views.updateSellingPrice, name="updateSellingPrice"),
+    url(r'^placeOrder$', views.placeOrder,name='placeOrder')
 ]

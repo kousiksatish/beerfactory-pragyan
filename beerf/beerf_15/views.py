@@ -70,6 +70,22 @@ def retailer_allocate(fac1):
 	fac_ret_relation = factory_retailer(fid = fac2, rid = ret)
 	fac_ret_relation.save()
 
+#function for returning the initial money for the factory at start of game
+def get_initial_money():
+	return 10000
+
+#function for returning the initial capacity fir the factory at start of the game
+def get_initial_capacity():
+	return 200
+
+#function for returning the base price and range
+def get_sp_details():
+	sp_details={}
+	sp_details["base"] = 50
+	sp_details["range"] = 5
+	return sp_details
+
+
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
 def assign(request):
@@ -84,14 +100,19 @@ def assign(request):
 		if not(user.factory_id):
 			#The user's factory has not been set
 			#create user's factory with money=10000
-			fac1 = factories(money = 10000)
+			fac1 = factories(money = get_initial_money())
 			fac1.save()
+
+			cap1 = capacity(fid=fac1, turn=0, capacity=get_initial_capacity())
+			cap1.save()
 			#link the factory with the user
 			user.factory = fac1
 			user.save()
 			#create user's opponent factory with money=10000
-			fac2 = factories(money = 10000)
+			fac2 = factories(money = get_initial_money())
 			fac2.save()
+			cap2 = capacity(fid=fac2, turn=0, capacity=get_initial_capacity())
+			cap2.save()
 			#link the factories
 			fac_fac_relation = factory_factory(fac1 = fac1, fac2 = fac2)
 			fac_fac_relation.save()
@@ -210,6 +231,57 @@ def get_selling_price(request):
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
+def placeOrder(request):
+	'''
+		Places order to produce beer for a particular factory at the second stage, i.e, stage == 1
+	'''
+	if request.method == 'POST':
+		id = request.POST.get('user_id')
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+
+		# after user verification is done
+		if id and user:
+			cur_status = status.objects.get(pid = id)
+			turn = int(cur_status.turn)						# turn number as stored in DB
+			stage = int(cur_status.stage) 					# stage number as stored in DB
+			if stage != 1:									# current stage should be == 1
+				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
+
+			try:
+				quantity = int(request.POST['quantity'])
+				valid_turn_and_stage = (turn == int(request.POST['turn']) and stage == int(request.POST['stage']))
+			except KeyError:
+				return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
+
+			if not valid_turn_and_stage:
+				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
+
+			factory = user.factory
+			cur_capacity = int(capacity.objects.get(fid=factory,turn=turn).capacity)
+			if quantity > cur_capacity:
+				return JsonResponse({"status":"106","data":{"description":"Quantity exceeded capacity of the factory"}})
+			# create the new order in the DB
+			new_order = factory_order(fid=factory,turn=turn,quantity=quantity)
+			new_order.save()
+			# move to next stage of the current turn
+			cur_status.stage += 1
+			cur_status.save()
+			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
+		else:
+			return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
+	else:
+		return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
+
+
+def mapp(request):
+	return render(request,"map_test.html")
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def get_demand(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -293,11 +365,61 @@ def map(request):
 			json["data"] = data
 			json["zone"] = zone
 			return JsonResponse(json)
-
-			
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 
 def testmap(request):
 	return render(request, "map_test.html")
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def updateSellingPrice(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		if id and user:
+			turn = request.POST.get("turn")
+			stage = request.POST.get("stage")
+			sp = request.POST.get("selling_price")
+			if(not (stage) or not (turn) or not(sp)):
+				return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn,stage,selling prices should be provided."}})
+			else:
+				if((turn != str(status.objects.get(pid = id).turn)) or (stage != str(status.objects.get(pid = id).stage)) or stage!="4"):
+					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
+				else:
+					sp_list1 = sp.split(',')
+					sp_list2 = [s for s in sp_list1 if s.isdigit()]
+					sp_list2 = [int(s) for s in sp_list2]
+					sp_details = get_sp_details()
+					sp_range = range(sp_details["base"]-sp_details["range"],sp_details["base"]+sp_details["range"]+1)
+					sp_list2 = [s for s in sp_list2 if s in sp_range]
+					sp_length1 = len(sp_list1)
+					sp_length2 = len(sp_list2)
+					factory = user.factory
+					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
+					frid_length = len(frids)
+					if(sp_length1 != frid_length or sp_length2 !=frid_length):
+						return JsonResponse({"status":"106", "data":{"description":"Invalid Selling Prices Array."}})
+					for i in range(0,sp_length2):
+						fr = factory_retailer.objects.get(pk = frids[i])
+						sp = selling_price(frid = fr,turn = turn,selling_price = sp_list2[i])
+						sp.save()
+					json = {}
+					json["status"] = 200
+					data = {}
+					data["description"] = "Successfully Updated Selling Prices for all retailers"
+					json["data"] = data
+
+					# increment the stage of the user
+					stat = status.objects.get(pid = id)
+					stat.stage = stat.stage+1
+					stat.save()
+					return JsonResponse(json)
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
