@@ -7,6 +7,7 @@ from django.utils.decorators import decorator_from_middleware
 from beerf_15.models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
 def register(request):
 	if 'user_id' in request.session:
@@ -41,6 +42,8 @@ def login(request,error=''):
 	else:
 		form = userLoginForm()
 		return render(request, "login.html", {"form" : form,"error" : error})
+
+
 
 @decorator_from_middleware(middleware.UserAuth)
 def home(request):
@@ -301,6 +304,7 @@ def map(request):
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
 def supply(request):
+	
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
 		try:
@@ -310,13 +314,38 @@ def supply(request):
 			user = None
 		
 		if id and user:
-
-			quantity = request.POST.getlist("quantity")
 			turn = request.POST.get("turn")
 			stage = request.POST.get("stage")
+			
+			if(not (stage) or not (turn)):
+				return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn and stage should be provided."}})
+			else:
+				stat = status.objects.get(pid = id)
+				if((turn != str(stat.turn)) or (stage != str(stat.stage)) or stage !="2"):
+					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
+				else:
+					quantity1 = request.POST.get("quantity").split(',')
+					i = 1
+					for qty in quantity1:
+					 	fr = factory_retailer.objects.get(fid_id= id ,rid_id = i )
+					 	demand = fac_ret_demand.objects.get(frid_id= fr.frid, turn= stat.turn)
+					 	
+					 	if int(qty) > demand.quantity:
+					 		return JsonResponse({"status":"106", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
+					 						 		
+					 	else:
+					 		supply_value = fac_ret_supply(turn= int(turn), quantity= int(qty), frid_id= fr.frid )
+					 		supply_value.save()
+					 		i=i+1
+					stat = status.objects.get(pid = id)
+					stat.stage = stat.stage+1
+					stat.save()
+					return JsonResponse({"status":"200", "data":{"description":"Success"}})
 
-			stat = status.objects.get(pid=user)
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+			
 
-			if stat.turn == turn and stat.stage == 2 :
-				
+	
+
 				
