@@ -10,6 +10,7 @@ class factories(models.Model):
 	fid = models.AutoField(primary_key=True)
 	fcode = models.CharField(max_length=100, blank=True, unique=True, default = uuid.uuid4)
 	money = models.IntegerField()
+	inventory = models.IntegerField(default=0)
 	def __str__(self):
 		return str(self.fid) + " (" + self.fcode + ")"
 
@@ -32,6 +33,8 @@ class retailers(models.Model):
 	rid = models.AutoField(primary_key=True)
 	rcode = models.CharField(max_length=100, blank=True, unique=True, default = uuid.uuid4)
 	zone = models.IntegerField(null=True)
+	unlocked = models.IntegerField(default=0)
+	details = models.CharField(max_length=500, blank=True, null=True)
 	def __str__(self):
 		return str(self.rid) + " (" + self.rcode + ")"
 
