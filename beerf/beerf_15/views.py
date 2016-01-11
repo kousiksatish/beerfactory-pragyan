@@ -450,22 +450,27 @@ def supply(request):
 					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
 				else:
 					quantity1 = request.POST.get("quantity").split(',')
-					i = 1
-					for qty in quantity1:
-					 	fr = factory_retailer.objects.get(fid_id= id ,rid_id = i )
-					 	demand = fac_ret_demand.objects.get(frid_id= fr.frid, turn= stat.turn)
-					 	
-					 	if int(qty) > demand.quantity:
-					 		return JsonResponse({"status":"106", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
-					 						 		
-					 	else:
-					 		supply_value = fac_ret_supply(turn= int(turn), quantity= int(qty), frid_id= fr.frid )
+					factory = user.factory
+					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
+					demands = fac_ret_demand.objects.filter(frid_id__in = frids, turn = stat.turn)
+					if len(demands) != len(quantity1):
+						return JsonResponse({"status":"106", "data":{"description":"Supply Demand mismatch."}})
+					else:
+						i=0
+						for demand in demands:
+					 		
+					 		if int(quantity1[i]) > demand.quantity:
+					 			return JsonResponse({"status":"107", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
+					 		i=i+1
+					 	i=0				 		
+					 	for demand in demands:
+					 		supply_value = fac_ret_supply(turn = int(turn), quantity = int(quantity1[i]), frid_id = demand.frid_id )
 					 		supply_value.save()
 					 		i=i+1
-					stat = status.objects.get(pid = id)
-					stat.stage = stat.stage+1
-					stat.save()
-					return JsonResponse({"status":"200", "data":{"description":"Success"}})
+						
+						stat.stage = stat.stage+1
+						stat.save()
+						return JsonResponse({"status":"200", "data":{"description":"Success"}})
 
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
