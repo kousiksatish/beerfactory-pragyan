@@ -66,43 +66,8 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 
 }]);
 
-// service to get the status, takes id as input
-/*app.factory('getStatus', ['$http', function($http){
 
-	console.log('id from app.js', id);
-	console.log('getStatusUrl from app.js', getStatusUrl);
-
-
-	getStatusDetails = function(id){
-
-		return $http({
-	   		 	method: 'POST',
-	    		url: getStatusUrl,
-	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-	    		transformRequest: function(obj) {
-	    		    var str = [];
-	        		for(var p in obj)
-	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-	        		return str.join("&");
-	    		},
-	    		data: {user_id: id}
-				})
-				.success(function(json) {
-	    					return json;
-	  					})
-	  			.error(function(err) {
-	    					return err;
-	  					});
-	};
-
-	return  {getStatusDetails: getStatusDetails};
-
-
-
-}]);
-*/
-
-// service to get the demand, takes turn, stage as input
+// service for turn/stage based functions
 app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
 	console.log('id from app.js', id);
@@ -131,7 +96,32 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 	  					});
 	};
 
-	return  {getDemandDetails: getDemandDetails};
+	viewDemandDetails = function(id, _turn, _stage){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: viewDemandUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id, turn: _turn, stage: _stage}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+	};
+
+	return  {
+		getDemandDetails: getDemandDetails,
+		viewDemandDetails: viewDemandDetails
+	};
 
 
 
@@ -219,15 +209,37 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	});
 
 	vm.getDemand = function(){
-		TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
-		vm.demandDetails = json;
-		console.log('demand details', vm.demandDetails);
-	});
+		if(vm.status.stage === 0){
+
+			TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
+			vm.demandDetails = json;
+			console.log('id from getDemand', id);
+			console.log('demand details', vm.demandDetails);
+
+				var i=0;
+				for(var order of vm.products[0].orders){
+					order.order_no = vm.demandDetails.data.demand[i];
+					i++;
+				}
+			});
+		}
+
+		else{
+
+			TurnStageBasedFunctions.viewDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
+			vm.demandDetails = json;
+			console.log('id from getDemand', id);
+			console.log('demand details', vm.demandDetails);
+
+				var i=0;
+				for(var order of vm.products[0].orders){
+					order.order_no = vm.demandDetails.data.demand[i];
+					i++;
+				}
+			});
+		}
+
 	}
-	/*getDemand.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
-		vm.demandDetails = json;
-		console.log('demand details', vm.demandDetails);
-	});*/
 
 
 }]);
