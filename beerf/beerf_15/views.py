@@ -81,6 +81,9 @@ def get_initial_money():
 def get_initial_capacity():
 	return 200
 
+def get_initial_invntory():
+	return 200
+
 #function for returning the base price and range
 def get_sp_details():
 	sp_details={}
@@ -103,7 +106,7 @@ def assign(request):
 		if not(user.factory_id):
 			#The user's factory has not been set
 			#create user's factory with money=10000
-			fac1 = factories(money = get_initial_money())
+			fac1 = factories(money = get_initial_money(), inventory = get_initial_inventory())
 			fac1.save()
 
 			cap1 = capacity(fid=fac1, turn=0, capacity=get_initial_capacity())
@@ -112,7 +115,7 @@ def assign(request):
 			user.factory = fac1
 			user.save()
 			#create user's opponent factory with money=10000
-			fac2 = factories(money = get_initial_money())
+			fac2 = factories(money = get_initial_money(), inventory = get_initial_inventory())
 			fac2.save()
 			cap2 = capacity(fid=fac2, turn=0, capacity=get_initial_capacity())
 			cap2.save()
@@ -178,13 +181,16 @@ def fac_details(request):
 			data = {}
 			fact1={}
 			fact2={}
+			data["description"] = "Success"
 			fact1['fcode'] = factory1.fcode
 			fact1["money"] = factory1.money
 			fact1["capacity"] = capacity1.capacity
+			fact1["inventory"] = factory1.inventory
 			data["factory_1"] = fact1
 			fact2['fcode'] = factory2.fcode
 			fact2["money"] = factory2.money
 			fact2["capacity"] = capacity2.capacity
+			fact2["inventory"] = factory2.inventory
 			data["factory_2"] = fact2
 			json["data"] = data
 			return JsonResponse(json)
