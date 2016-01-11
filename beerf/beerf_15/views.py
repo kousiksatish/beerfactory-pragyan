@@ -268,6 +268,7 @@ TURN & STAGE BASED OPERATIONS
 2. supply(Turn, Stage = 1)
 3. placeOrder(Turn, Stage = 2)
 4. update_selling_price(Turn, Stage=)
+5. viewDemand (Turn, Stage = 1)
 
 '''
 
@@ -319,6 +320,42 @@ def get_demand(request):
 def calculate_demand(frid,turn):
 	return 100
 
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def viewDemand(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		if id and user:
+			turn = request.POST.get("turn")
+			stage = request.POST.get("stage")
+			if(not (stage) or not (turn)):
+				return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn and stage should be provided."}})
+			else:
+				if((turn != str(status.objects.get(pid = id).turn)) or (stage != str(status.objects.get(pid = id).stage)) or stage!="1"):
+					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
+				else:
+					factory = user.factory
+					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
+					json={}
+					json["status"] = 200
+					data={}
+					demand = []
+					for frid in frids:
+						fac_ret = factory_retailer.objects.get(pk=frid)
+						fr_demand = fac_ret_demand.objects.get(frid=fac_ret, turn=turn)
+						demand.append(fr_demand.quantity)
+					data["description"] = "Success"
+					data["demand"] = demand
+					json["data"] = data
+
+					return JsonResponse(json)
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
