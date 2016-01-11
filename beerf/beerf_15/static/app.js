@@ -8,12 +8,12 @@ var app = angular.module('store',[]).config(function($interpolateProvider) {
 
 //   SERVICES 
 
-// service that gets factory details
-app.factory('fac_details', ['$http', function($http){
+// service for any-time functions
+app.factory('AnyTimeFunctions', ['$http', function($http){
 
 	console.log('id from app.js', id);
-	console.log('url from app.js', factoryDetailsUrl);
-
+	console.log('factoryDetailsUrl from app.js', factoryDetailsUrl);
+	console.log('getStatusUrl from app.js', getStatusUrl);
 
 	getFactoryDetails = function(id) {
 
@@ -37,12 +37,37 @@ app.factory('fac_details', ['$http', function($http){
 	  					});
 	};
 
-	return {getFactoryDetails: getFactoryDetails};
+	getStatusDetails = function(id){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: getStatusUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+	};
+
+	return {
+		getFactoryDetails: getFactoryDetails,
+		getStatusDetails: getStatusDetails
+	};
 
 }]);
 
 // service to get the status, takes id as input
-app.factory('getStatus', ['$http', function($http){
+/*app.factory('getStatus', ['$http', function($http){
 
 	console.log('id from app.js', id);
 	console.log('getStatusUrl from app.js', getStatusUrl);
@@ -75,10 +100,10 @@ app.factory('getStatus', ['$http', function($http){
 
 
 }]);
-
+*/
 
 // service to get the demand, takes turn, stage as input
-app.factory('getDemand', ['$http', function($http){
+app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
 	console.log('id from app.js', id);
 	console.log('getDemandUrl from app.js', getDemandUrl);
@@ -117,7 +142,7 @@ app.factory('getDemand', ['$http', function($http){
 
 
 //controller for the data inside tabs
-app.controller('StoreController', ['fac_details', 'getStatus', 'getDemand', function(fac_details, getStatus, getDemand){					
+app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions', function(AnyTimeFunctions, TurnStageBasedFunctions){					
 
 	var vm = this;
 
@@ -183,21 +208,21 @@ app.controller('StoreController', ['fac_details', 'getStatus', 'getDemand', func
 	vm.status = {};
 	vm.demandDetails = {};
 
-	fac_details.getFactoryDetails(id).success(function(json){
+	AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 		vm.factoryDetails = json;
 		console.log('factory details', vm.factoryDetails);
 	});
 
-	getStatus.getStatusDetails(id).success(function(json){
+	AnyTimeFunctions.getStatusDetails(id).success(function(json){
 		vm.status = json;
 		console.log('status details', vm.status);
 	});
 
-	
-	getDemand.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
+
+	/*getDemand.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
 		vm.demandDetails = json;
 		console.log('demand details', vm.demandDetails);
-	});
+	});*/
 
 
 }]);
