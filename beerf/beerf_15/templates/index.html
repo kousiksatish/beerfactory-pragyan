@@ -22,19 +22,9 @@
 
 
 
+
+<!-- <div style="clear: both; width: 500px; height: 50px; border: 1px solid black;" id="selections"></div> -->
 <img style="width:100%;border:0;" id="map1" src="{% static "images/map1.gif" %}" alt="map1" usemap="#map1">
-
-
-
-
-
-
-
-
-
-
-
-
 
 <map name="map1">
     <area alt="" title="fact1" name="fact1" href="#" shape="poly" coords="508,558,138,559,132,547,137,539,145,538,144,467,165,467,164,435,172,429,173,278,180,279,180,267,200,266,200,409,210,408,209,236,230,235,232,218,248,218,250,377,264,372,264,391,279,392,280,310,295,295,297,284,319,280,326,280,327,205,333,205,333,191,368,189,368,203,377,204,376,335,396,335,398,347,409,344,412,266,404,266,407,259,413,258,414,243,431,243,432,257,439,258,440,265,432,266,439,342,458,343,465,350,469,363,469,419,494,419,502,427,503,437,504,534,513,540,518,549,516,556" />
@@ -125,23 +115,23 @@ console.log('url is', factoryDetailsUrl);
 				<li ng-class="{active:panel.istab(4)}"> <a href ng-click="panel.settab(4)"> BUY NOW! </a> </li>
 			</ul>
 			<div class="panel" ng-show="panel.istab(1)">
-				<table class="table table-bordered table-striped"> <thead>
+				<table class="table table-bordered table-striped" style="width:50%"> <thead>
 					<tr> 
-						<th class="col-md-1"> RETAILER </th>
-						<th class="col-md-1"> ORDER <br> AMOUNT </th>
-						<th class="col-md-1"> AMOUNT TO <br> DELIVER </th>
-						<th class="col-md-1"> TRANSPORT <br> MODE </th>
-						<th class="col-md-1" >  </th>
+						<th> RETAILER </th>
+						<th> ORDER <br> AMOUNT </th>
+						<th> AMOUNT TO <br> DELIVER </th>
+						<th> TRANSPORT <br> MODE </th>
+						<th>  </th>
 
 	 				</tr>
 	 				</thead>
 	 				<tbody>
 	 				<tr ng-repeat="order in product.orders">
-	 					<td class="col-md-1"> {$order.from$}</td>
-	 					<td class="col-md-1"> {$order.order_no$}</td>
-	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
-	 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 					<td class="col-md-1"> <input type="submit" value="Send!" class="col-sm-12"/> </td>
+	 					<td> {$order.from$}</td>
+	 					<td> {$order.order_no$}</td>
+	 					<td> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
+	 					<td> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
+	 					<td> <input type="submit" value="Send!" class="col-sm-12"/> </td>
 	 				</tr>
 	 				</tbody>
 	 			</table>
@@ -149,7 +139,7 @@ console.log('url is', factoryDetailsUrl);
 
 			</div>
 			<div class="panel" ng-show="panel.istab(2)">
-				<table class="table table-bordered table-striped"> <thead>
+				<table class="table table-bordered table-striped" style="width:50%"> <thead>
 					<tr> 
 						<th > DAY </th>
 						<th > PRODUCED <br> AMOUNT </th>
@@ -168,7 +158,7 @@ console.log('url is', factoryDetailsUrl);
 	 			</table>
 			</div>
 			<div class="panel" ng-show="panel.istab(3)">
-				<table class="table table-bordered table-striped"> <thead>
+				<table class="table table-bordered table-striped" style="width:50%"> <thead>
 					<tr > 
 						<th> DAY </th>
 						<th> PRODUCED<br> AMOUNT </th>
@@ -197,7 +187,7 @@ console.log('url is', factoryDetailsUrl);
 
 	<div class="container">
 		<h3> Factory details </h3>
-		<table class = "table table-bordered table-striped table-responsive">
+		<table class = "table table-bordered table-striped table-responsive" style="width:50%">
 			
 			<tr>
 				<th> </th>

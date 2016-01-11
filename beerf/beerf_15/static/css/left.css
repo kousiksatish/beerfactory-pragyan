@@ -1,15 +1,16 @@
 #map_left
 {
 	position:absolute;
-	left:0%;
-	width:50%;
+	left:5%;
+	width:30%;
 	height:100%;
 }
 #right_half
 {
-	position:absolute;
-	left:65%;
+	position:fixed;
+	left:40%;
 	width:50%;
+	overflow: hidden;
 	
 }
 
