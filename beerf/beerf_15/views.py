@@ -403,18 +403,22 @@ def supply(request):
 					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
 				else:
 					quantity1 = request.POST.get("quantity").split(',')
+				 	for q in quantity1:
+				 		if not(q.isdigit()):
+				 			return JsonResponse({"status":"106", "data":{"description":"Invalid Quantity. Quantity must be an integer"}})
+
 					factory = user.factory
 					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
 					unlocked_frids = unlocked_ret(frids, user.factory_id)
 					demands = fac_ret_demand.objects.filter(frid_id__in = unlocked_frids, turn = stat.turn)
 					if len(demands) != len(quantity1):
-						return JsonResponse({"status":"106", "data":{"description":"Supply Demand mismatch."}})
+						return JsonResponse({"status":"107", "data":{"description":"Supply Demand mismatch."}})
 					else:
 						i=0
 						for demand in demands:
 					 		
 					 		if int(quantity1[i]) > demand.quantity:
-					 			return JsonResponse({"status":"107", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
+					 			return JsonResponse({"status":"108", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
 					 		i=i+1
 					 	i=0				 		
 					 	for demand in demands:
@@ -494,7 +498,10 @@ def placeOrder(request):
 				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
 
 			try:
-				quantity = int(request.POST['quantity'])
+				quantity1 = request.POST['quantity']
+				if not(quantity1.isdigit()):
+					return JsonResponse({"status":"106","data":{"description":"Invalid Quantity. It must be a number"}})
+				quantity = int(quantity1)
 				valid_turn_and_stage = (turn == int(request.POST['turn']) and stage == int(request.POST['stage']))
 			except KeyError:
 				return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
@@ -595,6 +602,10 @@ def updateValues(request):
 					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
 				else:
 					updates = request.POST.get("values").split(',')
+					for u in updates:
+				 		if not(u.isdigit()):
+				 			return JsonResponse({"status":"106", "data":{"description":"Invalid value. It must be an integer"}})
+
 															 		
 					new_capacity = capacity(turn = int(turn), capacity = int(updates[0]) , fid_id = user.factory_id)
 					new_capacity.save()
