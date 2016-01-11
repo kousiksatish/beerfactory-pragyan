@@ -218,7 +218,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('status details', vm.status);
 	});
 
-
+	vm.getDemand = function(){
+		TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
+		vm.demandDetails = json;
+		console.log('demand details', vm.demandDetails);
+	});
+	}
 	/*getDemand.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
 		vm.demandDetails = json;
 		console.log('demand details', vm.demandDetails);

@@ -159,6 +159,8 @@ console.log('getDemandUrl is', getDemandUrl);
 				<th> Factory Code </th>
 				<th> Money </th>
 				<th> Capacity </th>
+				<th> Inventory </th>
+
 			</tr>
 
 			<tr>
@@ -166,6 +168,8 @@ console.log('getDemandUrl is', getDemandUrl);
 				<td> {$ store.factoryDetails.data.factory_1.fcode $} </td>
 				<td> {$ store.factoryDetails.data.factory_1.money $} </td>
 				<td> {$ store.factoryDetails.data.factory_1.capacity $} </td>
+				<td> {$ store.factoryDetails.data.factory_1.inventory $} </td>
+
 			</tr>
 
 			<tr>
@@ -173,9 +177,14 @@ console.log('getDemandUrl is', getDemandUrl);
 				<td> {$ store.factoryDetails.data.factory_2.fcode $} </td>
 				<td> {$ store.factoryDetails.data.factory_2.money $} </td>
 				<td> {$ store.factoryDetails.data.factory_2.capacity $} </td>
+				<td> {$ store.factoryDetails.data.factory_2.inventory $} </td>
 			</tr>
 
 		</table>
+	</div>
+
+	<div class="container">
+		<input type = "button" class = "button" value = "Get Demand" ng-click = "store.getDemand()">
 	</div>
 </div>
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>
