@@ -562,6 +562,42 @@ def updateSellingPrice(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def updateValues(request):
+	
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		if id and user:
+			turn = request.POST.get("turn")
+			stage = request.POST.get("stage")
+			
+			if(not (stage) or not (turn)):
+				return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn and stage should be provided."}})
+			else:
+				stat = status.objects.get(pid = id)
+				if((turn != str(stat.turn)) or (stage != str(stat.stage)) or stage !="3"):
+					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
+				else:
+					updates = request.POST.get("values").split(',')
+															 		
+					new_capacity = capacity(turn = int(turn), capacity = int(updates[0]) , fid_id = user.factory_id)
+					new_capacity.save()
+	
+					stat.stage = stat.stage+1
+					stat.save()
+					return JsonResponse({"status":"200", "data":{"description":"Success"}})
+
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+
 '''
 OTHERS
 1. get_selling_price
