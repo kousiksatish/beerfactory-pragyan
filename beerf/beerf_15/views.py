@@ -8,7 +8,14 @@ from beerf_15.models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-# Create your views here.
+'''
+INITIAL FUNCTIONS
+1. /register
+2. /login
+3. /logout
+4. /home
+'''
+
 def register(request):
 	if 'user_id' in request.session:
 		return redirect(beerf_15.views.home)
@@ -16,7 +23,7 @@ def register(request):
 		form = userForm(request.POST)
 		if form.is_valid():
 			new_user = form.save()
-			stat = status(pid = new_user,turn = 0,stage=0)
+			stat = status(pid = new_user,turn = 1,stage=0)
 			stat.save()
 			request.session["user_id"] = new_user.pid
 			return redirect(beerf_15.views.home)
@@ -43,8 +50,6 @@ def login(request,error=''):
 		form = userLoginForm()
 		return render(request, "login.html", {"form" : form,"error" : error})
 
-
-
 @decorator_from_middleware(middleware.UserAuth)
 def home(request):
 	id = request.session["user_id"]
@@ -57,21 +62,14 @@ def logout(request):
 	form = userLoginForm()
 	return render(request, "login.html", {"form" : form,"error" : "logged out"})
 
-#creates a retailer for factory fac1 and its opponent factory
-def retailer_allocate(fac1):
-	#create the retailer
-	ret = retailers()
-	ret.save()
 
-	fac_fac_relation = factory_factory.objects.get(fac1=fac1)
-	fac2 = fac_fac_relation.fac2
-
-	#create the factory-retailer link
-	fac_ret_relation = factory_retailer(fid = fac1, rid = ret)
-	fac_ret_relation.save()
-
-	fac_ret_relation = factory_retailer(fid = fac2, rid = ret)
-	fac_ret_relation.save()
+'''
+INITIALISATION OF PARAMETERS
+1. initial money
+2. initial capacity
+3. initial inventory
+4. selling price
+'''
 
 #function for returning the initial money for the factory at start of game
 def get_initial_money():
@@ -91,6 +89,27 @@ def get_sp_details():
 	sp_details["range"] = 5
 	return sp_details
 
+'''
+ALLOCATION
+1. retailer_allocate
+2. assign_factory
+'''
+
+#creates a retailer for factory fac1 and its opponent factory
+def retailer_allocate(fac1):
+	#create the retailer
+	ret = retailers()
+	ret.save()
+
+	fac_fac_relation = factory_factory.objects.get(fac1=fac1)
+	fac2 = fac_fac_relation.fac2
+
+	#create the factory-retailer link
+	fac_ret_relation = factory_retailer(fid = fac1, rid = ret)
+	fac_ret_relation.save()
+
+	fac_ret_relation = factory_retailer(fid = fac2, rid = ret)
+	fac_ret_relation.save()
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
@@ -109,7 +128,7 @@ def assign(request):
 			fac1 = factories(money = get_initial_money(), inventory = get_initial_inventory())
 			fac1.save()
 
-			cap1 = capacity(fid=fac1, turn=0, capacity=get_initial_capacity())
+			cap1 = capacity(fid=fac1, turn=1, capacity=get_initial_capacity())
 			cap1.save()
 			#link the factory with the user
 			user.factory = fac1
@@ -117,7 +136,7 @@ def assign(request):
 			#create user's opponent factory with money=10000
 			fac2 = factories(money = get_initial_money(), inventory = get_initial_inventory())
 			fac2.save()
-			cap2 = capacity(fid=fac2, turn=0, capacity=get_initial_capacity())
+			cap2 = capacity(fid=fac2, turn=1, capacity=get_initial_capacity())
 			cap2.save()
 			#link the factories
 			fac_fac_relation = factory_factory(fac1 = fac1, fac2 = fac2)
@@ -134,8 +153,12 @@ def assign(request):
 		return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
 
 
-def testhome(request):
-	return render(request, "index.html")
+'''
+ANY TIME FUNCTIONS
+1. getStatus
+2. facDetails
+3. map
+'''
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
@@ -200,7 +223,7 @@ def fac_details(request):
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
-def get_selling_price(request):
+def map(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
 		try:
@@ -208,86 +231,45 @@ def get_selling_price(request):
 		except users.DoesNotExist:
 			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
 			user = None
+		
 		if id and user:
-			turn = status.objects.get(pid = id).turn
-			factory1 = user.factory
-			factory2 = factory_factory.objects.get(fac1=factory1).fac2
+			user_fac = factories.objects.get(pk=user.factory_id)
 			
-			fac_ret_1 = factory_retailer.objects.filter(fid = factory1).values_list('frid', flat = True)
-			fac_ret_2 = factory_retailer.objects.filter(fid = factory2).values_list('frid', flat = True)
+			opponents = factory_factory.objects.filter(fac1_id=user.factory_id)
+			fcode = []
+			fcode.append(user_fac.fcode)
+			for opponent in opponents:
+				opponent_fac = factories.objects.get(pk=opponent.fac2_id)
+				fcode.append(opponent_fac.fcode) 
+
+			retailers1 = factory_retailer.objects.filter(fid_id=user.factory_id)
+			rcode = []
+			zone = []
+			for retailer in retailers1:
+				retailer_details = retailers.objects.get(pk=retailer.rid_id)
+				rcode.append(retailer_details.rcode)
+				zone.append(retailer_details.zone)
 			
-			sp1 = selling_price.objects.filter(frid__in = fac_ret_1,turn=turn)
-			sp2 = selling_price.objects.filter(frid__in = fac_ret_2,turn=turn)
-			json = {}
-			json["status"] ="200"
+			json={}
+			json["status"] = "200"
 			data = {}
-			fact1={}
-			fact2={}
-			sps = []
-			for sp in sp1:
-				sps.append(sp.selling_price)
-			fact1["selling_price"] = sps
-			data["factory_1"] = fact1
-			sps = []
-			for sp in sp2:
-				sps.append(sp.selling_price)
-			fact2["selling_price"] = sps
-			data["factory_2"] = fact2
+			data["fcode"] = fcode
+			data["rcode"] = rcode
 			json["data"] = data
+			json["zone"] = zone
 			return JsonResponse(json)
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
-@csrf_exempt
-@decorator_from_middleware(middleware.SessionPIDAuth)
-def placeOrder(request):
-	'''
-		Places order to produce beer for a particular factory at the second stage, i.e, stage == 1
-	'''
-	if request.method == 'POST':
-		id = request.POST.get('user_id')
-		try:
-			user  = users.objects.get(pk=id)
-		except users.DoesNotExist:
-			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
-			user = None
+'''
+TURN & STAGE BASED OPERATIONS
+1. getDemand (Turn, Stage = 0)
+	-calculate_demand(utility function)
+2. supply(Turn, Stage = 1)
+3. placeOrder(Turn, Stage = 2)
+4. update_selling_price(Turn, Stage=)
 
-		# after user verification is done
-		if id and user:
-			cur_status = status.objects.get(pid = id)
-			turn = int(cur_status.turn)						# turn number as stored in DB
-			stage = int(cur_status.stage) 					# stage number as stored in DB
-			if stage != 1:									# current stage should be == 1
-				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
-
-			try:
-				quantity = int(request.POST['quantity'])
-				valid_turn_and_stage = (turn == int(request.POST['turn']) and stage == int(request.POST['stage']))
-			except KeyError:
-				return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
-
-			if not valid_turn_and_stage:
-				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
-
-			factory = user.factory
-			cur_capacity = int(capacity.objects.get(fid=factory,turn=turn).capacity)
-			if quantity > cur_capacity:
-				return JsonResponse({"status":"106","data":{"description":"Quantity exceeded capacity of the factory"}})
-			# create the new order in the DB
-			new_order = factory_order(fid=factory,turn=turn,quantity=quantity)
-			new_order.save()
-			# move to next stage of the current turn
-			cur_status.stage += 1
-			cur_status.save()
-			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
-		else:
-			return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
-	else:
-		return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
-
-
-def mapp(request):
-	return render(request,"map_test.html")
+'''
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
@@ -337,9 +319,11 @@ def get_demand(request):
 def calculate_demand(frid,turn):
 	return 100
 
+
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
-def map(request):
+def supply(request):
+	
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
 		try:
@@ -349,38 +333,90 @@ def map(request):
 			user = None
 		
 		if id and user:
-			user_fac = factories.objects.get(pk=user.factory_id)
+			turn = request.POST.get("turn")
+			stage = request.POST.get("stage")
 			
-			opponents = factory_factory.objects.filter(fac1_id=user.factory_id)
-			fcode = []
-			fcode.append(user_fac.fcode)
-			for opponent in opponents:
-				opponent_fac = factories.objects.get(pk=opponent.fac2_id)
-				fcode.append(opponent_fac.fcode) 
+			if(not (stage) or not (turn)):
+				return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn and stage should be provided."}})
+			else:
+				stat = status.objects.get(pid = id)
+				if((turn != str(stat.turn)) or (stage != str(stat.stage)) or stage !="1"):
+					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
+				else:
+					quantity1 = request.POST.get("quantity").split(',')
+					factory = user.factory
+					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
+					demands = fac_ret_demand.objects.filter(frid_id__in = frids, turn = stat.turn)
+					if len(demands) != len(quantity1):
+						return JsonResponse({"status":"106", "data":{"description":"Supply Demand mismatch."}})
+					else:
+						i=0
+						for demand in demands:
+					 		
+					 		if int(quantity1[i]) > demand.quantity:
+					 			return JsonResponse({"status":"107", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
+					 		i=i+1
+					 	i=0				 		
+					 	for demand in demands:
+					 		supply_value = fac_ret_supply(turn = int(turn), quantity = int(quantity1[i]), frid_id = demand.frid_id )
+					 		supply_value.save()
+					 		i=i+1
+						
+						stat.stage = stat.stage+1
+						stat.save()
+						return JsonResponse({"status":"200", "data":{"description":"Success"}})
 
-			retailers1 = factory_retailer.objects.filter(fid_id=user.factory_id)
-			rcode = []
-			zone = []
-			for retailer in retailers1:
-				retailer_details = retailers.objects.get(pk=retailer.rid_id)
-				rcode.append(retailer_details.rcode)
-				zone.append(retailer_details.zone)
-			
-			json={}
-			json["status"] = "200"
-			data = {}
-			data["fcode"] = fcode
-			data["rcode"] = rcode
-			json["data"] = data
-			json["zone"] = zone
-			return JsonResponse(json)
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def placeOrder(request):
+	'''
+		Places order to produce beer for a particular factory at the second stage, i.e, stage == 1
+	'''
+	if request.method == 'POST':
+		id = request.POST.get('user_id')
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
 
-def testmap(request):
-	return render(request, "map_test.html")
+		# after user verification is done
+		if id and user:
+			cur_status = status.objects.get(pid = id)
+			turn = int(cur_status.turn)						# turn number as stored in DB
+			stage = int(cur_status.stage) 					# stage number as stored in DB
+			if stage != 2:									# current stage should be == 1
+				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
 
+			try:
+				quantity = int(request.POST['quantity'])
+				valid_turn_and_stage = (turn == int(request.POST['turn']) and stage == int(request.POST['stage']))
+			except KeyError:
+				return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
+
+			if not valid_turn_and_stage:
+				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
+
+			factory = user.factory
+			cur_capacity = int(capacity.objects.get(fid=factory,turn=turn).capacity)
+			if quantity > cur_capacity:
+				return JsonResponse({"status":"106","data":{"description":"Quantity exceeded capacity of the factory"}})
+			# create the new order in the DB
+			new_order = factory_order(fid=factory,turn=turn,quantity=quantity)
+			new_order.save()
+			# move to next stage of the current turn
+			cur_status.stage += 1
+			cur_status.save()
+			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
+		else:
+			return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
+	else:
+		return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
+
+	
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
 def updateSellingPrice(request):
@@ -432,10 +468,15 @@ def updateSellingPrice(request):
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
+
+'''
+OTHERS
+1. get_selling_price
+'''
+
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
-def supply(request):
-	
+def get_selling_price(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
 		try:
@@ -443,45 +484,48 @@ def supply(request):
 		except users.DoesNotExist:
 			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
 			user = None
-		
 		if id and user:
-			turn = request.POST.get("turn")
-			stage = request.POST.get("stage")
+			turn = status.objects.get(pid = id).turn
+			factory1 = user.factory
+			factory2 = factory_factory.objects.get(fac1=factory1).fac2
 			
-			if(not (stage) or not (turn)):
-				return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn and stage should be provided."}})
-			else:
-				stat = status.objects.get(pid = id)
-				if((turn != str(stat.turn)) or (stage != str(stat.stage)) or stage !="2"):
-					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
-				else:
-					quantity1 = request.POST.get("quantity").split(',')
-					factory = user.factory
-					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
-					demands = fac_ret_demand.objects.filter(frid_id__in = frids, turn = stat.turn)
-					if len(demands) != len(quantity1):
-						return JsonResponse({"status":"106", "data":{"description":"Supply Demand mismatch."}})
-					else:
-						i=0
-						for demand in demands:
-					 		
-					 		if int(quantity1[i]) > demand.quantity:
-					 			return JsonResponse({"status":"107", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
-					 		i=i+1
-					 	i=0				 		
-					 	for demand in demands:
-					 		supply_value = fac_ret_supply(turn = int(turn), quantity = int(quantity1[i]), frid_id = demand.frid_id )
-					 		supply_value.save()
-					 		i=i+1
-						
-						stat.stage = stat.stage+1
-						stat.save()
-						return JsonResponse({"status":"200", "data":{"description":"Success"}})
-
+			fac_ret_1 = factory_retailer.objects.filter(fid = factory1).values_list('frid', flat = True)
+			fac_ret_2 = factory_retailer.objects.filter(fid = factory2).values_list('frid', flat = True)
+			
+			sp1 = selling_price.objects.filter(frid__in = fac_ret_1,turn=turn)
+			sp2 = selling_price.objects.filter(frid__in = fac_ret_2,turn=turn)
+			json = {}
+			json["status"] ="200"
+			data = {}
+			fact1={}
+			fact2={}
+			sps = []
+			for sp in sp1:
+				sps.append(sp.selling_price)
+			fact1["selling_price"] = sps
+			data["factory_1"] = fact1
+			sps = []
+			for sp in sp2:
+				sps.append(sp.selling_price)
+			fact2["selling_price"] = sps
+			data["factory_2"] = fact2
+			json["data"] = data
+			return JsonResponse(json)
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
-			
 
-	
+'''
+FRONT END TEST FUNCTIONS
+1. mapp
+2. testmap
+3. testhome
+'''
 
-				
+def mapp(request):
+	return render(request,"map_test.html")
+
+def testmap(request):
+	return render(request, "map_test.html")
+
+def testhome(request):
+	return render(request, "index.html")
