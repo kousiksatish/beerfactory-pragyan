@@ -6,6 +6,42 @@ var app = angular.module('store',[]).config(function($interpolateProvider) {
 });
 
 
+//   SERVICES 
+
+// service that gets factory details
+app.factory('fac_details', ['$http', function($http){
+
+	console.log('id from app.js', id);
+	console.log('url from app.js', factoryDetailsUrl);
+
+
+	getFactoryDetails = function(id) {
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: factoryDetailsUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+	};
+
+	return {getFactoryDetails: getFactoryDetails};
+
+}]);
+
+
 //  CONTROLLERS
 
 
@@ -74,7 +110,7 @@ app.controller('StoreController', ['fac_details', function(fac_details){
 
 	vm.factoryDetails = {};
 
-	fac_details.success(function(json){
+	fac_details.getFactoryDetails(id).success(function(json){
 		vm.factoryDetails = json;
 		console.log('factory details', vm.factoryDetails);
 	});
@@ -89,34 +125,6 @@ app.controller('PanelController',function(){
 });
 
 
-//   SERVICES 
-
-// service that gets factory details
-app.factory('fac_details', ['$http', function($http){
-
-	console.log('id from app.js', id);
-	console.log('url from app.js', factoryDetailsUrl);
-
-	return $http({
-   		 	method: 'POST',
-    		url: factoryDetailsUrl,
-    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    		transformRequest: function(obj) {
-    		    var str = [];
-        		for(var p in obj)
-        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-        		return str.join("&");
-    		},
-    		data: {user_id: id}
-			})
-			.success(function(json) {
-    					return json;
-  					})
-  			.error(function(err) {
-    					return err;
-  					});
-
-}]);
 
 
 
