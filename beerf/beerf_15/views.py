@@ -89,6 +89,13 @@ def get_sp_details():
 	sp_details["range"] = 5
 	return sp_details
 
+def unlocked_ret(frids, fid):
+	rids = factory_retailer.objects.filter(frid__in = frids).values_list('rid_id', flat = True)
+	unlocked_rids = retailers.objects.filter(rid__in = rids , unlocked = 1).values_list('rid', flat = True)
+	unlocked_frids = factory_retailer.objects.filter(rid_id__in = unlocked_rids, fid_id = fid).values_list('frid',flat = True)
+	return unlocked_frids
+
+
 '''
 ALLOCATION
 1. retailer_allocate
@@ -307,12 +314,13 @@ def get_demand(request):
 				else:
 					factory = user.factory
 					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
+					unlocked_frids = unlocked_ret(frids, user.factory_id)
 					json={}
 					json["status"] = 200
 					data={}
 					demand = []
 					#get the demand from the algo foreach retailer
-					for frid in frids:
+					for frid in unlocked_frids:
 						retailer_demand = calculate_demand(frid,turn)
 						demand.append(retailer_demand)
 						fac_ret = factory_retailer.objects.get(pk=frid)
@@ -397,7 +405,8 @@ def supply(request):
 					quantity1 = request.POST.get("quantity").split(',')
 					factory = user.factory
 					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
-					demands = fac_ret_demand.objects.filter(frid_id__in = frids, turn = stat.turn)
+					unlocked_frids = unlocked_ret(frids, user.factory_id)
+					demands = fac_ret_demand.objects.filter(frid_id__in = unlocked_frids, turn = stat.turn)
 					if len(demands) != len(quantity1):
 						return JsonResponse({"status":"106", "data":{"description":"Supply Demand mismatch."}})
 					else:
