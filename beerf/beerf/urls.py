@@ -36,5 +36,6 @@ urlpatterns = [
     url(r'^testmap$', views.testmap, name="testmap"),
     url(r'^updateSellingPrice$', views.updateSellingPrice, name="updateSellingPrice"),
     url(r'^placeOrder$', views.placeOrder,name='placeOrder'),
-    url(r'^viewDemand$', views.viewDemand, name='viewDemand')
+    url(r'^viewDemand$', views.viewDemand, name='viewDemand'),
+    url(r'^viewDemandSupply$', views.viewDemandSupply, name='viewDemandSupply')
 ]
