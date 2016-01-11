@@ -1,4 +1,4 @@
-#left_half
+#map_left
 {
 	position:absolute;
 	left:0%;
@@ -8,9 +8,9 @@
 #right_half
 {
 	position:absolute;
-	left:50%;
+	left:65%;
 	width:50%;
-	height:100%;
+	
 }
 
 #main
