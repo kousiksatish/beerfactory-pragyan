@@ -32,7 +32,9 @@ urlpatterns = [
 
     url(r'^getDemand$', views.get_demand, name="get_demand"),
     url(r'^map$', views.map, name="map"),
+    url(r'^supply$', views.supply, name="supply"),
     url(r'^testmap$', views.testmap, name="testmap"),
     url(r'^updateSellingPrice$', views.updateSellingPrice, name="updateSellingPrice"),
     url(r'^placeOrder$', views.placeOrder,name='placeOrder')
+
 ]

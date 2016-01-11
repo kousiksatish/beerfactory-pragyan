@@ -7,6 +7,7 @@ from django.utils.decorators import decorator_from_middleware
 from beerf_15.models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
 def register(request):
 	if 'user_id' in request.session:
@@ -41,6 +42,8 @@ def login(request,error=''):
 	else:
 		form = userLoginForm()
 		return render(request, "login.html", {"form" : form,"error" : error})
+
+
 
 @decorator_from_middleware(middleware.UserAuth)
 def home(request):
@@ -423,3 +426,56 @@ def updateSellingPrice(request):
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def supply(request):
+	
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user  = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		if id and user:
+			turn = request.POST.get("turn")
+			stage = request.POST.get("stage")
+			
+			if(not (stage) or not (turn)):
+				return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn and stage should be provided."}})
+			else:
+				stat = status.objects.get(pid = id)
+				if((turn != str(stat.turn)) or (stage != str(stat.stage)) or stage !="2"):
+					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
+				else:
+					quantity1 = request.POST.get("quantity").split(',')
+					factory = user.factory
+					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
+					demands = fac_ret_demand.objects.filter(frid_id__in = frids, turn = stat.turn)
+					if len(demands) != len(quantity1):
+						return JsonResponse({"status":"106", "data":{"description":"Supply Demand mismatch."}})
+					else:
+						i=0
+						for demand in demands:
+					 		
+					 		if int(quantity1[i]) > demand.quantity:
+					 			return JsonResponse({"status":"107", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
+					 		i=i+1
+					 	i=0				 		
+					 	for demand in demands:
+					 		supply_value = fac_ret_supply(turn = int(turn), quantity = int(quantity1[i]), frid_id = demand.frid_id )
+					 		supply_value.save()
+					 		i=i+1
+						
+						stat.stage = stat.stage+1
+						stat.save()
+						return JsonResponse({"status":"200", "data":{"description":"Success"}})
+
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+			
+
+	
+
+				
