@@ -15,8 +15,25 @@
 
 </style>
 </head>
-<!-- LEFTTTT -->
+<body>
+<!--NAVBAR -->
+<!--navbar-2-->
+<nav class="navbar navbar-default navbar-fixed-top nav-container"  ng-controller="StoreController as store">
+  <div class="container-fluid"   ng-repeat="product in store.products">
+    <div class="navbar-header col-md-3">
+      <a class="navbar-brand" href="#">BEER-FACTORY</a>
+    </div>
+    <ul class="top-info col-md-9" ng-repeat="x in product.inventory" ng-hide="$index!==product.inventory.length-1">
+      <li class="col-md-3"> DAY: {$x.day$} </li>
+	  <li class="col-md-3"> INVENTORY: {$x.no_inv$}</li>
+	  <li class="col-md-3">MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
+	  <li class="col-md-3">Hi {{name}}</li>
+    </ul>
+  </div>
+</nav>
 
+<!-- LEFTTTT -->
+<div id="main-content">
 <div id = "map_left">
 <!-- <div style="clear: both; width: 500px; height: 50px; border: 1px solid black;" id="selections"></div> -->
 <img style="width:100%;border:0;" id="map1" src="{% static "images/map1.gif" %}" alt="map1" usemap="#map1">
@@ -60,7 +77,6 @@
 </div>
 </map>
 {% load staticfiles %}
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script src="{% static "js/jquery.imagemapster.js" %}"></script>
 <script type="text/javascript" src="{% static "mapp.js" %}"></script>
 </div>
@@ -108,14 +124,13 @@ console.log('url is', factoryDetailsUrl);
 				<li ng-class="{active:panel.istab(3)}"> <a href ng-click="panel.settab(3)"> Backlog </a> </li>
 				<li ng-class="{active:panel.istab(4)}"> <a href ng-click="panel.settab(4)"> BUY NOW! </a> </li>
 			</ul>
-			<div class="panel" ng-show="panel.istab(1)">
-				<table class="table table-bordered table-striped" style="width:50%"> <thead>
+			<div class="panel home-tables" ng-show="panel.istab(1)">
+				<table class="table" style="width:50%"> <thead>
 					<tr> 
 						<th> RETAILER </th>
 						<th> ORDER <br> AMOUNT </th>
 						<th> AMOUNT TO <br> DELIVER </th>
 						<th> TRANSPORT <br> MODE </th>
-						<th>  </th>
 
 	 				</tr>
 	 				</thead>
@@ -125,34 +140,33 @@ console.log('url is', factoryDetailsUrl);
 	 					<td> {$order.order_no$}</td>
 	 					<td> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
 	 					<td> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 					<td> <input type="submit" value="Send!" class="col-sm-12"/> </td>
 	 				</tr>
 	 				</tbody>
 	 			</table>
 
 
 			</div>
-			<div class="panel" ng-show="panel.istab(2)">
-				<table class="table table-bordered table-striped" style="width:50%"> <thead>
+			<div class="panel home-tables" ng-show="panel.istab(2)">
+				<table class="table" style="width:50%"> <thead>
 					<tr> 
-						<th > DAY </th>
-						<th > PRODUCED <br> AMOUNT </th>
+						<th> DAY </th>
+						<th> PRODUCED <br> AMOUNT </th>
 						<th> AMOUNT<br> SOLD </th>
-						<th > INVENTORY </th>
+						<th> INVENTORY </th>
 	 				</tr>
 	 				</thead>
 	 				<tbody>
 	 				<tr ng-repeat="inv in product.inventory">
-	 					<td > {$inv.day$}</td>
-	 					<td > {$inv.no_produced$}</td>
+	 					<td> {$inv.day$}</td>
+	 					<td> {$inv.no_produced$}</td>
 	 					<td> {$inv.no_sold$}</td>
-	 					<td > {$inv.no_inv$}</td>
+	 					<td> {$inv.no_inv$}</td>
 	 				</tr>
 	 				</tbody>
 	 			</table>
 			</div>
-			<div class="panel" ng-show="panel.istab(3)">
-				<table class="table table-bordered table-striped" style="width:50%"> <thead>
+			<div class="panel home-tables" ng-show="panel.istab(3)">
+				<table class="table" style="width:50%"> <thead>
 					<tr > 
 						<th> DAY </th>
 						<th> PRODUCED<br> AMOUNT </th>
@@ -172,7 +186,7 @@ console.log('url is', factoryDetailsUrl);
 	 				</tbody>
 	 			</table>
 			</div>
-			<div class="panel" ng-show="panel.istab(4)">
+			<div class="panel home-tables" ng-show="panel.istab(4)">
 			</div>
 		</section>
 			</li>
@@ -181,7 +195,7 @@ console.log('url is', factoryDetailsUrl);
 
 	<div class="container">
 		<h3> Factory details </h3>
-		<table class = "table table-bordered table-striped table-responsive" style="width:50%">
+		<table class = "table home-tables table-responsive" style="width:50%">
 			
 			<tr>
 				<th> </th>
@@ -207,5 +221,7 @@ console.log('url is', factoryDetailsUrl);
 		</table>
 	</div>
 </div>
+</div>
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>
+	</body>
 </html>
