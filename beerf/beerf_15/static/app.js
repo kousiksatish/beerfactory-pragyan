@@ -209,6 +209,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	});
 
 	vm.getDemand = function(){
+
 		if(vm.status.stage === 0){
 
 			TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
@@ -239,6 +240,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			});
 		}
 
+	}
+
+	vm.send = function(){
+		console.log('Updated Products', vm.products);
 	}
 
 
