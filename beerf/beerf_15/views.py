@@ -7,6 +7,7 @@ from django.utils.decorators import decorator_from_middleware
 from beerf_15.models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from beerf_algo import dummy_algo
 
 '''
 INITIAL FUNCTIONS
@@ -321,7 +322,7 @@ def get_demand(request):
 					demand = []
 					#get the demand from the algo foreach retailer
 					for frid in unlocked_frids:
-						retailer_demand = calculate_demand(frid,turn)
+						retailer_demand = dummy_algo.calculate_demand(frid,turn)
 						demand.append(retailer_demand)
 						fac_ret = factory_retailer.objects.get(pk=frid)
 						fr_demand = fac_ret_demand( frid = fac_ret, turn = turn,quantity = retailer_demand)
@@ -421,7 +422,7 @@ def supply(request):
 					 		supply_value = fac_ret_supply(turn = int(turn), quantity = int(quantity1[i]), frid_id = demand.frid_id )
 					 		supply_value.save()
 					 		i=i+1
-						
+						dummy_algo.calculate_supply(factory.fid,int(turn))
 						stat.stage = stat.stage+1
 						stat.save()
 						return JsonResponse({"status":"200", "data":{"description":"Success"}})
