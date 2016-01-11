@@ -79,7 +79,7 @@ def get_initial_money():
 def get_initial_capacity():
 	return 200
 
-def get_initial_invntory():
+def get_initial_inventory():
 	return 200
 
 #function for returning the base price and range
@@ -96,9 +96,9 @@ ALLOCATION
 '''
 
 #creates a retailer for factory fac1 and its opponent factory
-def retailer_allocate(fac1):
+def retailer_allocate(fac1, zone, unlocked):
 	#create the retailer
-	ret = retailers()
+	ret = retailers(zone = zone, unlocked=unlocked)
 	ret.save()
 
 	fac_fac_relation = factory_factory.objects.get(fac1=fac1)
@@ -143,7 +143,15 @@ def assign(request):
 			fac_fac_relation.save()
 			#calling the retailer_allocate function 3 times to create 3 retailers and map to fac1 and fac2
 			for i in range(0,3):
-				retailer_allocate(fac1) 
+				retailer_allocate(fac1, 1, 1)
+			'''
+			for zone in range(1,5):
+				for i in range(0,3):
+					if zone=1:
+						retailer_allocate(fac1, zone, 1)
+					else:
+						retailer_allocate(fac1, zone, 0)
+			'''
 			return JsonResponse({"status":"200","data":{"description":"Successfully allocated Factories and Retailers"}})
 		else:
 			#The facrtory has been set already
@@ -245,10 +253,12 @@ def map(request):
 			retailers1 = factory_retailer.objects.filter(fid_id=user.factory_id)
 			rcode = []
 			zone = []
+			unlocked = []
 			for retailer in retailers1:
 				retailer_details = retailers.objects.get(pk=retailer.rid_id)
 				rcode.append(retailer_details.rcode)
 				zone.append(retailer_details.zone)
+				unlocked.append(retailer_details.unlocked)
 			
 			json={}
 			json["status"] = "200"
@@ -257,6 +267,7 @@ def map(request):
 			data["rcode"] = rcode
 			json["data"] = data
 			json["zone"] = zone
+			json["unlocked"] = unlocked
 			return JsonResponse(json)
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
