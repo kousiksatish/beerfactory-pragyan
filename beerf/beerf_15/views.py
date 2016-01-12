@@ -7,7 +7,7 @@ from django.utils.decorators import decorator_from_middleware
 from beerf_15.models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from beerf_algo import dummy_algo
+from beerf_algo.beerf_algo import dummy_algo
 
 '''
 INITIAL FUNCTIONS
