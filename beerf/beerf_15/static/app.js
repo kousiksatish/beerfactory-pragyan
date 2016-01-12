@@ -1,3 +1,5 @@
+// check turn or stage mismatch 
+
 (function(){
 
 var app = angular.module('store',[]).config(function($interpolateProvider) {   
@@ -118,9 +120,57 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 	  					});
 	};
 
+	supply = function(id, supplyValues, _turn, _stage){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: supplyUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id, quantity: supplyValues, turn: _turn, stage: _stage}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+
+	};
+
+	placOrder = function(id, order, _turn, _stage){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: placeOrderUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id, quantity: order, turn: _turn, stage: _stage}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+
+	}
+
 	return  {
 		getDemandDetails: getDemandDetails,
-		viewDemandDetails: viewDemandDetails
+		viewDemandDetails: viewDemandDetails,
+		supply: supply,
+		placOrder: placOrder
 	};
 
 
@@ -197,6 +247,13 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.factoryDetails = {};
 	vm.status = {};
 	vm.demandDetails = {};
+	
+	// supply value holds the values that are to be submitted by the user. This is ngmodeled in the html
+	vm.supplyValues = [];
+
+	for(var order of vm.products[0].orders){
+		vm.supplyValues.push(order.to_no);
+	}
 
 	AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 		vm.factoryDetails = json;
@@ -209,6 +266,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	});
 
 	vm.getDemand = function(){
+
+		AnyTimeFunctions.getStatusDetails(id).success(function(json){
+		vm.status = json;
+		console.log('status details', vm.status);
+		});
 
 		if(vm.status.stage === 0){
 
@@ -226,6 +288,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 
 		else{
+			console.log(vm.status.data.stage);
 
 			TurnStageBasedFunctions.viewDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			vm.demandDetails = json;
@@ -243,7 +306,44 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}
 
 	vm.send = function(){
-		console.log('Updated Products', vm.products);
+		console.log('Initial Products', vm.products);
+		console.log('Supply values', vm.supplyValues);
+
+		var i=0;
+		for(var order of vm.products[0].orders){
+			order.to_no = vm.supplyValues[i];
+			i++;
+		}
+
+		var supply = '';
+
+		for(value of vm.supplyValues){
+			supply += (value + ',');
+		}
+
+		supply = supply.substr(0, supply.length-1);
+
+		console.log('Supply to be sent', supply);
+
+
+		TurnStageBasedFunctions.supply(id, supply, vm.status.data.turn, vm.status.data.stage).success(function(json){
+			console.log('Response for supply', json);;
+		})
+		
+
+
+
+		console.log('New products is', vm.products);
+	};
+
+
+	vm.placeOrder = function(order){
+
+		
+
+		TurnStageBasedFunctions.placeOrder(id, order, vm.status.data.turn, vm.status.data.stage).success(function(json){
+			console.log('Response for place order', json);
+		})
 	}
 
 

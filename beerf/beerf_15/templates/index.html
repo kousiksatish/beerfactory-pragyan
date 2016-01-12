@@ -68,6 +68,12 @@ console.log('getDemandUrl is', getDemandUrl);
 var viewDemandUrl = "{% url 'viewDemand' %}";
 console.log('viewDemandUrl is', viewDemandUrl);
 
+var supplyUrl = "{% url 'supply' %}";
+console.log('supplyUrl is', supplyUrl);
+
+var placeOrderUrl = "{% url 'placeOrder' %}";
+console.log('placeOrderUrl is', placeOrderUrl);
+
 </script>
 
 <div id="right_half" ng-controller="StoreController as store">
@@ -92,15 +98,17 @@ console.log('viewDemandUrl is', viewDemandUrl);
 	 				</tr>
 	 				</thead>
 	 				<tbody>
-	 				<tr ng-repeat="order in product.orders">
+	 				<tr ng-repeat="order in product.orders track by $index">
 	 					<td class="col-md-1"> {$order.from$}</td>
 	 					<td class="col-md-1"> {$order.order_no$}</td>
-	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
+	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
 	 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
 	 				</tr>
 	 				</tbody>
 	 			</table>
-	 		<input type = "button" class="btn btn-default" value = "Send!" ng-click="">
+	 			<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
+	 			<input type="text" placeholder="Place the order for the next round here!">
+	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder(Order)">	
 
 			</div>
 			<div class="panel" ng-show="panel.istab(2)">
