@@ -59,6 +59,15 @@ console.log('user id is', id);
 var factoryDetailsUrl = "{% url 'fac_details' %}";
 console.log('url is', factoryDetailsUrl);
 
+var getStatusUrl = "{% url 'getStatus' %}";
+console.log('getStatusUrl is', getStatusUrl);
+
+var getDemandUrl = "{% url 'get_demand' %}";
+console.log('getDemandUrl is', getDemandUrl);
+
+var viewDemandUrl = "{% url 'viewDemand' %}";
+console.log('viewDemandUrl is', viewDemandUrl);
+
 </script>
 
 <div id="right_half" ng-controller="StoreController as store">
@@ -80,8 +89,6 @@ console.log('url is', factoryDetailsUrl);
 						<th class="col-md-1"> ORDER <br> AMOUNT </th>
 						<th class="col-md-1"> AMOUNT TO <br> DELIVER </th>
 						<th class="col-md-1"> TRANSPORT <br> MODE </th>
-						<th class="col-md-1" >  </th>
-
 	 				</tr>
 	 				</thead>
 	 				<tbody>
@@ -90,11 +97,10 @@ console.log('url is', factoryDetailsUrl);
 	 					<td class="col-md-1"> {$order.order_no$}</td>
 	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
 	 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 					<td class="col-md-1"> <input type="submit" value="Send!" class="col-sm-12"/> </td>
 	 				</tr>
 	 				</tbody>
 	 			</table>
-
+	 		<input type = "button" class="btn btn-default" value = "Send!" ng-click="">
 
 			</div>
 			<div class="panel" ng-show="panel.istab(2)">
@@ -153,6 +159,8 @@ console.log('url is', factoryDetailsUrl);
 				<th> Factory Code </th>
 				<th> Money </th>
 				<th> Capacity </th>
+				<th> Inventory </th>
+
 			</tr>
 
 			<tr>
@@ -160,6 +168,8 @@ console.log('url is', factoryDetailsUrl);
 				<td> {$ store.factoryDetails.data.factory_1.fcode $} </td>
 				<td> {$ store.factoryDetails.data.factory_1.money $} </td>
 				<td> {$ store.factoryDetails.data.factory_1.capacity $} </td>
+				<td> {$ store.factoryDetails.data.factory_1.inventory $} </td>
+
 			</tr>
 
 			<tr>
@@ -167,9 +177,14 @@ console.log('url is', factoryDetailsUrl);
 				<td> {$ store.factoryDetails.data.factory_2.fcode $} </td>
 				<td> {$ store.factoryDetails.data.factory_2.money $} </td>
 				<td> {$ store.factoryDetails.data.factory_2.capacity $} </td>
+				<td> {$ store.factoryDetails.data.factory_2.inventory $} </td>
 			</tr>
 
 		</table>
+	</div>
+
+	<div class="container">
+		<input type = "button" class = "button" value = "Get Demand" ng-click = "store.getDemand()">
 	</div>
 </div>
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>

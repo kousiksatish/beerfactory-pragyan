@@ -6,11 +6,133 @@ var app = angular.module('store',[]).config(function($interpolateProvider) {
 });
 
 
+//   SERVICES 
+
+// service for any-time functions
+app.factory('AnyTimeFunctions', ['$http', function($http){
+
+	console.log('id from app.js', id);
+	console.log('factoryDetailsUrl from app.js', factoryDetailsUrl);
+	console.log('getStatusUrl from app.js', getStatusUrl);
+
+	getFactoryDetails = function(id) {
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: factoryDetailsUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+	};
+
+	getStatusDetails = function(id){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: getStatusUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+	};
+
+	return {
+		getFactoryDetails: getFactoryDetails,
+		getStatusDetails: getStatusDetails
+	};
+
+}]);
+
+
+// service for turn/stage based functions
+app.factory('TurnStageBasedFunctions', ['$http', function($http){
+
+	console.log('id from app.js', id);
+	console.log('getDemandUrl from app.js', getDemandUrl);
+
+
+	getDemandDetails = function(id, _turn, _stage){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: getDemandUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id, turn: _turn, stage: _stage}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+	};
+
+	viewDemandDetails = function(id, _turn, _stage){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: viewDemandUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id, turn: _turn, stage: _stage}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+	};
+
+	return  {
+		getDemandDetails: getDemandDetails,
+		viewDemandDetails: viewDemandDetails
+	};
+
+
+
+}]);
+
+
 //  CONTROLLERS
 
 
 //controller for the data inside tabs
-app.controller('StoreController', ['fac_details', function(fac_details){					
+app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions', function(AnyTimeFunctions, TurnStageBasedFunctions){					
 
 	var vm = this;
 
@@ -73,11 +195,57 @@ app.controller('StoreController', ['fac_details', function(fac_details){
 	}];
 
 	vm.factoryDetails = {};
+	vm.status = {};
+	vm.demandDetails = {};
 
-	fac_details.success(function(json){
+	AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 		vm.factoryDetails = json;
 		console.log('factory details', vm.factoryDetails);
 	});
+
+	AnyTimeFunctions.getStatusDetails(id).success(function(json){
+		vm.status = json;
+		console.log('status details', vm.status);
+	});
+
+	vm.getDemand = function(){
+
+		if(vm.status.stage === 0){
+
+			TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
+			vm.demandDetails = json;
+			console.log('id from getDemand', id);
+			console.log('demand details', vm.demandDetails);
+
+				var i=0;
+				for(var order of vm.products[0].orders){
+					order.order_no = vm.demandDetails.data.demand[i];
+					i++;
+				}
+			});
+		}
+
+		else{
+
+			TurnStageBasedFunctions.viewDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
+			vm.demandDetails = json;
+			console.log('id from getDemand', id);
+			console.log('demand details', vm.demandDetails);
+
+				var i=0;
+				for(var order of vm.products[0].orders){
+					order.order_no = vm.demandDetails.data.demand[i];
+					i++;
+				}
+			});
+		}
+
+	}
+
+	vm.send = function(){
+		console.log('Updated Products', vm.products);
+	}
+
 
 }]);
 
@@ -89,34 +257,6 @@ app.controller('PanelController',function(){
 });
 
 
-//   SERVICES 
-
-// service that gets factory details
-app.factory('fac_details', ['$http', function($http){
-
-	console.log('id from app.js', id);
-	console.log('url from app.js', factoryDetailsUrl);
-
-	return $http({
-   		 	method: 'POST',
-    		url: factoryDetailsUrl,
-    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    		transformRequest: function(obj) {
-    		    var str = [];
-        		for(var p in obj)
-        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-        		return str.join("&");
-    		},
-    		data: {user_id: id}
-			})
-			.success(function(json) {
-    					return json;
-  					})
-  			.error(function(err) {
-    					return err;
-  					});
-
-}]);
 
 
 
