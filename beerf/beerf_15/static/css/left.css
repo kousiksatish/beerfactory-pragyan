@@ -1,3 +1,25 @@
+/*body{
+	background-color: #252326;
+}*/
+.nav-container{
+	background-color: #252326;
+	color: #C3A96A;
+	font-family: Roboto;
+}
+.top-info{
+	position: relative;
+	top: 1.5rem;
+	display: inline;
+}
+
+.top-info li{
+	float: left;
+}
+#main-content{
+	position: absolute;
+	top:5.5rem;
+	width: 100%;
+}
 #map_left
 {
 	position:absolute;
@@ -12,6 +34,14 @@
 	width:50%;
 	overflow: hidden;
 	
+}
+.home-tables{
+	background-color: #fff;
+	color: black;
+}
+.home-tables input{
+	background-color: #fff;
+	color: black;
 }
 
 #main

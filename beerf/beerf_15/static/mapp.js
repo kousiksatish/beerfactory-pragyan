@@ -12,13 +12,13 @@
 function myFunction(level) {
     switch(level){
         case 1: //path="{% static "images/map1.gif" %}" ;
-        path = 'static/images/map1.gif';
+        path = 'static/images/map1.jpg';
             break;
-        case 2: path='static/images/map2.gif' ;
+        case 2: path='static/images/map2.jpg' ;
             break;
-        case 3: path='static/images/map3.gif';
+        case 3: path='static/images/map3.jpg';
             break;
-        case 4: path='static/images/map4.gif' ;
+        case 4: path='static/images/map4.jpg' ;
             break;
         
     }
@@ -45,8 +45,10 @@ function mapp(){
 
     render_select : { altImage : path},
         onMouseover: function(x) {
- hovered = x.key;
-
+        var $element = $('#right_half');
+        var scope = angular.element($element).scope();
+        console.log(scope.store.products[0]);
+        hovered = scope.store.products[0].orders[x.key-1].order_no;
                  image.mapster('set_options', { 
                 areas: [{
                     key: x.key,
