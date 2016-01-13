@@ -143,7 +143,7 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
 	};
 
-	placOrder = function(id, order, _turn, _stage){
+	placeOrder = function(id, order, _turn, _stage){
 
 		return $http({
 	   		 	method: 'POST',
@@ -170,7 +170,7 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 		getDemandDetails: getDemandDetails,
 		viewDemandDetails: viewDemandDetails,
 		supply: supply,
-		placOrder: placOrder
+		placeOrder: placeOrder
 	};
 
 
@@ -272,7 +272,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('status details', vm.status);
 		});
 
-		if(vm.status.stage === 0){
+		if(vm.status.data.stage === '0'){
 
 			TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			vm.demandDetails = json;
@@ -338,8 +338,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 
 	vm.placeOrder = function(order){
-
-		
 
 		TurnStageBasedFunctions.placeOrder(id, order, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			console.log('Response for place order', json);
