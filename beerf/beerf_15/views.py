@@ -98,6 +98,10 @@ def unlocked_ret(frids, fid):
 	unlocked_frids = factory_retailer.objects.filter(rid_id__in = unlocked_rids, fid_id = fid).values_list('frid',flat = True)
 	return unlocked_frids
 
+def calculate_popularity(retailer_no):
+	pops = [0.7,0.5,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];
+	return pops[retailer_no]
+
 
 '''
 ALLOCATION
@@ -105,8 +109,9 @@ ALLOCATION
 2. assign_factory
 '''
 
+
 #creates a retailer for factory fac1 and its opponent factory
-def retailer_allocate(fac1, zone, unlocked):
+def retailer_allocate(fac1, zone, unlocked, retailer_no):
 	#create the retailer
 	ret = retailers(zone = zone, unlocked=unlocked)
 	ret.save()
@@ -114,11 +119,12 @@ def retailer_allocate(fac1, zone, unlocked):
 	fac_fac_relation = factory_factory.objects.get(fac1=fac1)
 	fac2 = fac_fac_relation.fac2
 
+	pop = calculate_popularity(retailer_no)
 	#create the factory-retailer link
-	fac_ret_relation = factory_retailer(fid = fac1, rid = ret)
+	fac_ret_relation = factory_retailer(fid = fac1, rid = ret, popularity = pop)
 	fac_ret_relation.save()
 
-	fac_ret_relation = factory_retailer(fid = fac2, rid = ret)
+	fac_ret_relation = factory_retailer(fid = fac2, rid = ret, popularity = 1-pop)
 	fac_ret_relation.save()
 
 @csrf_exempt
@@ -151,17 +157,14 @@ def assign(request):
 			#link the factories
 			fac_fac_relation = factory_factory(fac1 = fac1, fac2 = fac2)
 			fac_fac_relation.save()
-			#calling the retailer_allocate function 3 times to create 3 retailers and map to fac1 and fac2
-			for i in range(0,3):
-				retailer_allocate(fac1, 1, 1)
-			'''
-			for zone in range(1,5):
+
+			for zone in range(1,6):
 				for i in range(0,3):
-					if zone=1:
-						retailer_allocate(fac1, zone, 1)
+					if zone==1:
+						retailer_allocate(fac1, zone, 1, (zone-1)*3+i)
 					else:
-						retailer_allocate(fac1, zone, 0)
-			'''
+						retailer_allocate(fac1, zone, 0, (zone-1)*3+i)
+
 			return JsonResponse({"status":"200","data":{"description":"Successfully allocated Factories and Retailers"}})
 		else:
 			#The facrtory has been set already
@@ -297,7 +300,7 @@ TURN & STAGE BASED OPERATIONS
 '''
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def get_demand(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -383,7 +386,7 @@ def viewDemand(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def supply(request):
 	
 	if request.method == 'POST':
@@ -486,7 +489,7 @@ def viewDemandSupply(request):
 
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def placeOrder(request):
 	'''
 		Places order to produce beer for a particular factory at the second stage, i.e, stage == 1
@@ -529,7 +532,8 @@ def placeOrder(request):
 			money.moneyPlaceOrder(factory.fid, quantity, int(turn))
 			inventory.increase(factory.fid, quantity, int(turn))
 			# move to next stage of the current turn
-			cur_status.stage += 1
+			cur_status.turn=turn+1
+			cur_status.stage = 0
 			cur_status.save()
 
 			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
@@ -691,7 +695,7 @@ def testmap(request):
 	return render(request, "map_test.html")
 
 def testhome(request):
-	return render(request, "index.html")
-@csrf_exempt
-def testing(request):
-	money.moneySupply(3,2,1)
+	id = request.session["user_id"]
+	user = users.objects.get(pid = id)
+	return render(request, "index.html",{ "name" : user.name })
+
