@@ -31,7 +31,9 @@ function on(n){
 //for changing level of factory
 function myFunction(level) {
     switch(level){
+
         case 1: path = 'static/images/map1.gif';
+
             break;
         case 2: path='static/images/map2.gif' ;
             break;

@@ -667,4 +667,6 @@ def testmap(request):
 	return render(request, "map_test.html")
 
 def testhome(request):
-	return render(request, "index.html")
+	id = request.session["user_id"]
+	user = users.objects.get(pid = id)
+	return render(request, "index.html",{ "name" : user.name })

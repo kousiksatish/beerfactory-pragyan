@@ -142,24 +142,121 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			from:"R1",
 			order_no:100,
 			to_no:0,
-			transport:"none"
+			transport:"none",
+			zone:1
 
 		},
 		{	
 			from:"R2",
 			order_no:150,
 			to_no:0,
-			transport:"none"
+			transport:"none",
+			zone:1
 
 		},
 		{	
 			from:"R3",
 			order_no:200,
 			to_no:0,
-			transport:"none"
+			transport:"none",
+			zone:1
 
-		}
-		],
+		}],
+
+		// ,{	
+		// 	from:"R4",
+		// 	order_no:100,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:2
+
+		// },
+		// {	
+		// 	from:"R5",
+		// 	order_no:150,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:2
+
+		// },
+		// {	
+		// 	from:"R6",
+		// 	order_no:200,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:2
+
+		// },{	
+		// 	from:"R7",
+		// 	order_no:100,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:3
+
+		// },
+		// {	
+		// 	from:"R8",
+		// 	order_no:150,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:3
+
+		// },
+		// {	
+		// 	from:"R9",
+		// 	order_no:200,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:3
+
+		// },{	
+		// 	from:"R10",
+		// 	order_no:100,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:4
+
+		// },
+		// {	
+		// 	from:"R11",
+		// 	order_no:150,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:4
+
+		// },
+		// {	
+		// 	from:"R12",
+		// 	order_no:200,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:4
+
+		// },{	
+		// 	from:"R13",
+		// 	order_no:100,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:5
+
+		// },
+		// {	
+		// 	from:"R14",
+		// 	order_no:150,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:5
+
+		// },
+		// {	
+		// 	from:"R15",
+		// 	order_no:200,
+		// 	to_no:0,
+		// 	transport:"none",
+		// 	zone:5
+
+		// }
+		// ],
 
 		inventory: [
 		{
@@ -248,6 +345,27 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 
 }]);
+// angular.module('starter.filters', []).filter('startFrom', function() {
+// return function(input, start) {
+//     if(input) {
+//         start = +start; //parse to int
+//         appended = input.slice(0,start);
+//         initialArray = input.slice(start);
+//         finalArray= initialArray.concat(appended);
+//         return finalArray;
+//     }
+//     return [];
+// }
+// });
+app.filter('startFrom', function() {
+    return function(input, start) {
+        if(input) {
+            start = +start; //parse to int
+            return input.slice(start);
+        }
+        return [];
+    }
+});
 
 // controller for the panel
 app.controller('PanelController',function(){         							       
@@ -256,6 +374,11 @@ app.controller('PanelController',function(){
 	this.istab = function(a) { return this.tab === a;};
 });
 
+app.controller('ZoneController',function(){         							       
+	this.zone=1;
+	this.setzone = function(a) { this.zone = a; };
+	this.iszone = function(a) { return this.zone === a;};
+});
 
 
 
