@@ -1,16 +1,47 @@
-#left_half
+/*body{
+	background-color: #252326;
+}*/
+.nav-container{
+	background-color: #252326;
+	color: #C3A96A;
+	font-family: Roboto;
+}
+.top-info{
+	position: relative;
+	top: 1.5rem;
+	display: inline;
+}
+
+.top-info li{
+	float: left;
+}
+#main-content{
+	position: absolute;
+	top:5.5rem;
+	width: 100%;
+}
+#map_left
 {
 	position:absolute;
-	left:0%;
-	width:50%;
+	left:5%;
+	width:30%;
 	height:100%;
 }
 #right_half
 {
-	position:absolute;
-	left:50%;
+	position:fixed;
+	left:40%;
 	width:50%;
-	height:100%;
+	overflow: hidden;
+	
+}
+.home-tables{
+	background-color: #c3a96a;
+	color: #252326;
+}
+.home-tables input{
+	background-color: #252326;
+	color: #c3a96a;
 }
 
 #main
