@@ -35,11 +35,11 @@ function myFunction(level) {
         case 1: path = 'static/images/map1.gif';
 
             break;
-        case 2: path='static/images/map2.jpg' ;
+        case 2: path='static/images/map2.gif' ;
             break;
-        case 3: path='static/images/map3.jpg';
+        case 3: path='static/images/map3.gif';
             break;
-        case 4: path='static/images/map4.jpg' ;
+        case 4: path='static/images/map4.gif' ;
             break;
         
     }
