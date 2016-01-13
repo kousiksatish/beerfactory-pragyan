@@ -133,6 +133,12 @@ console.log('getDemandUrl is', getDemandUrl);
 var viewDemandUrl = "{% url 'viewDemand' %}";
 console.log('viewDemandUrl is', viewDemandUrl);
 
+var supplyUrl = "{% url 'supply' %}";
+console.log('supplyUrl is', supplyUrl);
+
+var placeOrderUrl = "{% url 'placeOrder' %}";
+console.log('placeOrderUrl is', placeOrderUrl	);
+
 </script>
 
 <div id="right_half" ng-controller="StoreController as store">
@@ -149,12 +155,14 @@ console.log('viewDemandUrl is', viewDemandUrl);
 			</ul>
 
 			<div class="panel home-tables" ng-show="panel.istab(1)" ng-controller="ZoneController as zone">
+				
 				<ul class="nav nav-pills">
 					<li ng-class="{active:zone.iszone(1)}"> <a href ng-click="zone.setzone(1)"> Zone 1 </a> </li>
 					<li ng-class="{active:zone.iszone(2)}"> <a href ng-click="zone.setzone(2)"> Zone 2 </a> </li>
 					<li ng-class="{active:zone.iszone(3)}"> <a href ng-click="zone.setzone(3)"> Zone 3 </a> </li>
 					<li ng-class="{active:zone.iszone(4)}"> <a href ng-click="zone.setzone(4)"> Zone 4 </a> </li>
 				</ul>
+
 				<!-- ZONE 1 INFO -->
 				<div class="zone" ng-show="zone.iszone(1)">
 				<table class="table" style="width:50%"> <thead>
@@ -168,38 +176,57 @@ console.log('viewDemandUrl is', viewDemandUrl);
 	 				</tr>
 	 				</thead>
 	 				<tbody>
-	 				<tr ng-repeat="order in product.orders">
-	 					<td> {$order.from$}</td>
-	 					<td> {$order.order_no$}</td>
-	 					<td> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
-	 					<td> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
+
+	 				<tr ng-repeat="order in product.orders track by $index">
+	 					<td class="col-md-1"> {$order.from$}</td>
+	 					<td class="col-md-1"> {$order.order_no$}</td>
+	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+	 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
 	 				</tr>
 	 				</tbody>
 	 			</table>
+	 			<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
+	 			<input type="text" placeholder="Place the order for the next round here!" ng-model="store.order">
+	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">	
+
+	 				</tr>
+	 				</thead>
+	 				
+	 			</table>
 	 			</div>
-	 		<!-- 	ZONE 2 INFO -->
-	 			<div class="zone" ng-show="zone.iszone(2)">
-				<table class="table table-bordered table-striped" style="width:50%"> <thead>
+
+				<!-- ZONE 2 INFO -->
+				<div class="zone" ng-show="zone.iszone(2)">
+				<table class="table" style="width:50%"> <thead>
+
 					<tr> 
 						<th> RETAILER </th>
 						<th> ORDER <br> AMOUNT </th>
 						<th> AMOUNT TO <br> DELIVER </th>
 						<th> TRANSPORT <br> MODE </th>
-						<th>  </th>
 
 	 				</tr>
 	 				</thead>
 	 				<tbody>
-	 				<tr ng-repeat="order in product.orders">
-	 					<td> {$order.from$}</td>
-	 					<td> {$order.order_no$}</td>
-	 					<td> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
-	 					<td> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 					<td> <input type="submit" value="Send!" class="col-sm-12"/> </td>
+
+	 				<tr ng-repeat="order in product.orders track by $index">
+	 					<td class="col-md-1"> {$order.from$}</td>
+	 					<td class="col-md-1"> {$order.order_no$}</td>
+	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+	 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
 	 				</tr>
 	 				</tbody>
 	 			</table>
+	 			<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
+	 			<input type="text" placeholder="Place the order for the next round here!" ng-model="store.order">
+	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">	
+
+	 				</tr>
+	 				</thead>
+	 				
+	 			</table>
 	 			</div>
+
 	 			<!-- ZONE 3 INFO -->
 	 			<div class="zone" ng-show="zone.iszone(3)">
 				<table class="table table-bordered table-striped" style="width:50%"> <thead>
@@ -209,7 +236,6 @@ console.log('viewDemandUrl is', viewDemandUrl);
 						<th> ORDER <br> AMOUNT </th>
 						<th> AMOUNT TO <br> DELIVER </th>
 						<th> TRANSPORT <br> MODE </th>
-						<th>  </th>
 
 
 	 				</tr>
@@ -221,10 +247,14 @@ console.log('viewDemandUrl is', viewDemandUrl);
 	 					<td> {$order.order_no$}</td>
 	 					<td> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
 	 					<td> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 					<td> <input type="submit" value="Send!" class="col-sm-12"/> </td>
 	 				</tr>
 	 				</tbody>
 	 			</table>
+
+	 			<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
+	 			<input type="text" placeholder="Place the order for the next round here!" ng-model="store.order">
+	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">	
+
 	 			</div>
 	 			<!-- ZONE 4 INFO -->
 
@@ -235,7 +265,6 @@ console.log('viewDemandUrl is', viewDemandUrl);
 						<th> ORDER <br> AMOUNT </th>
 						<th> AMOUNT TO <br> DELIVER </th>
 						<th> TRANSPORT <br> MODE </th>
-						<th>  </th>
 
 
 	 				</tr>
@@ -246,10 +275,14 @@ console.log('viewDemandUrl is', viewDemandUrl);
 	 					<td> {$order.order_no$}</td>
 	 					<td> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
 	 					<td> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 					<td> <input type="submit" value="Send!" class="col-sm-12"/> </td>
 	 				</tr>
 	 				</tbody>
 	 			</table>
+
+	 			<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
+	 			<input type="text" placeholder="Place the order for the next round here!" ng-model="store.order">
+	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">	
+
 	 			</div>
 	 			<!-- END OF ZONE INFO -->
 			</div>
