@@ -85,6 +85,17 @@ class factory_factory(models.Model):
 	def __str__(self):
 		return str(self.mid) + " ( Factory-id: " + self.fac1 + " - OppFactory-id: "+self.fac2+")"
 
+class money_log(models.Model):
+	mlid = models.AutoField(primary_key=True)
+	turn = models.IntegerField()
+	money_change = models.IntegerField()
+	fid = models.ForeignKey(factories)
+
+class inventory_log(models.Model):
+	ilid = models.AutoField(primary_key=True)
+	turn = models.IntegerField()
+	inventory_change = models.IntegerField()
+	fid = models.ForeignKey(factories)
 
 class userForm(ModelForm):
     class Meta:
