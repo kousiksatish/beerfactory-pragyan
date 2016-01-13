@@ -250,6 +250,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	
 	// supply value holds the values that are to be submitted by the user. This is ngmodeled in the html
 	vm.supplyValues = [];
+	vm.order=0;
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
@@ -337,9 +338,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	};
 
 
-	vm.placeOrder = function(order){
+	vm.placeOrder = function(){
+		
+		AnyTimeFunctions.getStatusDetails(id).success(function(json){
+		vm.status = json;
+		console.log('status details', vm.status);
+		});
 
-		TurnStageBasedFunctions.placeOrder(id, order, vm.status.data.turn, vm.status.data.stage).success(function(json){
+		console.log('order is ', vm.order);
+
+		TurnStageBasedFunctions.placeOrder(id, vm.order, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			console.log('Response for place order', json);
 		})
 	}
