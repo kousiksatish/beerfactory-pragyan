@@ -209,9 +209,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	});
 
 	vm.getDemand = function(){
-
-		if(vm.status.stage === 0){
-
+		console.log('stage inside getdmand is ', vm.status.data.stage);
+		if(vm.status.data.stage === '0'){
+			console.log('stage = 0 ');
 			TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			vm.demandDetails = json;
 			console.log('id from getDemand', id);
