@@ -39,4 +39,5 @@ urlpatterns = [
     url(r'^placeOrder$', views.placeOrder,name='placeOrder'),
     url(r'^viewDemand$', views.viewDemand, name='viewDemand'),
     url(r'^viewDemandSupply$', views.viewDemandSupply, name='viewDemandSupply')
+
 ]

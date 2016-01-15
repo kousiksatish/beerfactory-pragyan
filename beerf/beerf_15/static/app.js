@@ -382,11 +382,13 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					order.order_no = vm.demandDetails.data.demand[i];
 					i++;
 				}
+				var stage = parseInt(vm.status.data.stage)+1;
+				vm.status.data.stage = stage.toString();
 			});
 		}
 
 		else{
-			console.log(vm.status.data.stage);
+			console.log(vm.status.data.stage)	
 
 			TurnStageBasedFunctions.viewDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			vm.demandDetails = json;
