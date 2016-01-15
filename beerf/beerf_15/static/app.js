@@ -182,7 +182,7 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
 
 //controller for the data inside tabs
-app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions', function(AnyTimeFunctions, TurnStageBasedFunctions){					
+app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions', '$scope', function(AnyTimeFunctions, TurnStageBasedFunctions, $scope){					
 
 	var vm = this;
 
