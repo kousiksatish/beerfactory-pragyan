@@ -8,6 +8,8 @@ from beerf_15.models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from beerf_algo.beerf_algo import dummy_algo
+from utilities import money
+from utilities import inventory
 
 '''
 INITIAL FUNCTIONS
@@ -96,6 +98,10 @@ def unlocked_ret(frids, fid):
 	unlocked_frids = factory_retailer.objects.filter(rid_id__in = unlocked_rids, fid_id = fid).values_list('frid',flat = True)
 	return unlocked_frids
 
+def calculate_popularity(retailer_no):
+	pops = [0.7,0.5,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];
+	return pops[retailer_no]
+
 
 '''
 ALLOCATION
@@ -103,8 +109,9 @@ ALLOCATION
 2. assign_factory
 '''
 
+
 #creates a retailer for factory fac1 and its opponent factory
-def retailer_allocate(fac1, zone, unlocked):
+def retailer_allocate(fac1, zone, unlocked, retailer_no):
 	#create the retailer
 	ret = retailers(zone = zone, unlocked=unlocked)
 	ret.save()
@@ -112,11 +119,12 @@ def retailer_allocate(fac1, zone, unlocked):
 	fac_fac_relation = factory_factory.objects.get(fac1=fac1)
 	fac2 = fac_fac_relation.fac2
 
+	pop = calculate_popularity(retailer_no)
 	#create the factory-retailer link
-	fac_ret_relation = factory_retailer(fid = fac1, rid = ret)
+	fac_ret_relation = factory_retailer(fid = fac1, rid = ret, popularity = pop)
 	fac_ret_relation.save()
 
-	fac_ret_relation = factory_retailer(fid = fac2, rid = ret)
+	fac_ret_relation = factory_retailer(fid = fac2, rid = ret, popularity = 1-pop)
 	fac_ret_relation.save()
 
 @csrf_exempt
@@ -149,17 +157,14 @@ def assign(request):
 			#link the factories
 			fac_fac_relation = factory_factory(fac1 = fac1, fac2 = fac2)
 			fac_fac_relation.save()
-			#calling the retailer_allocate function 3 times to create 3 retailers and map to fac1 and fac2
-			for i in range(0,3):
-				retailer_allocate(fac1, 1, 1)
-			'''
-			for zone in range(1,5):
+
+			for zone in range(1,6):
 				for i in range(0,3):
-					if zone=1:
-						retailer_allocate(fac1, zone, 1)
+					if zone==1:
+						retailer_allocate(fac1, zone, 1, (zone-1)*3+i)
 					else:
-						retailer_allocate(fac1, zone, 0)
-			'''
+						retailer_allocate(fac1, zone, 0, (zone-1)*3+i)
+
 			return JsonResponse({"status":"200","data":{"description":"Successfully allocated Factories and Retailers"}})
 		else:
 			#The facrtory has been set already
@@ -289,7 +294,7 @@ TURN & STAGE BASED OPERATIONS
 4. viewDemandSupply (Turn, Stage = 2)
 5. placeOrder(Turn, Stage = 2)
 6. update_selling_price(Turn, Stage=)
-
+7. updateValues(Turn, stage = 3)
 
 
 '''
@@ -403,19 +408,28 @@ def supply(request):
 				if((turn != str(stat.turn)) or (stage != str(stat.stage)) or stage !="1"):
 					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
 				else:
-					quantity1 = request.POST.get("quantity").split(',')
 					factory = user.factory
+					quantity1 = request.POST.get("quantity").split(',')
+					quantity_sum = 0
+					for q in quantity1:
+				 		if not(q.isdigit()):
+				 			return JsonResponse({"status":"106", "data":{"description":"Invalid Quantity. Quantity must be an integer"}})
+				 		quantity_sum += int(q)
+				 	
+				 	if quantity_sum > factory.inventory:
+				 		return JsonResponse({"status":"107", "data":{"description":"Invalid Quantity. supply must be less than inventory"}})
+				 		
 					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
 					unlocked_frids = unlocked_ret(frids, user.factory_id)
 					demands = fac_ret_demand.objects.filter(frid_id__in = unlocked_frids, turn = stat.turn)
 					if len(demands) != len(quantity1):
-						return JsonResponse({"status":"106", "data":{"description":"Supply Demand mismatch."}})
+						return JsonResponse({"status":"108", "data":{"description":"Supply Demand mismatch."}})
 					else:
 						i=0
 						for demand in demands:
 					 		
 					 		if int(quantity1[i]) > demand.quantity:
-					 			return JsonResponse({"status":"107", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
+					 			return JsonResponse({"status":"109", "data":{"description":"Invalid supply quantity. Supply should not be greater than demand"}})
 					 		i=i+1
 					 	i=0				 		
 					 	for demand in demands:
@@ -423,6 +437,8 @@ def supply(request):
 					 		supply_value.save()
 					 		i=i+1
 						dummy_algo.calculate_supply(factory.fid,int(turn))
+						money.moneySupply(factory.fid, quantity_sum, int(turn))
+						inventory.decrease(factory.fid, quantity_sum, int(turn))
 						stat.stage = stat.stage+1
 						stat.save()
 						return JsonResponse({"status":"200", "data":{"description":"Success"}})
@@ -495,7 +511,10 @@ def placeOrder(request):
 				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
 
 			try:
-				quantity = int(request.POST['quantity'])
+				quantity1 = request.POST['quantity']
+				if not(quantity1.isdigit()):
+					return JsonResponse({"status":"106","data":{"description":"Invalid Quantity. It must be a number"}})
+				quantity = int(quantity1)
 				valid_turn_and_stage = (turn == int(request.POST['turn']) and stage == int(request.POST['stage']))
 			except KeyError:
 				return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
@@ -510,9 +529,13 @@ def placeOrder(request):
 			# create the new order in the DB
 			new_order = factory_order(fid=factory,turn=turn,quantity=quantity)
 			new_order.save()
+			money.moneyPlaceOrder(factory.fid, quantity, int(turn))
+			inventory.increase(factory.fid, quantity, int(turn))
 			# move to next stage of the current turn
-			cur_status.stage += 1
+			cur_status.turn=turn+1
+			cur_status.stage = 0
 			cur_status.save()
+
 			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
 		else:
 			return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
@@ -572,6 +595,7 @@ def updateSellingPrice(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 
+
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
 def updateValues(request):
@@ -596,6 +620,10 @@ def updateValues(request):
 					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
 				else:
 					updates = request.POST.get("values").split(',')
+					for u in updates:
+				 		if not(u.isdigit()):
+				 			return JsonResponse({"status":"106", "data":{"description":"Invalid value. It must be an integer"}})
+
 															 		
 					new_capacity = capacity(turn = int(turn), capacity = int(updates[0]) , fid_id = user.factory_id)
 					new_capacity.save()
