@@ -7,7 +7,7 @@ from django.utils.decorators import decorator_from_middleware
 from beerf_15.models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-#from beerf_algo.beerf_algo import dummy_algo
+from beerf_algo.beerf_algo import dummy_algo
 from utilities import money
 from utilities import inventory
 
@@ -287,7 +287,7 @@ def map(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def getPopularity(request):
 	'''
 		Returns popularity of each factory with each retailer.
