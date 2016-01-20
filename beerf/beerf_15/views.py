@@ -536,6 +536,12 @@ def placeOrder(request):
 			cur_status.stage = 0
 			cur_status.save()
 
+			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=factory)
+			cap.save()
+			opponent_factory = factory_factory.objects.get(fac1=factory).fac2
+			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=opponent_factory)
+			cap.save()
+
 			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
 		else:
 			return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
