@@ -1,5 +1,6 @@
 from django.db import models
 from django.forms import ModelForm
+from django import forms
 import uuid
 from django.utils.encoding import python_2_unicode_compatible
 # Create your models here.
@@ -104,7 +105,9 @@ class userForm(ModelForm):
     class Meta:
         model = users
         fields = ['name', 'email']
-
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'myfieldclass'}),
+        }
 class userLoginForm(ModelForm):
 	class Meta:
 		model = users
