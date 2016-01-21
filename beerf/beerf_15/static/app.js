@@ -465,6 +465,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var stage = parseInt(vm.status.data.stage)+1;
 				vm.status.data.stage = stage.toString();
 			}
+			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
+			vm.factoryDetails = json;
+			console.log('factory details after supplying', vm.factoryDetails);
+			});
 		})
 		
 
@@ -490,23 +494,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				vm.status.data.turn = turn.toString();
 				vm.status.data.stage = '0';
 			}
+			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
+			vm.factoryDetails = json;
+			console.log('factory details after placing order', vm.factoryDetails);
+			});
 		})
 	}
 
 
 }]);
-// angular.module('starter.filters', []).filter('startFrom', function() {
-// return function(input, start) {
-//     if(input) {
-//         start = +start; //parse to int
-//         appended = input.slice(0,start);
-//         initialArray = input.slice(start);
-//         finalArray= initialArray.concat(appended);
-//         return finalArray;
-//     }
-//     return [];
-// }
-// });
+
 app.filter('startFrom', function() {
     return function(input, start) {
         if(input) {
