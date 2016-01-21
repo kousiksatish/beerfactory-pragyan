@@ -16,12 +16,35 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	console.log('id from app.js', id);
 	console.log('factoryDetailsUrl from app.js', factoryDetailsUrl);
 	console.log('getStatusUrl from app.js', getStatusUrl);
+	console.log('mapUrl from app.js', mapUrl);
 
 	getFactoryDetails = function(id) {
 
 		return $http({
 	   		 	method: 'POST',
 	    		url: factoryDetailsUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+	};
+
+	getMapDetails = function(id) {
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: mapUrl,
 	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 	    		transformRequest: function(obj) {
 	    		    var str = [];
@@ -63,7 +86,8 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 
 	return {
 		getFactoryDetails: getFactoryDetails,
-		getStatusDetails: getStatusDetails
+		getStatusDetails: getStatusDetails,
+		getMapDetails: getMapDetails
 	};
 
 }]);
@@ -344,6 +368,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.factoryDetails = {};
 	vm.status = {};
 	vm.demandDetails = {};
+	vm.mapDetails={};
 	
 	// supply value holds the values that are to be submitted by the user. This is ngmodeled in the html
 	vm.supplyValues = [];
@@ -361,6 +386,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	AnyTimeFunctions.getStatusDetails(id).success(function(json){
 		vm.status = json;
 		console.log('status details', vm.status);
+	});
+
+	AnyTimeFunctions.getMapDetails(id).success(function(json){
+		vm.mapDetails = json;
+		console.log('map details', vm.mapDetails);
 	});
 
 	vm.getDemand = function(){
@@ -382,8 +412,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					order.order_no = vm.demandDetails.data.demand[i];
 					i++;
 				}
-				var stage = parseInt(vm.status.data.stage)+1;
-				vm.status.data.stage = stage.toString();
+				if(json.status === "200" || json.status === 200){
+					var stage = parseInt(vm.status.data.stage)+1;
+					vm.status.data.stage = stage.toString();
+				}
 			});
 		}
 
@@ -424,10 +456,19 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		supply = supply.substr(0, supply.length-1);
 
 		console.log('Supply to be sent', supply);
+		console.log('Status before sending', vm.status.data);
 
 
 		TurnStageBasedFunctions.supply(id, supply, vm.status.data.turn, vm.status.data.stage).success(function(json){
-			console.log('Response for supply', json);;
+			console.log('Response for supply', json);
+			if(json.status === "200" || json.status === 200){
+				var stage = parseInt(vm.status.data.stage)+1;
+				vm.status.data.stage = stage.toString();
+			}
+			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
+			vm.factoryDetails = json;
+			console.log('factory details after supplying', vm.factoryDetails);
+			});
 		})
 		
 
@@ -448,23 +489,21 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		TurnStageBasedFunctions.placeOrder(id, vm.order, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			console.log('Response for place order', json);
+			if(json.status === "200" || json.status === 200){
+				var turn = parseInt(vm.status.data.turn) + 1;
+				vm.status.data.turn = turn.toString();
+				vm.status.data.stage = '0';
+			}
+			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
+			vm.factoryDetails = json;
+			console.log('factory details after placing order', vm.factoryDetails);
+			});
 		})
 	}
 
 
 }]);
-// angular.module('starter.filters', []).filter('startFrom', function() {
-// return function(input, start) {
-//     if(input) {
-//         start = +start; //parse to int
-//         appended = input.slice(0,start);
-//         initialArray = input.slice(start);
-//         finalArray= initialArray.concat(appended);
-//         return finalArray;
-//     }
-//     return [];
-// }
-// });
+
 app.filter('startFrom', function() {
     return function(input, start) {
         if(input) {
