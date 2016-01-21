@@ -179,6 +179,7 @@ ANY TIME FUNCTIONS
 1. getStatus
 2. facDetails
 3. map
+4. getPopularity
 '''
 
 @csrf_exempt
@@ -248,7 +249,7 @@ def map(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
 		try:
-			user  = users.objects.get(pk=id)
+			user = users.objects.get(pk=id)
 		except users.DoesNotExist:
 			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
 			user = None
@@ -284,6 +285,32 @@ def map(request):
 			return JsonResponse(json)
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def getPopularity(request):
+	'''
+		Returns popularity of each factory with each retailer.
+	'''
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		# after all verification is done.	
+		if id and user:
+			fid = int(factories.objects.get(pk=user.factory_id).fid)
+			fac_rets = factory_retailer.objects.filter(fid=fid)
+			popularities = dict()
+			for retailer in fac_rets:
+				popularities[str(retailer.rid.rid)] = str(retailer.popularity)
+			return JsonResponse({'status':'200','data':popularities})
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
 
 '''
 TURN & STAGE BASED OPERATIONS

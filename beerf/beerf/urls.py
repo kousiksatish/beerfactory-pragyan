@@ -38,6 +38,6 @@ urlpatterns = [
     url(r'^updateValues$', views.updateValues, name="updateValues"),
     url(r'^placeOrder$', views.placeOrder,name='placeOrder'),
     url(r'^viewDemand$', views.viewDemand, name='viewDemand'),
-    url(r'^viewDemandSupply$', views.viewDemandSupply, name='viewDemandSupply')
-
+    url(r'^viewDemandSupply$', views.viewDemandSupply, name='viewDemandSupply'),
+    url(r'^getPopularity$', views.getPopularity, name='getPopularity'),
 ]
