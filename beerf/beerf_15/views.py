@@ -620,6 +620,8 @@ def placeOrder(request):
 			new_order.save()
 			money.moneyPlaceOrder(factory.fid, quantity, int(turn))
 			inventory.increase(factory.fid, quantity, int(turn))
+			#calculate the order of the simulated factory
+			dummy_algo.calculate_order(factory,int(turn))
 			# move to next stage of the current turn
 			cur_status.turn=turn+1
 			cur_status.stage = 0
