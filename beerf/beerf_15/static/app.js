@@ -2,9 +2,23 @@
 
 (function(){
 
-var app = angular.module('store',[]).config(function($interpolateProvider) {   
+var app = angular.module('store',['toastr', 'ngAnimate']).config(function($interpolateProvider) {   
     $interpolateProvider.startSymbol('{$');
     $interpolateProvider.endSymbol('$}');                      // So that django doesnt get confused
+});	
+
+app.config(function(toastrConfig) {
+  angular.extend(toastrConfig, {
+    autoDismiss: false,
+    containerId: 'toast-container',
+    maxOpened: 0,    
+    newestOnTop: true,
+    positionClass: 'toast-top-right',
+    progressBar: true,
+    preventDuplicates: false,
+    preventOpenDuplicates: false,
+    target: 'body'
+  });
 });
 
 
@@ -197,8 +211,6 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 		placeOrder: placeOrder
 	};
 
-
-
 }]);
 
 
@@ -206,7 +218,7 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
 
 //controller for the data inside tabs
-app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions', '$scope', function(AnyTimeFunctions, TurnStageBasedFunctions, $scope){					
+app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions', '$scope', 'toastr', function(AnyTimeFunctions, TurnStageBasedFunctions, $scope, toastr){					
 
 	var vm = this;
 
@@ -415,6 +427,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				if(json.status === "200" || json.status === 200){
 					var stage = parseInt(vm.status.data.stage)+1;
 					vm.status.data.stage = stage.toString();
+					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
+
 				}
 			});
 		}
@@ -464,6 +478,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			if(json.status === "200" || json.status === 200){
 				var stage = parseInt(vm.status.data.stage)+1;
 				vm.status.data.stage = stage.toString();
+				toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
+
 			}
 			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 			vm.factoryDetails = json;
@@ -493,6 +509,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var turn = parseInt(vm.status.data.turn) + 1;
 				vm.status.data.turn = turn.toString();
 				vm.status.data.stage = '0';
+				toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
+
 			}
 			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 			vm.factoryDetails = json;
