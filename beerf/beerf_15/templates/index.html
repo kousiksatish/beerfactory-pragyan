@@ -1,6 +1,6 @@
 {% load staticfiles %}
 <!-- 
-PROBLEMS: 1)ui-view not working-stage1.html has the content for stage 1 and right_half should contain that page
+PROBLEMS: 1)ui-view not working-stage1.html has the content for stage 1 and right_half should contain that page and stage2.html has content for stage 2
 2) ng-init value not being taken in popup to_no
 3) all the functions to be moved to angular
  -->
@@ -182,8 +182,8 @@ console.log('placeOrderUrl is', placeOrderUrl	);
             </tr>
         </tbody>
     </table>
-    <!-- <button id="send" class="btn btn-default" value = "Send" ng-click="store.send()" onclick="closepopup()">SEND</button>            -->
-    <button id="send" class="btn btn-default" value = "Send" onclick="closepopup()">SEND</button> 
+    <!-- <button id="send" class="btn btn-default" value = "Send" ng-click="store.send()" onclick="send_to_retailers()">SEND</button>            -->
+    <button id="send" class="btn btn-default" value = "Send" onclick="send_to_retailers()">SEND</button> 
 </div>
         <button id="getdemand" class = "btn btn-default" value = "Get Demand" onclick="getDemand()">SHOW DEMAND</button>
 </div>
@@ -215,6 +215,13 @@ function getDemand () {
 }
 function closepopup () {
     demandpopup.style.display="none";
+}
+function send_to_retailers () {
+    var progressbar = document.getElementById('progress-bar');
+    progressbar.style.width = '100%';
+    progressbar.innerHTML = "Stage 2 of 2";
+    demandpopup.style.display="none";
+    //load stage 2
 }
 function confirmorder (x) {
     var $element = $("#right_half");
