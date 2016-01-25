@@ -1,0 +1,60 @@
+ <ul id="demandtabs" class="nav nav-tabs" role="tablist">
+      <li class="active">
+          <a href="#demandtab" role="tab" data-toggle="tab"> DEMAND
+          </a>
+      </li>
+      <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY
+          </a>
+      </li>
+    </ul>
+        <!-- <button class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()" onclick="getDemand()">GET DEMAND</button> -->
+        <!-- <button ui-sref="stage1">Click here!</button> -->
+<div class="tab-content">
+            <div id="demandtab" class="tab-pane fade active in">
+        <div id="selections" class="rightcontent">
+
+            CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND
+             </div>
+<div id="demandpopup">
+    <div class="close" onclick="closepopup()">close</div>
+    <table class="table table-striped" style="width:100%"> 
+        <thead>
+            <tr> 
+                <th> RETAILER </th>
+                <th> ORDER <br> AMOUNT </th>
+                <th> AMOUNT TO <br> DELIVER </th>
+                </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="order in store.products[0].orders track by $index">
+                <td class="col-md-3"> {$order.from$}</td>
+                <td class="col-md-3"> {$order.order_no$}</td>
+                <td class="col-md-3"> <input type="number" class="form-control" ng-model="store.supplyValues[$index]" ng-init="store.supplyValues[$index]={$order.to_no$}" value="{$order.to_no$}" class="col-sm-12">  </input></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- <button id="send" class="btn btn-default" value = "Send" ng-click="store.send()" onclick="send_to_retailers()">SEND</button>            -->
+    <button id="send" class="btn btn-default" value = "Send" onclick="send_to_retailers()">SEND</button> 
+</div>
+        <button id="getdemand" class = "btn btn-default" value = "Get Demand" onclick="getDemand()">SHOW DEMAND</button>
+</div>
+<div id = "historytab" class="tab-pane fade">
+     <table class="table table-striped"> <thead>
+                    <tr> 
+                        <th> DAY </th>
+                        <th> PRODUCED <br> AMOUNT </th>
+                        <th> AMOUNT<br> SOLD </th>
+                        <th> INVENTORY </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="inv in store.products[0].inventory">
+                        <td> {$inv.day$}</td>
+                        <td> {$inv.no_produced$}</td>
+                        <td> {$inv.no_sold$}</td>
+                        <td> {$inv.no_inv$}</td>
+                    </tr>
+                    </tbody>
+                </table>
+</div> 
+</div>

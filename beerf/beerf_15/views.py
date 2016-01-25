@@ -96,7 +96,8 @@ def get_sp_details():
 
 def unlocked_ret(frids, fid):
 	rids = factory_retailer.objects.filter(frid__in = frids).values_list('rid_id', flat = True)
-	unlocked_rids = retailers.objects.filter(rid__in = rids , unlocked = 1).values_list('rid', flat = True)
+	# unlocked_rids = retailers.objects.filter(rid__in = rids , unlocked = 1).values_list('rid', flat = True)
+	unlocked_rids = retailers.objects.filter(rid__in = rids).values_list('rid', flat = True)
 	unlocked_frids = factory_retailer.objects.filter(rid_id__in = unlocked_rids, fid_id = fid).values_list('frid',flat = True)
 	return unlocked_frids
 
@@ -620,6 +621,8 @@ def placeOrder(request):
 			new_order.save()
 			money.moneyPlaceOrder(factory.fid, quantity, int(turn))
 			inventory.increase(factory.fid, quantity, int(turn))
+			#calculate the order of the simulated factory
+			dummy_algo.calculate_order(factory,int(turn))
 			# move to next stage of the current turn
 			cur_status.turn=turn+1
 			cur_status.stage = 0
