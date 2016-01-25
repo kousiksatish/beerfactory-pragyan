@@ -1,4 +1,4 @@
-   // a cross reference of area names to text to be shown for each area
+// a cross reference of area names to text to be shown for each area
     var  xref = {
         fact1: "YOUR FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS",
         // fact2: scope.store.products[0].orders[x.key-1].order_no,

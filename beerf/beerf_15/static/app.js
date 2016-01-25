@@ -37,7 +37,7 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	console.log('id from app.js', id);
 	console.log('factoryDetailsUrl from app.js', factoryDetailsUrl);
 	console.log('getStatusUrl from app.js', getStatusUrl);
-	console.log('mapUrl from app.js', mapUrl);
+	// console.log('mapUrl from app.js', mapUrl);
 
 	getFactoryDetails = function(id) {
 
@@ -61,7 +61,7 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	  					});
 	};
 
-	getMapDetails = function(id) {
+	/*getMapDetails = function(id) {
 
 		return $http({
 	   		 	method: 'POST',
@@ -81,7 +81,7 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	  			.error(function(err) {
 	    					return err;
 	  					});
-	};
+	};*/
 
 	getStatusDetails = function(id){
 
@@ -108,7 +108,7 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	return {
 		getFactoryDetails: getFactoryDetails,
 		getStatusDetails: getStatusDetails,
-		getMapDetails: getMapDetails
+		// getMapDetails: getMapDetails
 	};
 
 }]);
@@ -412,10 +412,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('status details', vm.status);
 	});
 
-	AnyTimeFunctions.getMapDetails(id).success(function(json){
-		vm.mapDetails = json;
-		console.log('map details', vm.mapDetails);
-	});
+	// AnyTimeFunctions.getMapDetails(id).success(function(json){
+	// 	vm.mapDetails = json;
+	// 	console.log('map details', vm.mapDetails);
+	// });
 
 	vm.getDemand = function(){
 
