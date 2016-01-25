@@ -201,3 +201,11 @@ input{
 {
 	bottom:0%;
 }
+#dot
+{
+	position:relative;
+	width:10%;
+	height:10%;
+	background-color: black;
+	z-index: 999;
+}

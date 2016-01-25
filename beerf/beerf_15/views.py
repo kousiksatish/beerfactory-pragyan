@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 from beerf_15 import middleware
 import beerf_15
 from django.utils.decorators import decorator_from_middleware
@@ -180,6 +182,8 @@ ANY TIME FUNCTIONS
 1. getStatus
 2. facDetails
 3. map
+4. getPopularity
+5. restart
 '''
 
 @csrf_exempt
@@ -249,7 +253,7 @@ def map(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
 		try:
-			user  = users.objects.get(pk=id)
+			user = users.objects.get(pk=id)
 		except users.DoesNotExist:
 			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
 			user = None
@@ -283,6 +287,91 @@ def map(request):
 			json["zone"] = zone
 			json["unlocked"] = unlocked
 			return JsonResponse(json)
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def getPopularity(request):
+	'''
+		Returns popularity of each factory with each retailer.
+	'''
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		# after all verification is done.	
+		if id and user:
+			fid = int(factories.objects.get(pk=user.factory_id).fid)
+			fac_rets = factory_retailer.objects.filter(fid=fid)
+			popularities = dict()
+			for retailer in fac_rets:
+				popularities[str(retailer.rid.rid)] = str(retailer.popularity)
+			return JsonResponse({'status':'200','data':popularities})
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def restart(request):
+	'''
+		Restarts the user's game by deleting all his data from the DB.
+		Deletion process(proper order of deleting):
+			* Get pid, and then fid. 
+			* Make factory field=NULL in users model.
+			* For the fid, get the opponent factory fid from factory_factory
+			* Delete the fid from factory_factory model, delete fid, opp_fid from factory model
+			* Delete status of user using pid.
+			* Delete factory orders using fid,opp_fid
+			* Using fid, opp_fid get the factory's retailers' rid,frid in factory_retailer model.
+			* Using frid, delete rows from fac_ret_demand,fac_ret_supply,selling_price models.
+			* Using rid delete retailers in retailers model and in factory_retailer model. 
+			* Using fid,opp_fid, delete factory capacity, money_log, inventory_log
+	'''
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		# after all verification is done.
+		if id and user:
+			fid = user.factory
+			user.factory = None
+			user.save()
+
+			try:
+				opp_fid = factory_factory.objects.get(fac1=fid).fac2
+				factory_factory.objects.get(fac1=fid).delete()
+				factories.objects.get(fid=fid.fid).delete()
+				factories.objects.get(fid=opp_fid.fid).delete()
+			except ObjectDoesNotExist:
+				return JsonResponse({"status":"109", "data":{"description":"User already in a new state!"}}) 
+
+			status.objects.filter(pid=id).delete()
+			fac_rets = factory_retailer.objects.filter(Q(fid=fid)|Q(fid=opp_fid))
+			frids = [ret.frid for ret in fac_rets]
+			rids = [ret.rid for ret in fac_rets]
+			fac_rets.delete()
+
+			for frid in frids:
+				fac_ret_demand.objects.filter(frid=frid).delete()
+				fac_ret_supply.objects.filter(frid=frid).delete()
+				selling_price.objects.filter(frid=frid).delete()
+			for rid in rids:
+				retailers.objects.filter(rid=rid).delete()
+
+			capacity.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
+			money_log.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
+			inventory_log.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
+			
+			return JsonResponse({"status":"200", "data":{"description":"Success!"}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
@@ -532,10 +621,18 @@ def placeOrder(request):
 			new_order.save()
 			money.moneyPlaceOrder(factory.fid, quantity, int(turn))
 			inventory.increase(factory.fid, quantity, int(turn))
+			#calculate the order of the simulated factory
+			dummy_algo.calculate_order(factory,int(turn))
 			# move to next stage of the current turn
 			cur_status.turn=turn+1
 			cur_status.stage = 0
 			cur_status.save()
+
+			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=factory)
+			cap.save()
+			opponent_factory = factory_factory.objects.get(fac1=factory).fac2
+			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=opponent_factory)
+			cap.save()
 
 			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
 		else:
