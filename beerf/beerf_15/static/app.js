@@ -1,3 +1,24 @@
+//{ check turn or stage mismatch 
+
+// (function(){
+
+// var app = angular.module('store',['ui.router', 'ngRoute']).config(['$stateProvider', function($interpolateProvider) {   
+//     $interpolateProvider.startSymbol('{$');
+//     $interpolateProvider.endSymbol('$}');                      // So that django doesnt get confused
+// }, 
+// function ($stateProvider){
+// //states
+// $stateProvider
+// 	.state('stage1',{
+// 		abstract:true,
+// 		views: {
+// 			'rightcontent':{
+// 				template: require("../templates/stage1.html")
+// 			}
+// 	}
+// 	});
+// }]);
+
 // check turn or stage mismatch 
 
 (function(){
@@ -190,6 +211,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		orders: [
 		{	
 			from:"R1",
+			name:"A-name of retailer 1",
 			order_no:100,
 			to_no:0,
 			transport:"none",
@@ -198,6 +220,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		},
 		{	
 			from:"R2",
+			name:"B-name of retailer 2",
 			order_no:150,
 			to_no:0,
 			transport:"none",
@@ -206,6 +229,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		},
 		{	
 			from:"R3",
+			name:"C-name of retailer 3",
 			order_no:200,
 			to_no:0,
 			transport:"none",

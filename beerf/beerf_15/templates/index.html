@@ -1,30 +1,26 @@
 {% load staticfiles %}
+<!-- 
+PROBLEMS: 1)ui-view not working-stage1.html has the content for stage 1 and right_half should contain that page
+2) ng-init value not being taken in popup to_no
+3) all the functions to be moved to angular
+ -->
 <html ng-app="store">
-<title>The Beer Factory</title>
-<head> 
+<head>
+	<title>The Beer Factory</title>
 	<script type="text/javascript" src="{% static "angular/angular.min.js" %}"> </script>
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
 	<link rel="stylesheet" type="text/css" href="{% static "css/left.css" %}" />
 
+	<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script> -->
+	<script src="{% static "js/jquery.min.js" %}"></script>
+	<script src="{% static "js/jquery.imagemapster.js" %}"></script>
+    <script src="{% static "bootstrap-3.3.6-dist/js/bootstrap.min.js" %}"></script>
 
-<script src="{% static "js/jquery.min.js" %}"></script>
-<script src="{% static "js/jquery.imagemapster.js" %}"></script>
-<style>
-#dot
-{
-	position:relative;
-	width:10%;
-	height:10%;
-	background-color: black;
-	z-index: 999;
-}
-
-</style>
+	
 </head>
 <body>
 <!--NAVBAR -->
-<!--navbar-2-->
 <nav class="navbar navbar-default navbar-fixed-top nav-container"  ng-controller="StoreController as store">
   <div class="container-fluid"   ng-repeat="product in store.products">
     <div class="navbar-header col-md-3">
@@ -39,29 +35,36 @@
     </ul>
   </div>
 </nav>
+<!--END OF NAVBAR-->
+
+<div class="progress">
+  <div id="progress-bar" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50"
+  aria-valuemin="0" aria-valuemax="100" style="width:50%; height:2rem;">
+    Stage 1 of 2
+  </div>
+</div>
 
 <!-- LEFTTTT -->
 <div id="main-content">
+
+
 <div id = "map_left">
-
-
-
 
 <div style="width:100%;border:0;background-color:black;"> 
 <!-- <div style="clear: both; width: 500px; height: 50px; border: 1px solid blackth;" id="selections"></div> -->
 <img style="width:100%;border:0;" id="map1" src="{% static "images/map1.gif" %}" alt="map1" usemap="#map1">
-<div id="dot" class="element-animation"></div>
 </div>
 <map name="map1">
     <area alt="" title="fact1" name="fact1" href="#" shape="poly" coords="508,558,138,559,132,547,137,539,145,538,144,467,165,467,164,435,172,429,173,278,180,279,180,267,200,266,200,409,210,408,209,236,230,235,232,218,248,218,250,377,264,372,264,391,279,392,280,310,295,295,297,284,319,280,326,280,327,205,333,205,333,191,368,189,368,203,377,204,376,335,396,335,398,347,409,344,412,266,404,266,407,259,413,258,414,243,431,243,432,257,439,258,440,265,432,266,439,342,458,343,465,350,469,363,469,419,494,419,502,427,503,437,504,534,513,540,518,549,516,556" />
 
     <area alt="" title="fact2" name="fact2" href="#" shape="poly" coords=" " />
-
+<div id = "zone1">
     <area alt="" title="ret1" name="1" href="#" shape="poly" coords="708,726,709,635,688,635,722,581,810,581,810,555,828,555,827,582,852,582,880,635,860,635,860,725" />
     
     <area alt="" title="ret2" name="2" href="#" shape="poly" coords="123,886,122,804,104,803,135,756,216,757,216,731,231,733,231,757,253,755,280,804,261,805,261,885" />
 
     <area alt="" title="ret3" name="3" href="#" shape="poly" coords="926,915,926,836,911,836,940,790,1014,792,1014,769,1028,769,1028,790,1048,792,1072,835,1057,837,1058,913" />
+</div>
 <div id = "zone2">
     <area alt="" title="ret4" name="4" href="#" shape="poly" coords="782,1183,782,1097,764,1096,795,1045,879,1045,878,1019,895,1021,896,1045,920,1045,946,1096,927,1097,926,1182" />
 
@@ -91,11 +94,12 @@
     <area alt="" title="ret15" name="15" href="#" shape="poly" coords="270,3136,276,3121,276,3100,268,3084,265,3078,266,3052,247,3053,276,3002,354,3004,356,2978,370,2978,372,3001,394,3001,420,3052,402,3052,402,3135" />
 </div>
 </map>
+
 {% load staticfiles %}
 <script src="{% static "js/jquery.imagemapster.js" %}"></script>
 <script type="text/javascript" src="{% static "mapp.js" %}"></script>
 </div>
-<script>
+<script type="text/javascript">
 var i1 = document.getElementById("i1");
 var f1 = document.getElementById("f1");
 function fact1()
@@ -143,233 +147,87 @@ console.log('placeOrderUrl is', placeOrderUrl	);
 </script>
 
 <div id="right_half" ng-controller="StoreController as store">
-	<div class="container">
-		<ul class="list-group">
-			<li ng-repeat="product in store.products" > 
-					<section ng-controller="PanelController as panel">
+      <ul id="demandtabs" class="nav nav-tabs" role="tablist">
+      <li class="active">
+          <a href="#demandtab" role="tab" data-toggle="tab"> DEMAND
+          </a>
+      </li>
+      <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY
+          </a>
+      </li>
+    </ul>
+        <!-- <button class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()" onclick="getDemand()">GET DEMAND</button> -->
+        <!-- <button ui-sref="stage1">Click here!</button> -->
+<div class="tab-content">
+            <div id="demandtab" class="tab-pane fade active in">
+        <div id="selections" class="rightcontent">
 
-			<ul class="nav nav-pills">
-				<li ng-class="{active:panel.istab(1)}"> <a href ng-click="panel.settab(1)"> Orders </a> </li>
-				<li ng-class="{active:panel.istab(2)}"> <a href ng-click="panel.settab(2)"> Inventory </a> </li>
-				<li ng-class="{active:panel.istab(3)}"> <a href ng-click="panel.settab(3)"> Backlog </a> </li>
-				<li ng-class="{active:panel.istab(4)}"> <a href ng-click="panel.settab(4)"> BUY NOW! </a> </li>
-			</ul>
-
-			<div class="panel home-tables" ng-show="panel.istab(1)" ng-controller="ZoneController as zone">
-				
-				<ul class="nav nav-pills">
-					<li ng-class="{active:zone.iszone(1)}"> <a href ng-click="zone.setzone(1)"> Zone 1 </a> </li>
-					<li ng-class="{active:zone.iszone(2)}"> <a href ng-click="zone.setzone(2)"> Zone 2 </a> </li>
-					<li ng-class="{active:zone.iszone(3)}"> <a href ng-click="zone.setzone(3)"> Zone 3 </a> </li>
-					<li ng-class="{active:zone.iszone(4)}"> <a href ng-click="zone.setzone(4)"> Zone 4 </a> </li>
-				</ul>
-
-				<!-- ZONE 1 INFO -->
-				<div class="zone" ng-show="zone.iszone(1)">
-				<table class="table" style="width:50%"> <thead>
-
-					<tr> 
-						<th> RETAILER </th>
-						<th> ORDER <br> AMOUNT </th>
-						<th> AMOUNT TO <br> DELIVER </th>
-						<th> TRANSPORT <br> MODE </th>
-
-	 				</tr>
-	 				</thead>
-	 				<tbody>
-
-	 				<tr ng-repeat="order in product.orders track by $index">
-	 					<td class="col-md-1"> {$order.from$}</td>
-	 					<td class="col-md-1"> {$order.order_no$}</td>
-	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-	 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 				</tr>
-	 				</tbody>
-	 			</table>
-	 			<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
-	 			<input type="text" placeholder="Place the order for the next round here!" ng-model="store.order">
-	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">	
-
-	 				</tr>
-	 				</thead>
-	 				
-	 			</table>
-	 			</div>
-
-				<!-- ZONE 2 INFO -->
-				<div class="zone" ng-show="zone.iszone(2)">
-				<table class="table" style="width:50%"> <thead>
-
-					<tr> 
-						<th> RETAILER </th>
-						<th> ORDER <br> AMOUNT </th>
-						<th> AMOUNT TO <br> DELIVER </th>
-						<th> TRANSPORT <br> MODE </th>
-
-	 				</tr>
-	 				</thead>
-	 				<tbody>
-
-	 				<tr ng-repeat="order in product.orders track by $index">
-	 					<td class="col-md-1"> {$order.from$}</td>
-	 					<td class="col-md-1"> {$order.order_no$}</td>
-	 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-	 					<td class="col-md-1"> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 				</tr>
-	 				</tbody>
-	 			</table>
-	 			<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
-	 			<input type="text" placeholder="Place the order for the next round here!" ng-model="store.order">
-	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">	
-
-	 				</tr>
-	 				</thead>
-	 				
-	 			</table>
-	 			</div>
-
-	 			<!-- ZONE 3 INFO -->
-	 			<div class="zone" ng-show="zone.iszone(3)">
-				<table class="table table-bordered table-striped" style="width:50%"> <thead>
-					<tr> 
-						<th> RETAILER </th>
-						<th> ORDER <br> AMOUNT </th>
-						<th> AMOUNT TO <br> DELIVER </th>
-						<th> TRANSPORT <br> MODE </th>
-	 				</tr>
-	 				</thead>
-	 				<tbody>
-	 				<tr ng-repeat="order in product.orders">
-	 					<td> {$order.from$}</td>
-	 					<td> {$order.order_no$}</td>
-	 					<td> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
-	 					<td> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 				</tr>
-	 				</tbody>
-	 			</table>
-
-	 			<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
-	 			<input type="text" placeholder="Place the order for the next round here!" ng-model="store.order">
-	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">	
-
-	 			</div>
-	 			<!-- ZONE 4 INFO -->
-
-	 			<div class="zone" ng-show="zone.iszone(4)">
-				<table class="table table-bordered table-striped" style="width:50%"> <thead>
-					<tr> 
-						<th> RETAILER </th>
-						<th> ORDER <br> AMOUNT </th>
-						<th> AMOUNT TO <br> DELIVER </th>
-						<th> TRANSPORT <br> MODE </th>
-
-
-	 				</tr>
-	 				</thead>
-	 				<tbody>
-	 				<tr ng-repeat="order in product.orders">
-	 					<td> {$order.from$}</td>
-	 					<td> {$order.order_no$}</td>
-	 					<td> <input type="number" value="{$order.to_no$}" class="col-sm-12">  </input></td>
-	 					<td> <input type="text" value="{$order.transport$}" class="col-sm-12">  </input></td>
-	 				</tr>
-	 				</tbody>
-	 			</table>
-
-	 			<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
-	 			<input type="text" placeholder="Place the order for the next round here!" ng-model="store.order">
-	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">	
-
-	 			</div>
-	 			<!-- END OF ZONE INFO -->
-			</div>
-			<div class="panel home-tables" ng-show="panel.istab(2)">
-				<table class="table" style="width:50%"> <thead>
-					<tr> 
-						<th> DAY </th>
-						<th> PRODUCED <br> AMOUNT </th>
-						<th> AMOUNT<br> SOLD </th>
-						<th> INVENTORY </th>
-	 				</tr>
-	 				</thead>
-	 				<tbody>
-	 				<tr ng-repeat="inv in product.inventory">
-	 					<td> {$inv.day$}</td>
-	 					<td> {$inv.no_produced$}</td>
-	 					<td> {$inv.no_sold$}</td>
-	 					<td> {$inv.no_inv$}</td>
-	 				</tr>
-	 				</tbody>
-	 			</table>
-			</div>
-			<div class="panel home-tables" ng-show="panel.istab(3)">
-				<table class="table" style="width:50%"> <thead>
-					<tr > 
-						<th> DAY </th>
-						<th> PRODUCED<br> AMOUNT </th>
-						<th> AMOUNT<br> ORDERED </th>
-						<th> AMOUNT <br>SENT </th>
-						<th> BACKLOG <br>AMOUNT </th>
-	 				</tr>
-	 				</thead>
-	 				<tbody>
-	 				<tr ng-repeat="backlog in product.backlog">
-	 					<td> {$backlog.day$}</td>
-	 					<td> {$backlog.no_produced$}</td>
-	 					<td> {$backlog.no_ord$}</td>
-	 					<td> {$backlog.no_to$}</td>
-	 					<td> {$backlog.no_back$}</td>
-	 				</tr>
-	 				</tbody>
-	 			</table>
-			</div>
-			<div class="panel home-tables" ng-show="panel.istab(4)">
-			</div>
-		</section>
-			</li>
-		</ul>
-	</div>
-
-	<div class="container">
-		<h3> Factory details </h3>
-		<table class = "table home-tables table-responsive" style="width:50%">
-			
-			<tr>
-				<th> </th>
-				<th> Factory Code </th>
-				<th> Money </th>
-				<th> Capacity </th>
-				<th> Inventory </th>
-
-			</tr>
-
-			<tr>
-				<td> Factory 1 </td>
-				<td> {$ store.factoryDetails.data.factory_1.fcode $} </td>
-				<td> {$ store.factoryDetails.data.factory_1.money $} </td>
-				<td> {$ store.factoryDetails.data.factory_1.capacity $} </td>
-				<td> {$ store.factoryDetails.data.factory_1.inventory $} </td>
-
-			</tr>
-
-			<tr>
-				<td> Factory 2 </td>
-				<td> {$ store.factoryDetails.data.factory_2.fcode $} </td>
-				<td> {$ store.factoryDetails.data.factory_2.money $} </td>
-				<td> {$ store.factoryDetails.data.factory_2.capacity $} </td>
-				<td> {$ store.factoryDetails.data.factory_2.inventory $} </td>
-			</tr>
-
-		</table>
-	</div>
-
-
-	<div class="container">
-		<input type = "button" class = "button" value = "Get Demand" ng-click = "store.getDemand()">
-	</div>
-
+            CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND
+             </div>
+<div id="demandpopup">
+    <div class="close" onclick="closepopup()">close</div>
+    <table class="table table-striped" style="width:100%"> 
+        <thead>
+            <tr> 
+                <th> RETAILER </th>
+                <th> ORDER <br> AMOUNT </th>
+                <th> AMOUNT TO <br> DELIVER </th>
+                </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="order in store.products[0].orders track by $index">
+                <td class="col-md-3"> {$order.from$}</td>
+                <td class="col-md-3"> {$order.order_no$}</td>
+                <td class="col-md-3"> <input type="number" class="form-control" ng-model="store.supplyValues[$index]" ng-init="store.supplyValues[$index]={$order.to_no$}" value="{$order.to_no$}" class="col-sm-12">  </input></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- <button id="send" class="btn btn-default" value = "Send" ng-click="store.send()" onclick="closepopup()">SEND</button>            -->
+    <button id="send" class="btn btn-default" value = "Send" onclick="closepopup()">SEND</button> 
+</div>
+        <button id="getdemand" class = "btn btn-default" value = "Get Demand" onclick="getDemand()">SHOW DEMAND</button>
+</div>
+<div id = "historytab" class="tab-pane fade">
+     <table class="table table-striped"> <thead>
+                    <tr> 
+                        <th> DAY </th>
+                        <th> PRODUCED <br> AMOUNT </th>
+                        <th> AMOUNT<br> SOLD </th>
+                        <th> INVENTORY </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="inv in store.products[0].inventory">
+                        <td> {$inv.day$}</td>
+                        <td> {$inv.no_produced$}</td>
+                        <td> {$inv.no_sold$}</td>
+                        <td> {$inv.no_inv$}</td>
+                    </tr>
+                    </tbody>
+                </table>
+</div> 
 </div>
 </div>
-	<script type="text/javascript" src="{% static "app.js" %}"> </script>
-	</body>
+<script type="text/javascript">
+var demandpopup = document.getElementById('demandpopup');
+function getDemand () {
+    demandpopup.style.display="block";
+}
+function closepopup () {
+    demandpopup.style.display="none";
+}
+function confirmorder (x) {
+    var $element = $("#right_half");
+    var scope = angular.element($element).scope();
+    var ret = scope.store.products[0].orders[x-1];
+    var tono = $("#tono").val();
+    ret.to_no = tono;
+    for(i=0;i<3;i++){
+        ret = scope.store.products[0].orders[i];
+        console.log("tonooo",i,ret.to_no);
+    }
+}
+</script>
+<script type="text/javascript" src="{% static "app.js" %}"> </script>
+</body>
 </html>

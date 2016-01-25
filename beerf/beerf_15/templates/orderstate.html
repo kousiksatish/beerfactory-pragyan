@@ -1,0 +1,44 @@
+<div class="panel home-tables" ng-show="panel.istab(2)">
+				<table class="table" style="width:50%"> <thead>
+					<tr> 
+						<th> DAY </th>
+						<th> PRODUCED <br> AMOUNT </th>
+						<th> AMOUNT<br> SOLD </th>
+						<th> INVENTORY </th>
+	 				</tr>
+	 				</thead>
+	 				<tbody>
+	 				<tr ng-repeat="inv in product.inventory">
+	 					<td> {$inv.day$}</td>
+	 					<td> {$inv.no_produced$}</td>
+	 					<td> {$inv.no_sold$}</td>
+	 					<td> {$inv.no_inv$}</td>
+	 				</tr>
+	 				</tbody>
+	 			</table>
+			</div>
+			<div class="panel home-tables" ng-show="panel.istab(3)">
+				<table class="table" style="width:50%"> <thead>
+					<tr > 
+						<th> DAY </th>
+						<th> PRODUCED<br> AMOUNT </th>
+						<th> AMOUNT<br> ORDERED </th>
+						<th> AMOUNT <br>SENT </th>
+						<th> BACKLOG <br>AMOUNT </th>
+	 				</tr>
+	 				</thead>
+	 				<tbody>
+	 				<tr ng-repeat="backlog in product.backlog">
+	 					<td> {$backlog.day$}</td>
+	 					<td> {$backlog.no_produced$}</td>
+	 					<td> {$backlog.no_ord$}</td>
+	 					<td> {$backlog.no_to$}</td>
+	 					<td> {$backlog.no_back$}</td>
+	 				</tr>
+	 				</tbody>
+	 			</table>
+	 				<input type="text" placeholder="Place the order for the next round here!" ng-model="store.order">
+	 			<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">
+			</div>
+
+	 		

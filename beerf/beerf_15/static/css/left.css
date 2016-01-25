@@ -15,9 +15,13 @@
 .top-info li{
 	float: left;
 }
+#progress-bar{
+	position: absolute;
+	top:5rem;
+}
 #main-content{
 	position: absolute;
-	top:5.5rem;
+	top:7.2rem;
 	width: 100%;
 }
 #map_left
@@ -32,8 +36,80 @@
 	position:fixed;
 	left:40%;
 	width:50%;
-	overflow: hidden;
-	
+	height: 90%;
+	border: 1px solid black;
+	overflow-y: auto;
+	font-size: 2rem;
+	line-height: 3.5rem;
+
+}
+.btn.btn-default{
+	font-size: 2rem;
+	line-height: 3.5rem;
+	margin-top: 1rem;
+}
+input{
+	padding: 0.5rem;
+}
+#demandtabs>li{
+	width: 50%;
+}
+#historytab>table{
+	margin-left:5%; 
+	width: 90%;
+	font-size: 2rem;
+	line-height: 3.5rem;
+}
+#selections{
+	border: 1px solid black;
+	height: 60%;
+	position: relative;
+	left: 2.5%;
+	top:2%;
+	width: 95%;
+	padding: 1rem;
+	overflow: auto;
+}
+#getdemand{
+	position: absolute;
+	bottom: 5%;
+	left: 10%;
+	width: 20%;
+	font-size: 2rem;
+}
+.container{
+    width: 70%;
+}
+#demandpopup{
+    display: none;
+    width: 70%;
+    position: absolute;
+    left:15%;
+    top:10%;
+    box-shadow: 0 0 2.5rem -0.5rem  black;
+    text-align: center;
+    font-size: 2rem;
+    background-color: white;
+}
+
+#send{
+    margin: 1rem;
+}
+#ordertabs li{
+	width: 50%;
+}
+#ordertab{
+	padding: 1rem;
+	border: 1px solid black;
+	width: 95%;
+	margin: 1% 0 0 2.5%;
+}
+#ordertab table{
+	font-size: 2rem;
+	line-height: 4.5rem;
+}
+#ordertab td{
+	width: 62%;
 }
 .home-tables{
 	background-color: #fff;
