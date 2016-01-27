@@ -28,8 +28,8 @@
 	   		  <li class="col-md-2"> DAY: {$ store.status.data.turn $} </li>
 	   		  <li class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
 			  <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
-			  <li class="col-md-2">MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
-			  <li class="col-md-2">Hi {{ name }}</li>	
+			  <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
+			  <li class="col-md-2"> Hi {{ name }}</li>	
 	   		</ul>
 		</div>
 	</nav>
@@ -39,7 +39,6 @@
 		<div id = "map_left">
 			<div style="width:100%;border:0;background-color:black;"> 
 				<img style="width:100%;border:0;" id="map1" src="{% static "images/map1.gif" %}" alt="map1" usemap="#map1">
-				<div id="dot" class="element-animation"></div>
 			</div>
 		
 			<map name="map1">
@@ -109,6 +108,7 @@
 									<li ng-class="{active:zone.iszone(2)}"> <a href ng-click="zone.setzone(2)"> Zone 2 </a> </li>
 									<li ng-class="{active:zone.iszone(3)}"> <a href ng-click="zone.setzone(3)"> Zone 3 </a> </li>
 									<li ng-class="{active:zone.iszone(4)}"> <a href ng-click="zone.setzone(4)"> Zone 4 </a> </li>
+									<li ng-class="{active:zone.iszone(5)}"> <a href ng-click="zone.setzone(5)"> Zone 5 </a> </li>
 								</ul>
 
 								<br><br>
@@ -124,10 +124,10 @@
 						 				</thead>
 
 						 				<tbody>
-						 				<tr ng-repeat="order in product.orders track by $index">
-						 					<td class="col-md-1"> {$order.from$}</td>
-						 					<td class="col-md-1"> {$order.order_no$}</td>
-						 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+						 				<tr ng-repeat="order in product.orders" ng-if="$index>=0 && $index<=2">
+							 					<td class="col-md-1"> {$order.from$} </td>
+							 					<td class="col-md-1"> {$order.order_no$}</td>
+							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
 						 				</tr>
 						 				</tbody>
 						 			</table>	
@@ -145,10 +145,10 @@
 						 				</thead>
 
 						 				<tbody>
-						 				<tr ng-repeat="order in product.orders track by $index">
-						 					<td class="col-md-1"> {$order.from$}</td>
-						 					<td class="col-md-1"> {$order.order_no$}</td>
-						 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+						 				<tr ng-repeat="order in product.orders" ng-if="$index>=3 && $index<=5">
+												<td class="col-md-1"> {$order.from$}</td>
+							 					<td class="col-md-1"> {$order.order_no$}</td>
+							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
 						 				</tr>
 						 				</tbody>
 						 			</table>
@@ -166,10 +166,10 @@
 						 				</thead>
 
 						 				<tbody>
-						 				<tr ng-repeat="order in product.orders track by $index">
-						 					<td class="col-md-1"> {$order.from$}</td>
-						 					<td class="col-md-1"> {$order.order_no$}</td>
-						 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+						 				<tr ng-repeat="order in product.orders" ng-if="$index>=6 && $index<=8">
+							 					<td class="col-md-1"> {$order.from$}</td>
+							 					<td class="col-md-1"> {$order.order_no$}</td>
+							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
 						 				</tr>
 						 				</tbody>
 						 			</table>
@@ -187,10 +187,31 @@
 						 				</thead>
 
 						 				<tbody>
-						 				<tr ng-repeat="order in product.orders track by $index">
-						 					<td class="col-md-1"> {$order.from$}</td>
-						 					<td class="col-md-1"> {$order.order_no$}</td>
-						 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+						 				<tr ng-repeat="order in product.orders" ng-if="$index>=9 && $index<=11">
+							 					<td class="col-md-1"> {$order.from$}</td>
+							 					<td class="col-md-1"> {$order.order_no$}</td>
+							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+						 				</tr>
+						 				</tbody>
+						 			</table>
+					 			</div>
+
+					 			<!-- ZONE 5 INFO -->
+					 			<div class="zone" ng-show="zone.iszone(5)">
+									<table class="table table-bordered table-striped" style="width:90%">
+										<thead>
+											<tr> 
+												<th><center> RETAILER </center></th>
+												<th><center> ORDERS </center></th>
+												<th><center> DELIVER </center></th>
+							 				</tr>
+						 				</thead>
+
+						 				<tbody>
+						 				<tr ng-repeat="order in product.orders" ng-if="$index>=12 && $index<=14">
+							 					<td class="col-md-1"> {$order.from$}</td>
+							 					<td class="col-md-1"> {$order.order_no$}</td>
+							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
 						 				</tr>
 						 				</tbody>
 						 			</table>
@@ -212,7 +233,7 @@
 				</ul>
 			</div>
 
-			<div class="container">
+			<!-- <div class="container">
 				<h3> Factory details </h3>
 				<table class = "table home-tables table-responsive" style="width:50%">
 					<tr>
@@ -239,7 +260,7 @@
 						<td> {$ store.factoryDetails.data.factory_2.inventory $} </td>
 					</tr>
 				</table>
-			</div>
+			</div> -->
 
 
 			<div class="container">

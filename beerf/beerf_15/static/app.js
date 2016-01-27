@@ -230,7 +230,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			to_no:0,
 			transport:"none",
 			zone:1
-
 		},
 		{	
 			from:"R2",
@@ -238,7 +237,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			to_no:0,
 			transport:"none",
 			zone:1
-
 		},
 		{	
 			from:"R3",
@@ -246,103 +244,92 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			to_no:0,
 			transport:"none",
 			zone:1
+		},
+		{	
+			from:"R4",
+			order_no:100,
+			to_no:0,
+			transport:"none",
+			zone:2
+		},
+		{	
+			from:"R5",
+			order_no:150,
+			to_no:0,
+			transport:"none",
+			zone:2
+		},
+		{	
+			from:"R6",
+			order_no:200,
+			to_no:0,
+			transport:"none",
+			zone:2
+		},
+		{	
+			from:"R7",
+			order_no:100,
+			to_no:0,
+			transport:"none",
+			zone:3
+		},
+		{	
+			from:"R8",
+			order_no:150,
+			to_no:0,
+			transport:"none",
+			zone:3
+		},
+		{	
+			from:"R9",
+			order_no:200,
+			to_no:0,
+			transport:"none",
+			zone:3
+		},
+		{	
+			from:"R10",
+			order_no:100,
+			to_no:0,
+			transport:"none",
+			zone:4
 
+		},
+		{	
+			from:"R11",
+			order_no:150,
+			to_no:0,
+			transport:"none",
+			zone:4
+		},
+		{	
+			from:"R12",
+			order_no:200,
+			to_no:0,
+			transport:"none",
+			zone:4
+		},
+		{	
+			from:"R13",
+			order_no:100,
+			to_no:0,
+			transport:"none",
+			zone:5
+		},
+		{	
+			from:"R14",
+			order_no:150,
+			to_no:0,
+			transport:"none",
+			zone:5
+		},
+		{	
+			from:"R15",
+			order_no:200,
+			to_no:0,
+			transport:"none",
+			zone:5
 		}],
-
-		// ,{	
-		// 	from:"R4",
-		// 	order_no:100,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:2
-
-		// },
-		// {	
-		// 	from:"R5",
-		// 	order_no:150,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:2
-
-		// },
-		// {	
-		// 	from:"R6",
-		// 	order_no:200,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:2
-
-		// },{	
-		// 	from:"R7",
-		// 	order_no:100,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:3
-
-		// },
-		// {	
-		// 	from:"R8",
-		// 	order_no:150,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:3
-
-		// },
-		// {	
-		// 	from:"R9",
-		// 	order_no:200,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:3
-
-		// },{	
-		// 	from:"R10",
-		// 	order_no:100,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:4
-
-		// },
-		// {	
-		// 	from:"R11",
-		// 	order_no:150,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:4
-
-		// },
-		// {	
-		// 	from:"R12",
-		// 	order_no:200,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:4
-
-		// },{	
-		// 	from:"R13",
-		// 	order_no:100,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:5
-
-		// },
-		// {	
-		// 	from:"R14",
-		// 	order_no:150,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:5
-
-		// },
-		// {	
-		// 	from:"R15",
-		// 	order_no:200,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:5
-
-		// }
-		// ],
 
 		inventory: [
 		{
