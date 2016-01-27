@@ -594,7 +594,6 @@ def placeOrder(request):
 		except users.DoesNotExist:
 			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
 			user = None
-
 		# after user verification is done
 		if id and user:
 			cur_status = status.objects.get(pid = id)
@@ -602,7 +601,6 @@ def placeOrder(request):
 			stage = int(cur_status.stage) 					# stage number as stored in DB
 			if stage != 2:									# current stage should be == 1
 				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
-
 			try:
 				quantity1 = request.POST['quantity']
 				if not(quantity1.isdigit()):
@@ -610,11 +608,9 @@ def placeOrder(request):
 				quantity = int(quantity1)
 				valid_turn_and_stage = (turn == int(request.POST['turn']) and stage == int(request.POST['stage']))
 			except KeyError:
-				return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
-
+				return JsonResponse({"status":"104","data":{"description":"Invalid request parameters. user_id,turn,stage,quantity should be provided."}})
 			if not valid_turn_and_stage:
 				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
-
 			factory = user.factory
 			cur_capacity = int(capacity.objects.get(fid=factory,turn=turn).capacity)
 			if quantity > cur_capacity:
@@ -628,18 +624,12 @@ def placeOrder(request):
 			cur_status.turn=turn+1
 			cur_status.stage = 0
 			cur_status.save()
-
 			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=factory)
 			cap.save()
 			opponent_factory = factory_factory.objects.get(fac1=factory).fac2
 			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=opponent_factory)
 			cap.save()
-
 			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
-		else:
-			return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
-	else:
-		return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
 
 	
 @csrf_exempt
