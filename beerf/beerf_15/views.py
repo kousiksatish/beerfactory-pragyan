@@ -151,6 +151,9 @@ def assign(request):
 			#link the factory with the user
 			user.factory = fac1
 			user.save()
+			#initialise status table (stage=0, turn=1)
+			stat = status(pid = user, turn = 1, stage = 0)
+			stat.save()
 			#create user's opponent factory with money=10000
 			fac2 = factories(money = get_initial_money(), inventory = get_initial_inventory())
 			fac2.save()
