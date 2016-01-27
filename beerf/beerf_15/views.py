@@ -461,11 +461,12 @@ def viewDemand(request):
 				else:
 					factory = user.factory
 					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
+					unlocked_frids = unlocked_ret(frids, user.factory_id)
 					json={}
 					json["status"] = 200
 					data={}
 					demand = []
-					for frid in frids:
+					for frid in unlocked_frids:
 						fac_ret = factory_retailer.objects.get(pk=frid)
 						fr_demand = fac_ret_demand.objects.get(frid=fac_ret, turn=turn)
 						demand.append(fr_demand.quantity)
