@@ -1,11 +1,4 @@
-// a cross reference of area names to text to be shown for each area
-    var  xref = {
-        fact1: "YOUR FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS",
-        // fact2: scope.store.products[0].orders[x.key-1].order_no,
-        // 1: scope.store.products[0].orders[x.key-1].order_no,
-        // 2: scope.store.products[0].orders[x.key-1].order_no
-    };
-    var path='static/images/map1.gif' ;
+var path='static/images/map1.gif' ;
 
 
 
@@ -168,17 +161,14 @@ singleSelect: false,
                }],    
         onMouseover: function(x) {
             if(x.key<4){
-        var $element = $('#right_half');
+        var $element = $('#main-content');
         var scope = angular.element($element).scope();
         var ret = scope.store.products[0].orders[x.key-1];
         hovered = ret.name+"<br>POPULARITY<br>DEMAND:"+ret.order_no;
-        // xref[x.key] = "<table><tr><th>NAME</th><th>DEMAND</th></tr><tr><td>"+scope.store.products[0].orders[x.key-1].from+"</td><td>"+scope.store.products[0].orders[x.key-1].order_no+"</td></tr></table>";
-        xref[x.key] = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+x.key+")'>CONFIRM</button>";
-    }
+        }
         else if(x.key<15){
             hovered = "KEEP PLAYING TO UNLOCK!"
-            xref[x.key] = "RETAILER "+x.key+" NOT UNLOCKED YET!<br>KEEP PLAYING TO UNLOCK THEM!<br>";
-        }
+            }
         else if(x.key=='fact1'){
             hovered = "FACTORY 1";
         }
@@ -190,21 +180,11 @@ singleSelect: false,
                 areas: [{
                     key: x.key,
                     toolTip: hovered,
-                    
-                    // toolTip: x.key
                     }]
                 });
         },
         showToolTip: true,
         toolTipClose: ["tooltip-click", "area-click"],
-
-        onClick:function (e) {
-            $('#selections').html(xref[e.key]);
-            
-           
-
-            
-        }
 });
 
 
