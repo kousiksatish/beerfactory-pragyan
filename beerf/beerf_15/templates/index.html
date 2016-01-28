@@ -1,8 +1,6 @@
 {% load staticfiles %}
 <!-- 
-PROBLEMS: 1)ui-view not working-stage1.html has the content for stage 1 and right_half should contain that page and stage2.html has content for stage 2
-2) ng-init value not being taken in popup to_no
-3) all the functions to be moved to angular
+PROBLEMS: 1)confirm order
  -->
 <html ng-app="store">
 <head>
@@ -160,7 +158,7 @@ console.log('mapUrl is', mapUrl );
             CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND
              </div>
 <div id="demandpopup">
-    <div class="close" onclick="closepopup()">close</div>
+    <div class="close" ng-click="store.closepopup()">close</div>
     <table class="table table-striped" style="width:100%"> 
         <thead>
             <tr> 
@@ -267,22 +265,6 @@ console.log('mapUrl is', mapUrl );
 </div>
 </div>
 </div>
-<script type="text/javascript">
-function closepopup () {
-    demandpopup.style.display="none";
-}
-function confirmorder (x) {
-    var $element = $("#right_half");
-    var scope = angular.element($element).scope();
-    var ret = scope.store.products[0].orders[x-1];
-    var tono = $("#tono").val();
-    ret.to_no = tono;
-    for(i=0;i<3;i++){
-        ret = scope.store.products[0].orders[i];
-        console.log("tonooo",i,ret.to_no);
-    }
-}
-</script>
 <script type="text/javascript" src="{% static "app.js" %}"> </script>
 </body>
 </html>

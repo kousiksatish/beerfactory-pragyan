@@ -538,7 +538,7 @@ var progressbar = angular.element('progress-bar');
 			console.log('EEEE',e);
 		var xref='';
 		var ret = vm.products[0].orders[e-1]
-        xref = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
+        xref = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' ng-click='store.confirmorder("+e+")'>CONFIRM</button>";
 		angular.element(document.getElementById('selections'))[0].innerHTML=xref;
 		}
 		else if(e>=4){
@@ -554,6 +554,19 @@ var progressbar = angular.element('progress-bar');
 
 		}
 	}
+	vm.closepopup = function() {
+    var d = angular.element(document.getElementById('demandpopup'))[0].style.display="none";
+}
+	vm.confirmorder = function(x) {
+	console.log('IN CONFIRM ORDER');
+    var ret = vm.store.products[0].orders[x-1];
+    var tono = angular.element("tono").val();
+    ret.to_no = tono;
+    for(i=0;i<3;i++){
+        ret = scope.store.products[0].orders[i];
+        console.log("tonooo",i,ret.to_no);
+    }
+}
 }]);
 
 app.filter('startFrom', function() {
