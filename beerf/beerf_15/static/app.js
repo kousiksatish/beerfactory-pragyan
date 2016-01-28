@@ -61,7 +61,7 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	  					});
 	};
 
-	/*getMapDetails = function(id) {
+	getMapDetails = function(id) {
 
 		return $http({
 	   		 	method: 'POST',
@@ -81,7 +81,7 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	  			.error(function(err) {
 	    					return err;
 	  					});
-	};*/
+	};
 
 	getStatusDetails = function(id){
 
@@ -108,7 +108,7 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	return {
 		getFactoryDetails: getFactoryDetails,
 		getStatusDetails: getStatusDetails,
-		// getMapDetails: getMapDetails
+		getMapDetails: getMapDetails
 	};
 
 }]);
@@ -259,102 +259,103 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			transport:"none",
 			zone:1
 
-		}],
+		}
+		,{	
+			from:"R4",
+			order_no:100,
+			to_no:0,
+			transport:"none",
+			zone:2
 
-		// ,{	
-		// 	from:"R4",
-		// 	order_no:100,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:2
+		},
+		{	
+			from:"R5",
+			order_no:150,
+			to_no:0,
+			transport:"none",
+			zone:2
 
-		// },
-		// {	
-		// 	from:"R5",
-		// 	order_no:150,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:2
+		},
+		{	
+			from:"R6",
+			order_no:200,
+			to_no:0,
+			transport:"none",
+			zone:2
 
-		// },
-		// {	
-		// 	from:"R6",
-		// 	order_no:200,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:2
+		},
+		{	
+			from:"R7",
+			order_no:100,
+			to_no:0,
+			transport:"none",
+			zone:3
 
-		// },{	
-		// 	from:"R7",
-		// 	order_no:100,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:3
+		},
+		{	
+			from:"R8",
+			order_no:150,
+			to_no:0,
+			transport:"none",
+			zone:3
 
-		// },
-		// {	
-		// 	from:"R8",
-		// 	order_no:150,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:3
+		},
+		{	
+			from:"R9",
+			order_no:200,
+			to_no:0,
+			transport:"none",
+			zone:3
 
-		// },
-		// {	
-		// 	from:"R9",
-		// 	order_no:200,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:3
+		},{	
+			from:"R10",
+			order_no:100,
+			to_no:0,
+			transport:"none",
+			zone:4
 
-		// },{	
-		// 	from:"R10",
-		// 	order_no:100,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:4
+		},
+		{	
+			from:"R11",
+			order_no:150,
+			to_no:0,
+			transport:"none",
+			zone:4
 
-		// },
-		// {	
-		// 	from:"R11",
-		// 	order_no:150,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:4
+		},
+		{	
+			from:"R12",
+			order_no:200,
+			to_no:0,
+			transport:"none",
+			zone:4
 
-		// },
-		// {	
-		// 	from:"R12",
-		// 	order_no:200,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:4
+		},
+		{	
+			from:"R13",
+			order_no:100,
+			to_no:0,
+			transport:"none",
+			zone:5
 
-		// },{	
-		// 	from:"R13",
-		// 	order_no:100,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:5
+		},
+		{	
+			from:"R14",
+			order_no:150,
+			to_no:0,
+			transport:"none",
+			zone:5
 
-		// },
-		// {	
-		// 	from:"R14",
-		// 	order_no:150,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:5
+		},
+		{	
+			from:"R15",
+			order_no:200,
+			to_no:0,
+			transport:"none",
+			zone:5
 
-		// },
-		// {	
-		// 	from:"R15",
-		// 	order_no:200,
-		// 	to_no:0,
-		// 	transport:"none",
-		// 	zone:5
-
-		// }
-		// ],
+		}
+		],
 
 		inventory: [
 		{
@@ -412,10 +413,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('status details', vm.status);
 	});
 
-	// AnyTimeFunctions.getMapDetails(id).success(function(json){
-	// 	vm.mapDetails = json;
-	// 	console.log('map details', vm.mapDetails);
-	// });
+	AnyTimeFunctions.getMapDetails(id).success(function(json){
+		vm.mapDetails = json;
+		console.log('map details', vm.mapDetails);
+	});
 
 	vm.getDemand = function(){
 
@@ -450,12 +451,15 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			vm.demandDetails = json;
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
-
+var x = angular.element(demandpopup);
+					x.css('display','block');
+					console.log("DEMAND POPUP",x);
 				var i=0;
 				for(var order of vm.products[0].orders){
 					order.order_no = vm.demandDetails.data.demand[i];
 					i++;
 				}
+	    		// angular.element('demandpopup').style.display="block";
 			});
 		}
 
@@ -481,7 +485,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		console.log('Supply to be sent', supply);
 		console.log('Status before sending', vm.status.data);
-
+var progressbar = angular.element('progress-bar');
+    progressbar.css('width','100%');
+    progressbar.html() = "Stage 2 of 2";
+    angular.element('demandpopup').css('display','none');
 
 		TurnStageBasedFunctions.supply(id, supply, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			console.log('Response for supply', json);
@@ -525,7 +532,41 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		})
 	}
 
+	vm.mapclicked = function(e){
+		console.log('MAP CLICKED ',e);
+		if(e>0&&e<4){
+			console.log('EEEE',e);
+		var xref='';
+		var ret = vm.products[0].orders[e-1]
+        xref = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' ng-click='store.confirmorder("+e+")'>CONFIRM</button>";
+		angular.element(document.getElementById('selections'))[0].innerHTML=xref;
+		}
+		else if(e>=4){
+			var xref="RETAILER "+e+" NOT UNLOCKED YET!<br>KEEP PLAYING TO UNLOCK THEM!<br>";
+			angular.element(document.getElementById('selections'))[0].innerHTML=xref;
 
+		}
+		else if(e==-1){
+			angular.element(document.getElementById('selections'))[0].innerHTML="YOUR FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS"
+		}
+		else if(e==-2){
+			angular.element(document.getElementById('selections'))[0].innerHTML="OPPONENET'S FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS"
+
+		}
+	}
+	vm.closepopup = function() {
+    var d = angular.element(document.getElementById('demandpopup'))[0].style.display="none";
+}
+	vm.confirmorder = function(x) {
+	console.log('IN CONFIRM ORDER');
+    var ret = vm.store.products[0].orders[x-1];
+    var tono = angular.element("tono").val();
+    ret.to_no = tono;
+    for(i=0;i<3;i++){
+        ret = scope.store.products[0].orders[i];
+        console.log("tonooo",i,ret.to_no);
+    }
+}
 }]);
 
 app.filter('startFrom', function() {
