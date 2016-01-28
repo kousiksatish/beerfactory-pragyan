@@ -1,5 +1,6 @@
 from django.db import models
 from django.forms import ModelForm
+from django import forms
 import uuid
 from django.utils.encoding import python_2_unicode_compatible
 # Create your models here.
@@ -83,8 +84,11 @@ class factory_factory(models.Model):
 	fac1 = models.ForeignKey(factories, related_name="his_factory")
 	fac2 = models.ForeignKey(factories, related_name="opponent")
 	def __str__(self):
-		return str(self.mid) + " ( Factory-id: " + self.fac1 + " - OppFactory-id: "+self.fac2+")"
-
+		return '{mid} ( Factory-id: {fac1} - OppFactory-id: {fac2})'.format(
+												mid=str(self.mid),
+												fac1=str(self.fac1),
+												fac2=str(self.fac2)
+												)
 class money_log(models.Model):
 	mlid = models.AutoField(primary_key=True)
 	turn = models.IntegerField()
@@ -101,7 +105,9 @@ class userForm(ModelForm):
     class Meta:
         model = users
         fields = ['name', 'email']
-
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'myfieldclass'}),
+        }
 class userLoginForm(ModelForm):
 	class Meta:
 		model = users
