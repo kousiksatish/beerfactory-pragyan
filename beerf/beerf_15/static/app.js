@@ -222,6 +222,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	var vm = this;
 
+	//object which is used for all front-end purposes
 	vm.products = [{
 		orders: [
 		{	

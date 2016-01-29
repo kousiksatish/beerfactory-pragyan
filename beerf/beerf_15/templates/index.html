@@ -137,7 +137,7 @@
 
 								<!-- ZONE 2 INFO -->
 								<div class="zone" ng-show="zone.iszone(2)">
-									<!--gets unlocked only after turn 5-->
+									<!--gets unlocked only after turn 2-->
 									<div ng-show="store.level>=2">
 										<div ng-show="store.status.data.stage=='1'">
 											<table class="table table-bordered table-striped" style="width:90%">
@@ -168,6 +168,7 @@
 
 					 			<!-- ZONE 3 INFO -->
 					 			<div class="zone" ng-show="zone.iszone(3)">
+									<!--gets unlocked only after turn 3-->
 					 				<div ng-show="store.level>=3">
 										<div ng-show="store.status.data.stage=='1'">
 											<table class="table table-bordered table-striped" style="width:90%">
@@ -197,6 +198,7 @@
 			 					
 			 					<!-- ZONE 4 INFO -->
 					 			<div class="zone" ng-show="zone.iszone(4)">
+									<!--gets unlocked only after turn 4-->
 					 				<div ng-show="store.level>=4">
 										<div ng-show="store.status.data.stage=='1'">
 											<table class="table table-bordered table-striped" style="width:90%">
@@ -226,6 +228,7 @@
 
 					 			<!-- ZONE 5 INFO -->
 					 			<div class="zone" ng-show="zone.iszone(5)">
+									<!--gets unlocked only after turn 5-->
 					 				<div ng-show="store.level>=5">
 										<div ng-show="store.status.data.stage=='1'">
 											<table class="table table-bordered table-striped" style="width:90%">
@@ -253,6 +256,7 @@
 								 	</div>
 					 			</div>
 			 				<!-- END OF ZONE INFO -->
+			 				
 								<div ng-show="store.status.data.stage=='1'">
 			 						<center><input type = "button" class="btn btn-primary btn-lg" value = "Send" ng-click="store.send()"></center>
 							 	</div>
