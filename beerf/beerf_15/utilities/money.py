@@ -23,6 +23,10 @@ def moneyPlaceOrder (fid, units, turn):
 	amount = units * 40
 	moneyDecrease (fid, amount, turn)
 
+def moneyInventory (fid, units, turn):
+	amount = units * 2
+	moneyDecrease (fid, amount, turn)
+
 def moneyUpdate(fid, level, turn):
 	if level == 2:
 		moneyDecrease (fid, 3000, turn)
