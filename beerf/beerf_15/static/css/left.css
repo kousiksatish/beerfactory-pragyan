@@ -15,9 +15,13 @@
 .top-info li{
 	float: left;
 }
+#progressbartop{
+	position: absolute;
+	top:5rem;
+}
 #main-content{
 	position: absolute;
-	top:5.5rem;
+	top:7.2rem;
 	width: 100%;
 }
 #map_left
@@ -33,7 +37,6 @@
 	left:35%;
 	width:65%;
 	overflow: hidden;
-	
 }
 .home-tables{
 	background-color: #fff;
