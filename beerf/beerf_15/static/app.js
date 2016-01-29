@@ -369,7 +369,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.status = {};
 	vm.demandDetails = {};
 	vm.mapDetails={};
-	
+	vm.level=0;
 	// supply value holds the values that are to be submitted by the user. This is ngmodeled in the html
 	vm.supplyValues = [];
 	vm.order=0;
@@ -386,6 +386,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	AnyTimeFunctions.getStatusDetails(id).success(function(json){
 		vm.status = json;
 		console.log('status details', vm.status);
+		vm.level = Math.floor(parseInt(vm.status.data.turn)/5)+1;
 	});
 
 	AnyTimeFunctions.getMapDetails(id).success(function(json){
@@ -450,8 +451,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 
 		var supply = '';
-
-		vm.level = Math.floor(parseInt(vm.status.data.turn)/5)+1;
 
 		console.log('level', vm.level);
 

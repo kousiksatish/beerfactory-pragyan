@@ -15,7 +15,7 @@
 	<script src="{% static "js/jquery.imagemapster.js" %}"></script>
 </head>
 
-<body>
+<body ng-cloak>
 
 <div ng-controller = "StoreController as store">
 	<nav class="navbar navbar-default navbar-fixed-top nav-container">
@@ -256,7 +256,7 @@
 								 	</div>
 					 			</div>
 			 				<!-- END OF ZONE INFO -->
-			 				
+
 								<div ng-show="store.status.data.stage=='1'">
 			 						<center><input type = "button" class="btn btn-primary btn-lg" value = "Send" ng-click="store.send()"></center>
 							 	</div>
@@ -343,7 +343,7 @@ var mapUrl = "{% url 'map' %}";
 console.log('mapUrl is', mapUrl	);
 </script>
 
-
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>
+	
 </body>
 </html>
