@@ -15,7 +15,7 @@
 .top-info li{
 	float: left;
 }
-#progress-bar{
+#progressbartop{
 	position: absolute;
 	top:5rem;
 }
