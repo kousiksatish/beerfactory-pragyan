@@ -15,7 +15,7 @@
 	<script src="{% static "js/jquery.imagemapster.js" %}"></script>
 </head>
 
-<body>
+<body ng-cloak>
 
 <div ng-controller = "StoreController as store">
 	<nav class="navbar navbar-default navbar-fixed-top nav-container">
@@ -114,115 +114,158 @@
 								<br><br>
 								<!-- ZONE 1 INFO -->
 								<div class="zone" ng-show="zone.iszone(1)">
-									
-									<table class="table table-bordered table-striped" style="width:90%">
-										<thead>
-											<tr> 
-												<th><center> RETAILER </center></th>
-												<th><center> ORDERS </center></th>
-												<th><center> DELIVER </center></th>
-							 				</tr>
-						 				</thead>
+									<div ng-show="store.status.data.stage=='1'">
+										<table class="table table-bordered table-striped" style="width:90%">
+											<thead>
+												<tr> 
+													<th><center> RETAILER </center></th>
+													<th><center> ORDERS </center></th>
+													<th><center> DELIVER </center></th>
+								 				</tr>
+							 				</thead>
 
-						 				<tbody>
-						 				<tr ng-repeat="order in product.orders" ng-if="$index>=0 && $index<=2">
-							 					<td class="col-md-1"> {$order.from$} </td>
-							 					<td class="col-md-1"> {$order.order_no$}</td>
-							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-						 				</tr>
-						 				</tbody>
-						 			</table>	
+							 				<tbody>
+							 				<tr ng-repeat="order in product.orders" ng-if="$index>=0 && $index<=2">
+								 					<td class="col-md-1"> {$order.from$} </td>
+								 					<td class="col-md-1"> {$order.order_no$}</td>
+								 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+							 				</tr>
+							 				</tbody>
+							 			</table>
+							 		</div>	
 					 			</div>
 
 								<!-- ZONE 2 INFO -->
 								<div class="zone" ng-show="zone.iszone(2)">
-									<table class="table table-bordered table-striped" style="width:90%">
-										<thead>
-											<tr> 
-												<th><center> RETAILER </center></th>
-												<th><center> ORDERS </center></th>
-												<th><center> DELIVER </center></th>
-							 				</tr>
-						 				</thead>
+									<!--gets unlocked only after turn 2-->
+									<div ng-show="store.level>=2">
+										<div ng-show="store.status.data.stage=='1'">
+											<table class="table table-bordered table-striped" style="width:90%">
+												<thead>
+													<tr> 
+														<th><center> RETAILER </center></th>
+														<th><center> ORDERS </center></th>
+														<th><center> DELIVER </center></th>
+									 				</tr>
+								 				</thead>
 
-						 				<tbody>
-						 				<tr ng-repeat="order in product.orders" ng-if="$index>=3 && $index<=5">
-												<td class="col-md-1"> {$order.from$}</td>
-							 					<td class="col-md-1"> {$order.order_no$}</td>
-							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-						 				</tr>
-						 				</tbody>
-						 			</table>
+								 				<tbody>
+								 				<tr ng-repeat="order in product.orders" ng-if="$index>=3 && $index<=5">
+														<td class="col-md-1"> {$order.from$}</td>
+									 					<td class="col-md-1"> {$order.order_no$}</td>
+									 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+								 				</tr>
+								 				</tbody>
+								 			</table>
+								 		</div>
+								 	</div>
+
+								 	<div ng-hide="store.level>=2">
+								 		<h3><center> Zone hasn't been unlocked yet. Keep playing! </center></h3>
+								 	</div>
+
 					 			</div>
 
 					 			<!-- ZONE 3 INFO -->
 					 			<div class="zone" ng-show="zone.iszone(3)">
-									<table class="table table-bordered table-striped" style="width:90%">
-										<thead>
-											<tr> 
-												<th><center> RETAILER </center></th>
-												<th><center> ORDERS </center></th>
-												<th><center> DELIVER </center></th>
-							 				</tr>
-						 				</thead>
+									<!--gets unlocked only after turn 3-->
+					 				<div ng-show="store.level>=3">
+										<div ng-show="store.status.data.stage=='1'">
+											<table class="table table-bordered table-striped" style="width:90%">
+												<thead>
+													<tr> 
+														<th><center> RETAILER </center></th>
+														<th><center> ORDERS </center></th>
+														<th><center> DELIVER </center></th>
+									 				</tr>
+								 				</thead>
 
-						 				<tbody>
-						 				<tr ng-repeat="order in product.orders" ng-if="$index>=6 && $index<=8">
-							 					<td class="col-md-1"> {$order.from$}</td>
-							 					<td class="col-md-1"> {$order.order_no$}</td>
-							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-						 				</tr>
-						 				</tbody>
-						 			</table>
+								 				<tbody>
+								 				<tr ng-repeat="order in product.orders" ng-if="$index>=6 && $index<=8">
+									 					<td class="col-md-1"> {$order.from$}</td>
+									 					<td class="col-md-1"> {$order.order_no$}</td>
+									 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+								 				</tr>
+								 				</tbody>
+								 			</table>
+								 		</div>
+								 	</div>
+
+								 	<div ng-hide="store.level>=3">
+								 		<h3><center> Zone hasn't been unlocked yet. Keep playing! </center></h3>
+								 	</div>
 					 			</div>
 			 					
 			 					<!-- ZONE 4 INFO -->
 					 			<div class="zone" ng-show="zone.iszone(4)">
-									<table class="table table-bordered table-striped" style="width:90%">
-										<thead>
-											<tr> 
-												<th><center> RETAILER </center></th>
-												<th><center> ORDERS </center></th>
-												<th><center> DELIVER </center></th>
-							 				</tr>
-						 				</thead>
+									<!--gets unlocked only after turn 4-->
+					 				<div ng-show="store.level>=4">
+										<div ng-show="store.status.data.stage=='1'">
+											<table class="table table-bordered table-striped" style="width:90%">
+												<thead>
+													<tr> 
+														<th><center> RETAILER </center></th>
+														<th><center> ORDERS </center></th>
+														<th><center> DELIVER </center></th>
+									 				</tr>
+								 				</thead>
 
-						 				<tbody>
-						 				<tr ng-repeat="order in product.orders" ng-if="$index>=9 && $index<=11">
-							 					<td class="col-md-1"> {$order.from$}</td>
-							 					<td class="col-md-1"> {$order.order_no$}</td>
-							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-						 				</tr>
-						 				</tbody>
-						 			</table>
+								 				<tbody>
+								 				<tr ng-repeat="order in product.orders" ng-if="$index>=9 && $index<=11">
+									 					<td class="col-md-1"> {$order.from$}</td>
+									 					<td class="col-md-1"> {$order.order_no$}</td>
+									 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+								 				</tr>
+								 				</tbody>
+								 			</table>
+								 		</div>
+								 	</div>
+
+								 	<div ng-hide="store.level>=4">
+								 		<h3><center> Zone hasn't been unlocked yet. Keep playing! </center></h3>
+								 	</div>
 					 			</div>
 
 					 			<!-- ZONE 5 INFO -->
 					 			<div class="zone" ng-show="zone.iszone(5)">
-									<table class="table table-bordered table-striped" style="width:90%">
-										<thead>
-											<tr> 
-												<th><center> RETAILER </center></th>
-												<th><center> ORDERS </center></th>
-												<th><center> DELIVER </center></th>
-							 				</tr>
-						 				</thead>
+									<!--gets unlocked only after turn 5-->
+					 				<div ng-show="store.level>=5">
+										<div ng-show="store.status.data.stage=='1'">
+											<table class="table table-bordered table-striped" style="width:90%">
+												<thead>
+													<tr> 
+														<th><center> RETAILER </center></th>
+														<th><center> ORDERS </center></th>
+														<th><center> DELIVER </center></th>
+									 				</tr>
+								 				</thead>
 
-						 				<tbody>
-						 				<tr ng-repeat="order in product.orders" ng-if="$index>=12 && $index<=14">
-							 					<td class="col-md-1"> {$order.from$}</td>
-							 					<td class="col-md-1"> {$order.order_no$}</td>
-							 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-						 				</tr>
-						 				</tbody>
-						 			</table>
+								 				<tbody>
+								 				<tr ng-repeat="order in product.orders" ng-if="$index>=12 && $index<=14">
+									 					<td class="col-md-1"> {$order.from$}</td>
+									 					<td class="col-md-1"> {$order.order_no$}</td>
+									 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
+								 				</tr>
+								 				</tbody>
+								 			</table>
+								 		</div>
+								 	</div>
+
+								 	<div ng-hide="store.level>=5">
+								 		<h3><center> Zone hasn't been unlocked yet. Keep playing! </center></h3>
+								 	</div>
 					 			</div>
 			 				<!-- END OF ZONE INFO -->
 
-			 					<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
-							 	<input type = "text" placeholder="Place the order for the next round here!" ng-model="store.order">
-								<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">
-
+								<div ng-show="store.status.data.stage=='1'">
+			 						<center><input type = "button" class="btn btn-primary btn-lg" value = "Send" ng-click="store.send()"></center>
+							 	</div>
+							 	<div ng-show="store.status.data.stage=='2'">
+								 		<input type = "text" class="form-control"placeholder="Place the order for the next round here!" ng-model="store.order">
+								 	<center>
+										<input type = "button" class="btn btn-primary btn-lg" value = "Order" ng-click="store.placeOrder()">
+									</center>
+								</div>
 							</div>
 
 							<!-- History - tab 2-->
@@ -264,8 +307,8 @@
 			</div> -->
 
 
-			<div class="container">
-				<input type = "button" class = "button" value = "Get Demand" ng-click = "store.getDemand()">
+			<div ng-show="store.status.data.stage=='0'">
+				<center><input type = "button" class = "btn btn-primary btn-lg" value = "Get Demand" ng-click = "store.getDemand()"></center>
 			</div>
 		</div>
 	</div>
@@ -300,7 +343,7 @@ var mapUrl = "{% url 'map' %}";
 console.log('mapUrl is', mapUrl	);
 </script>
 
-
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>
+	
 </body>
 </html>

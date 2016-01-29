@@ -222,6 +222,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	var vm = this;
 
+	//object which is used for all front-end purposes
 	vm.products = [{
 		orders: [
 		{	
@@ -368,7 +369,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.status = {};
 	vm.demandDetails = {};
 	vm.mapDetails={};
-	
+	vm.level=0;
 	// supply value holds the values that are to be submitted by the user. This is ngmodeled in the html
 	vm.supplyValues = [];
 	vm.order=0;
@@ -385,6 +386,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	AnyTimeFunctions.getStatusDetails(id).success(function(json){
 		vm.status = json;
 		console.log('status details', vm.status);
+		vm.level = Math.floor(parseInt(vm.status.data.turn)/5)+1;
 	});
 
 	AnyTimeFunctions.getMapDetails(id).success(function(json){
@@ -450,11 +452,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		var supply = '';
 
-		var turn = Math.floor(parseInt(vm.status.data.turn)/5);
+		console.log('level', vm.level);
 
-		console.log('turn', turn)
-
-		for(var i=0; i<3*(turn+1); i++){
+		for(var i=0; i<3*(vm.level-1); i++){
 			supply += (vm.supplyValues[i] + ',');
 		}
 
