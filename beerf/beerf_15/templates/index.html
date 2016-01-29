@@ -20,7 +20,7 @@ PROBLEMS: 1)confirm order
 <body>
 <!--NAVBAR -->
 <nav class="navbar navbar-default navbar-fixed-top nav-container"  ng-controller="StoreController as store">
-  <div class="container-fluid"   ng-repeat="product in store.products">
+  <div class="container-fluid"  ng-repeat="product in store.products">
     <div class="navbar-header col-md-3">
       <a class="navbar-brand" href="#">BEER-FACTORY</a>
     </div>
@@ -36,7 +36,7 @@ PROBLEMS: 1)confirm order
 <!--END OF NAVBAR-->
 
 <div class="progress">
-  <div id="progress-bar" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50"
+  <div id="progressbartop" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50"
   aria-valuemin="0" aria-valuemax="100" style="width:50%; height:2rem;">
     Stage 1 of 2
   </div>
@@ -139,7 +139,9 @@ console.log('mapUrl is', mapUrl );
 </script>
 
 <div id="right_half">
-    <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'||store.status.data.stage=='2'">
+    <!-- <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'||store.status.data.stage=='2'"> -->
+    <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'">
+
       <ul id="demandtabs" class="nav nav-tabs" role="tablist">
       <li class="active">
           <a href="#demandtab" role="tab" data-toggle="tab"> DEMAND
@@ -171,7 +173,7 @@ console.log('mapUrl is', mapUrl );
             <tr ng-repeat="order in store.products[0].orders track by $index">
                 <td class="col-md-3"> {$order.from$}</td>
                 <td class="col-md-3"> {$order.order_no$}</td>
-                <td class="col-md-3"> <input type="number" class="form-control" ng-model="store.supplyValues[$index]" ng-init="store.supplyValues[$index]={$order.to_no$}" value="{$order.to_no$}" class="col-sm-12">  </input></td>
+                <td class="col-md-3"> <input type="number" min="0" max="{$order.order_no$}" class="form-control" ng-model="order.to_no" class="col-sm-12">  </input></td>
             </tr>
         </tbody>
     </table>
@@ -200,7 +202,7 @@ console.log('mapUrl is', mapUrl );
 </div> 
 </div>
      </div>
-<div ng-show="store.status.data.stage=='3'">
+<div ng-show="store.status.data.stage=='2'">
     <ul id="ordertabs" class="nav nav-tabs" role="tablist">
       <li class="active">
           <a href="#ordertab" role="tab" data-toggle="tab"> ORDER

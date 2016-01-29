@@ -217,6 +217,9 @@ def assign(request):
 			#link the factory with the user
 			user.factory = fac1
 			user.save()
+			#initialise status table (stage=0, turn=1)
+			stat = status(pid = user, turn = 1, stage = 0)
+			stat.save()
 			#create user's opponent factory with money=10000
 			fac2 = factories(money = get_initial_money(), inventory = get_initial_inventory())
 			fac2.save()
@@ -524,11 +527,12 @@ def viewDemand(request):
 				else:
 					factory = user.factory
 					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
+					unlocked_frids = unlocked_ret(frids, user.factory_id)
 					json={}
 					json["status"] = 200
 					data={}
 					demand = []
-					for frid in frids:
+					for frid in unlocked_frids:
 						fac_ret = factory_retailer.objects.get(pk=frid)
 						fr_demand = fac_ret_demand.objects.get(frid=fac_ret, turn=turn)
 						demand.append(fr_demand.quantity)
@@ -660,7 +664,6 @@ def placeOrder(request):
 		except users.DoesNotExist:
 			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
 			user = None
-
 		# after user verification is done
 		if id and user:
 			cur_status = status.objects.get(pid = id)
@@ -668,7 +671,6 @@ def placeOrder(request):
 			stage = int(cur_status.stage) 					# stage number as stored in DB
 			if stage != 2:									# current stage should be == 1
 				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
-
 			try:
 				quantity1 = request.POST['quantity']
 				if not(quantity1.isdigit()):
@@ -676,11 +678,9 @@ def placeOrder(request):
 				quantity = int(quantity1)
 				valid_turn_and_stage = (turn == int(request.POST['turn']) and stage == int(request.POST['stage']))
 			except KeyError:
-				return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
-
+				return JsonResponse({"status":"104","data":{"description":"Invalid request parameters. user_id,turn,stage,quantity should be provided."}})
 			if not valid_turn_and_stage:
 				return JsonResponse({'status':'105', 'data':{'description':'Turn or stage mismatch'}})
-
 			factory = user.factory
 			cur_capacity = int(capacity.objects.get(fid=factory,turn=turn).capacity)
 			if quantity > cur_capacity:
@@ -688,9 +688,15 @@ def placeOrder(request):
 			# create the new order in the DB
 			new_order = factory_order(fid=factory,turn=turn,quantity=quantity)
 			new_order.save()
-			money.moneyPlaceOrder(factory.fid, quantity, int(turn))
+			try:
+				money.moneyPlaceOrder(factory.fid, quantity, int(turn))
+				inventory.increase(factory.fid, quantity, int(turn))
+				#calculate the order of the simulated factory
+				dummy_algo.calculate_order(factory,int(turn))
+			except ValueError as err:
+				new_order.delete()
+				return JsonResponse({"status":"111","data":{"description":str(err)}})
 			#calculate the order of the simulated factory
-			dummy_algo.calculate_order(factory,int(turn))
 			# move to next stage of the current turn
 			
 			cur_status.stage = stage+1
@@ -704,19 +710,10 @@ def placeOrder(request):
 				cur_status.turn=turn+1
 				cur_status.stage = 0
 				cur_status.save()
-				
-
+	
 			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=factory)
 			cap.save()
-			opponent_factory = factory_factory.objects.get(fac1=factory).fac2
-			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=opponent_factory)
-			cap.save()
-
 			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
-		else:
-			return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
-	else:
-		return JsonResponse({"status":"100","data":{"description":"Failed! Wrong type of request"}})
 
 	
 @csrf_exempt

@@ -485,10 +485,10 @@ var x = angular.element(demandpopup);
 
 		console.log('Supply to be sent', supply);
 		console.log('Status before sending', vm.status.data);
-var progressbar = angular.element('progress-bar');
-    progressbar.css('width','100%');
-    progressbar.html() = "Stage 2 of 2";
-    angular.element('demandpopup').css('display','none');
+		var progressbar = angular.element(progressbartop);
+   		progressbar.css('width','100%');
+    	progressbar.html("Stage 2 of 2");
+    	angular.element(demandpopup).css('display','none');
 
 		TurnStageBasedFunctions.supply(id, supply, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			console.log('Response for supply', json);
@@ -538,26 +538,26 @@ var progressbar = angular.element('progress-bar');
 			console.log('EEEE',e);
 		var xref='';
 		var ret = vm.products[0].orders[e-1]
-        xref = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' ng-click='store.confirmorder("+e+")'>CONFIRM</button>";
-		angular.element(document.getElementById('selections'))[0].innerHTML=xref;
+        xref = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' min='0' max='"+ret.order_no+"' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
+		angular.element(selections).html(xref);
 		}
 		else if(e>=4){
 			var xref="RETAILER "+e+" NOT UNLOCKED YET!<br>KEEP PLAYING TO UNLOCK THEM!<br>";
-			angular.element(document.getElementById('selections'))[0].innerHTML=xref;
+			angular.element(selections).html(xref);
 
 		}
 		else if(e==-1){
-			angular.element(document.getElementById('selections'))[0].innerHTML="YOUR FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS"
+			angular.element(selections).html("YOUR FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS");
 		}
 		else if(e==-2){
-			angular.element(document.getElementById('selections'))[0].innerHTML="OPPONENET'S FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS"
+			angular.element(selections).html("OPPONENET'S FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS");
 
 		}
 	}
 	vm.closepopup = function() {
-    var d = angular.element(document.getElementById('demandpopup'))[0].style.display="none";
+    angular.element(demandpopup).css('display','none');
 }
-	vm.confirmorder = function(x) {
+	/*vm.confirmorder = function(x) {
 	console.log('IN CONFIRM ORDER');
     var ret = vm.store.products[0].orders[x-1];
     var tono = angular.element("tono").val();
@@ -566,7 +566,7 @@ var progressbar = angular.element('progress-bar');
         ret = scope.store.products[0].orders[i];
         console.log("tonooo",i,ret.to_no);
     }
-}
+}*/
 }]);
 
 app.filter('startFrom', function() {
@@ -591,8 +591,20 @@ app.controller('ZoneController',function(){
 	this.setzone = function(a) { this.zone = a; };
 	this.iszone = function(a) { return this.zone === a;};
 });
-
-
-
-
 })();
+function confirmorder(x) {
+	console.log('IN CONFIRM ORDER');
+	var $element = $("#main-content");
+	var scope = angular.element($element).scope();
+    var ret = scope.store.products[0].orders[x-1];
+    var tono = $("#tono").val();
+    if(tono>0&&tono<=ret.order_no)
+    ret.to_no = parseInt(tono);
+	else ret.to_no = 0
+    for(i=0;i<3;i++){
+        ret = scope.store.products[0].orders[i];
+        console.log("tonooo",i,ret.to_no);
+    }
+    console.log("products",scope.store.products);
+    console.log("supply values", scope.store.supplyvalues);
+}
