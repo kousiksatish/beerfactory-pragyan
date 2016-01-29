@@ -624,7 +624,6 @@ def placeOrder(request):
 			#calculate the order of the simulated factory
 			dummy_algo.calculate_order(factory,int(turn))
 			# move to next stage of the current turn
-			dummy_algo.calculate_order(factory.fid,int(turn))
 			cur_status.turn=turn+1
 			cur_status.stage = 0
 			cur_status.save()
