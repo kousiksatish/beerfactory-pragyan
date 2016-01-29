@@ -12,7 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 from beerf_algo.beerf_algo import dummy_algo
 from utilities import money
 from utilities import inventory
-
 '''
 INITIAL FUNCTIONS
 1. /register
@@ -187,6 +186,7 @@ ANY TIME FUNCTIONS
 3. map
 4. getPopularity
 5. restart
+6. history
 '''
 
 @csrf_exempt
@@ -375,6 +375,71 @@ def restart(request):
 			inventory_log.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
 			
 			return JsonResponse({"status":"200", "data":{"description":"Success!"}})
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def history(request):
+	'''
+		Returns the user's game moves history by retrieving all his data from the DB.
+		Retrieves from:
+			* fac_ret_demand
+			* fac_ret_supply
+			* factory_order
+		Returns as:
+		history = 
+		{
+			'status':'200',
+			'data': {
+				#turn_no_1 : {
+					'supply':
+					'demand':
+					'order':
+				}
+				#turn_no_2:{
+				....
+				...
+				}
+				...
+				..
+			}
+		}
+	'''
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		# after all verification is done.
+		if id and user:
+			fid = user.factory
+			history = dict()
+			frids = [f.frid for f in factory_retailer.objects.filter(fid=fid)]
+			fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid) for frid in frids]
+			for fac_ret in fac_ret_demands:
+				for demand in fac_ret:
+					turn = int(demand.turn)
+					quantity = int(demand.quantity)
+					if turn not in history:
+						history[turn] = dict()
+						history[turn]['demand'] = []
+						history[turn]['supply'] = []
+					history[turn]['demand'].append(quantity)
+			fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid) for frid in frids]
+			for fac_ret in fac_ret_supplies:
+				for supply in fac_ret:
+					turn = int(demand.turn)
+					quantity = int(demand.quantity)
+					history[turn]['supply'].append(quantity)
+			factory_orders = factory_order.objects.filter(fid=fid)
+			for order in factory_orders:
+				turn = int(order.turn)
+				history[turn]['order'] = int(order.quantity)
+			return JsonResponse({"status":"200", "data":{"description":"Success","history":history}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
