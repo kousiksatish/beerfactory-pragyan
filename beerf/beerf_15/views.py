@@ -179,7 +179,9 @@ ALLOCATION
 #creates a retailer for factory fac1 and its opponent factory
 def retailer_allocate(fac1, zone, unlocked, retailer_no):
 	#create the retailer
-	ret = retailers(zone = zone, unlocked=unlocked)
+	rcodes = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o']
+	retDetails = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o']
+	ret = retailers(rcode = rcodes[retailer_no], zone = zone, details = retDetails[retailer_no], unlocked=unlocked)
 	ret.save()
 
 	fac_fac_relation = factory_factory.objects.get(fac1=fac1)
@@ -575,7 +577,10 @@ def supply(request):
 				 	
 				 	if quantity_sum > factory.inventory:
 				 		return JsonResponse({"status":"107", "data":{"description":"Invalid Quantity. supply must be less than inventory"}})
-				 		
+				 	inventoryCost = (factory.inventory - quantity_sum )* 2
+				 	cur_money = (quantity_sum * 50) + factory.money
+				 	if inventoryCost > cur_money:
+				 		return JsonResponse({"status":"102", "data":{"description":"Invalid Quantity. Insufficient money to bear Inventory cost, Increase Supply amount. "}})	
 					frids = factory_retailer.objects.filter(fid = factory).values_list('frid', flat = True)
 					unlocked_frids = unlocked_ret(frids, user.factory_id)
 					demands = fac_ret_demand.objects.filter(frid_id__in = unlocked_frids, turn = stat.turn)
@@ -596,6 +601,7 @@ def supply(request):
 						dummy_algo.calculate_supply(factory.fid,int(turn))
 						money.moneySupply(factory.fid, quantity_sum, int(turn))
 						inventory.decrease(factory.fid, quantity_sum, int(turn))
+						money.moneyInventory(factory.fid, factory.inventory, int(turn))
 						stat.stage = stat.stage+1
 						stat.save()
 						return JsonResponse({"status":"200", "data":{"description":"Success"}})

@@ -32,7 +32,7 @@ class status(models.Model):
 @python_2_unicode_compatible
 class retailers(models.Model):
 	rid = models.AutoField(primary_key=True)
-	rcode = models.CharField(max_length=100, blank=True, unique=True, default = uuid.uuid4)
+	rcode = models.CharField(max_length=100, blank=True)
 	zone = models.IntegerField(null=True)
 	unlocked = models.IntegerField(default=0)
 	details = models.CharField(max_length=500, blank=True, null=True)
