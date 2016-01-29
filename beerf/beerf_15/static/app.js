@@ -450,8 +450,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		var supply = '';
 
-		for(value of vm.supplyValues){
-			supply += (value + ',');
+		var turn = Math.floor(parseInt(vm.status.data.turn)/5);
+
+		console.log('turn', turn)
+
+		for(var i=0; i<3*(turn+1); i++){
+			supply += (vm.supplyValues[i] + ',');
 		}
 
 		supply = supply.substr(0, supply.length-1);
