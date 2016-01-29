@@ -454,7 +454,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		console.log('level', vm.level);
 
-		for(var i=0; i<3*vm.level; i++){
+		for(var i=0; i<3*(vm.level-1); i++){
 			supply += (vm.supplyValues[i] + ',');
 		}
 

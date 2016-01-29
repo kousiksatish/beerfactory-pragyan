@@ -254,11 +254,13 @@
 					 			</div>
 			 				<!-- END OF ZONE INFO -->
 								<div ng-show="store.status.data.stage=='1'">
-			 						<input type = "button" class="btn btn-default" value = "Send" ng-click="store.send()">	
+			 						<center><input type = "button" class="btn btn-primary btn-lg" value = "Send" ng-click="store.send()"></center>
 							 	</div>
 							 	<div ng-show="store.status.data.stage=='2'">
-							 		<input type = "text" placeholder="Place the order for the next round here!" ng-model="store.order">
-									<input type = "button" class="btn btn-default" value = "Order" ng-click="store.placeOrder()">
+								 		<input type = "text" class="form-control"placeholder="Place the order for the next round here!" ng-model="store.order">
+								 	<center>
+										<input type = "button" class="btn btn-primary btn-lg" value = "Order" ng-click="store.placeOrder()">
+									</center>
 								</div>
 							</div>
 
@@ -302,7 +304,7 @@
 
 
 			<div ng-show="store.status.data.stage=='0'">
-				<input type = "button" class = "button" value = "Get Demand" ng-click = "store.getDemand()">
+				<center><input type = "button" class = "btn btn-primary btn-lg" value = "Get Demand" ng-click = "store.getDemand()"></center>
 			</div>
 		</div>
 	</div>
