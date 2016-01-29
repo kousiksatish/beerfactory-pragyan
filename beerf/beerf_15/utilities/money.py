@@ -3,10 +3,13 @@ from beerf_15.models import *
 
 def moneyDecrease (fid, amount, turn):
 	fac = factories.objects.get(fid = fid)
+	if fac.money < amount:
+		raise ValueError("Not enough cash!")
 	fac.money -= amount
 	fac.save()
 	log = money_log(turn = turn, money_change = -amount, fid = fac)
 	log.save()
+	return True
 
 def moneyIncrease (fid, amount, turn):
 	fac = factories.objects.get(fid = fid)

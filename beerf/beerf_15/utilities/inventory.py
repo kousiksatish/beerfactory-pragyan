@@ -3,6 +3,8 @@ from beerf_15.models import *
 
 def decrease (fid, units, turn):
 	fac = factories.objects.get(fid = fid)
+	if fac.inventory < units:
+		raise ValueError("Not enough units available")
 	fac.inventory -= units
 	fac.save()
 	log = inventory_log(turn = turn, inventory_change = -units, fid = fac)
@@ -10,6 +12,9 @@ def decrease (fid, units, turn):
 
 def increase (fid, units, turn):
 	fac = factories.objects.get(fid = fid)
+	capacity = capacity.objects.get(fid=fid).capacity
+	if fac.inventory + units > capacity:
+		raise ValueError("Exceeded capacity")
 	fac.inventory += units
 	fac.save()
 	log = inventory_log(turn = turn, inventory_change = units, fid = fac)

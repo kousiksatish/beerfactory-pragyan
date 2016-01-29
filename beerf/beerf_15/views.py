@@ -619,10 +619,14 @@ def placeOrder(request):
 			# create the new order in the DB
 			new_order = factory_order(fid=factory,turn=turn,quantity=quantity)
 			new_order.save()
-			money.moneyPlaceOrder(factory.fid, quantity, int(turn))
-			inventory.increase(factory.fid, quantity, int(turn))
-			#calculate the order of the simulated factory
-			dummy_algo.calculate_order(factory,int(turn))
+			try:
+				money.moneyPlaceOrder(factory.fid, quantity, int(turn))
+				inventory.increase(factory.fid, quantity, int(turn))
+				#calculate the order of the simulated factory
+				dummy_algo.calculate_order(factory,int(turn))
+			except ValueError as err:
+				new_order.delete()
+				return JsonResponse({"status":"111","data":{"description":str(err)}})
 			# move to next stage of the current turn
 			cur_status.turn=turn+1
 			cur_status.stage = 0
