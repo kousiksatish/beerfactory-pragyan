@@ -41,4 +41,5 @@ urlpatterns = [
     url(r'^viewDemandSupply$', views.viewDemandSupply, name='viewDemandSupply'),
     url(r'^getPopularity$', views.getPopularity, name='getPopularity'),
     url(r'^restart$',views.restart, name='restart'),
+
 ]

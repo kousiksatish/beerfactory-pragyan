@@ -105,6 +105,69 @@ def calculate_popularity(retailer_no):
 	pops = [0.7,0.5,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];
 	return pops[retailer_no]
 
+#@csrf_exempt
+#@decorator_from_middleware(middleware.SessionPIDAuth)
+def unlockRetailers(id,turn,stage):
+	#if request.method == 'POST':
+		#id = request.POST.get("user_id")
+	try:
+		user  = users.objects.get(pk=id)
+	except users.DoesNotExist:
+		return 103 #return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+		user = None
+	if id and user:
+			#turn = request.POST.get("turn")
+			#stage = request.POST.get("stage")			
+		if(not (turn) or not (stage)):
+			return 104 #return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn and stage should be provided."}})
+		else:
+			stat = status.objects.get(pid = id)
+			if((turn != str(stat.turn)) or (stage != str(stat.stage)) or stage !="3"):
+				return 105 #return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch"}})
+			if(int(turn) % 5 != 0):
+					return 106 #return JsonResponse({"status":"106", "data":{"description":"Invalid Turn."}})
+			else:
+				factory = user.factory
+				zone = int(turn)/5 +1
+				rids = factory_retailer.objects.filter(fid = factory).values_list('rid_id', flat = True)
+				rets = retailers.objects.filter(rid__in = rids, zone = zone)
+				for ret in rets:
+					ret.unlocked = 1
+					ret.save()
+				return 200 #return JsonResponse({"status":"200", "data":{"description":"success.retailers unlocked."}})
+	#else:
+		#return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+#@csrf_exempt
+#@decorator_from_middleware(middleware.SessionPIDAuth)
+def updateInventory(id,turn,stage):
+	
+	#if request.method == 'POST':
+		#id = request.POST.get("user_id")
+	try:
+		user  = users.objects.get(pk=id)
+		
+	except users.DoesNotExist:
+		return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+		user = None
+	if id and user:
+			#turn = request.POST.get("turn")
+			#stage = request.POST.get("stage")			
+		if(not (turn) or not (stage)):
+			return 104 #return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn and stage should be provided."}})
+		else:
+			stat = status.objects.get(pid = id)
+			if((turn != str(stat.turn)) or (stage != str(stat.stage)) or stage !="3"):
+				return 105 #return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch"}})
+			else:
+				factory = user.factory
+				order = factory_order.objects.get(fid_id = factory.fid)
+				inventory.increase(factory.fid, order.quantity, int(turn))
+				
+				return 200 #return JsonResponse({"status":"200", "data":{"description":"success.Inventory updated."}})
+	#else:
+		#return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
 
 '''
 ALLOCATION
@@ -387,7 +450,7 @@ TURN & STAGE BASED OPERATIONS
 4. viewDemandSupply (Turn, Stage = 2)
 5. placeOrder(Turn, Stage = 2)
 6. update_selling_price(Turn, Stage=)
-7. updateValues(Turn, stage = 3)
+7. updateValues(Turn, stage = )
 
 
 '''
@@ -627,10 +690,21 @@ def placeOrder(request):
 			except ValueError as err:
 				new_order.delete()
 				return JsonResponse({"status":"111","data":{"description":str(err)}})
+			#calculate the order of the simulated factory
 			# move to next stage of the current turn
-			cur_status.turn=turn+1
-			cur_status.stage = 0
+			
+			cur_status.stage = stage+1
 			cur_status.save()
+
+			result1 = updateInventory(str(id), str(turn), str(3))
+			result2 = 200
+			if int(turn) % 5 == 0 :
+				result2 =unlockRetailers(str(id), str(turn), str(3))
+			if result1 == 200 and result2 == 200:
+				cur_status.turn=turn+1
+				cur_status.stage = 0
+				cur_status.save()
+	
 			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=factory)
 			cap.save()
 			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
@@ -773,6 +847,9 @@ def get_selling_price(request):
 			return JsonResponse(json)
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+
+
 
 '''
 FRONT END TEST FUNCTIONS
