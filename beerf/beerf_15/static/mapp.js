@@ -164,10 +164,17 @@ singleSelect: false,
         var $element = $('#main-content');
         var scope = angular.element($element).scope();
         var ret = scope.store.products[0].orders[x.key-1];
-        hovered = ret.name+"<br>POPULARITY<br>DEMAND:"+ret.order_no;
+        var stage = scope.store.status.data.stage;
+        if(stage==0||stage==1)
+            hovered = ret.name+"<br>POPULARITY<br>DEMAND:"+ret.order_no;
+        else
+            hovered = "DEMAND STAGE";
         }
         else if(x.key<15){
-            hovered = "KEEP PLAYING TO UNLOCK!"
+            if(stage==0||stage==1)
+                hovered = "KEEP PLAYING TO UNLOCK!"
+            else
+                hovered = "DEMAND STAGE";
             }
         else if(x.key=='fact1'){
             hovered = "FACTORY 1";
