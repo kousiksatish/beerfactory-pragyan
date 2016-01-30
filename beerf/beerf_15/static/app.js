@@ -12,7 +12,7 @@ app.config(function(toastrConfig) {
     autoDismiss: false,
     containerId: 'toast-container',
     maxOpened: 0,    
-    newestOnTop: true,
+    newestOnTop: false,
     positionClass: 'toast-top-right',
     progressBar: true,
     preventDuplicates: false,
@@ -386,6 +386,24 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	AnyTimeFunctions.getStatusDetails(id).success(function(json){
 		vm.status = json;
 		console.log('status details', vm.status);
+		var progressbar = angular.element(progressbartop);
+		console.log(vm.status.data.stage);
+		switch(vm.status.data.stage)
+		{
+			case "0":
+				progressbar.css('width','33%');
+	    		progressbar.html("Stage 1 of 3");
+	    		break;
+	    	case "1":
+	    		progressbar.css('width','66%');
+	    		progressbar.html("Stage 2 of 3");
+	    		break;
+	    	case "2":
+	    		console.log("ds");
+	    		progressbar.css('width','100%');
+	    		progressbar.html("Stage 3 of 3");
+	    		break;
+    	}
 		vm.level = Math.floor(parseInt(vm.status.data.turn)/5)+1;
 	});
 
@@ -416,6 +434,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				if(json.status === "200" || json.status === 200){
 					var stage = parseInt(vm.status.data.stage)+1;
 					vm.status.data.stage = stage.toString();
+					var progressbar = angular.element(progressbartop);
+			   		progressbar.css('width','66%');
+			    	progressbar.html("Stage 2 of 3");
 					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
 
 				}
@@ -470,6 +491,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			if(json.status === "200" || json.status === 200){
 				var stage = parseInt(vm.status.data.stage)+1;
 				vm.status.data.stage = stage.toString();
+				var progressbar = angular.element(progressbartop);
+		   		progressbar.css('width','100%');
+		    	progressbar.html("Stage 3 of 3");
 				toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
 
 			}
@@ -501,6 +525,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var turn = parseInt(vm.status.data.turn) + 1;
 				vm.status.data.turn = turn.toString();
 				vm.status.data.stage = '0';
+				var progressbar = angular.element(progressbartop);
+		   		progressbar.css('width','33%');
+		    	progressbar.html("Stage 1 of 3");
 				toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
 
 			}
@@ -511,6 +538,28 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		})
 	}
 
+	vm.mapclicked = function(e){
+		console.log('MAP CLICKED ',e);
+		if(e>0&&e<4){
+			console.log('EEEE',e);
+		var xref='';
+		var ret = vm.products[0].orders[e-1]
+        xref = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' min='0' max='"+ret.order_no+"' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
+		angular.element(selections).html(xref);
+		}
+		else if(e>=4){
+			var xref="RETAILER "+e+" NOT UNLOCKED YET!<br>KEEP PLAYING TO UNLOCK THEM!<br>";
+			angular.element(selections).html(xref);
+
+		}
+		else if(e==-1){
+			angular.element(selections).html("YOUR FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS");
+		}
+		else if(e==-2){
+			angular.element(selections).html("OPPONENET'S FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS");
+
+		}
+	}
 
 }]);
 

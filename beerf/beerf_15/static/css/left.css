@@ -16,8 +16,9 @@
 	float: left;
 }
 #progressbartop{
-	position: absolute;
+	position: fixed;
 	top:5rem;
+	z-index:1;
 }
 #main-content{
 	position: absolute;
@@ -31,12 +32,36 @@
 	width:30%;
 	height:100%;
 }
+#selections{
+	border: 1px solid black;
+	height: 60%;
+	position: relative;
+	left: 2.5%;
+	top:2%;
+	width: 95%;
+	padding: 1rem;
+	overflow: auto;
+}
 #right_half
 {
 	position:fixed;
 	left:35%;
 	width:65%;
 	overflow: hidden;
+}
+
+#right_half_bottom
+{
+	position:fixed;
+	top:60%;
+	left:40%;
+	width:50%;
+	height: 60%;
+	border: 1px solid black;
+	overflow-y: auto;
+	font-size: 2rem;
+	line-height: 3.5rem;
+
 }
 .home-tables{
 	background-color: #fff;
