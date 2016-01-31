@@ -28,8 +28,6 @@ def register(request):
 		form = userForm(request.POST)
 		if form.is_valid():
 			new_user = form.save()
-			stat = status(pid = new_user,turn = 1,stage=0)
-			stat.save()
 			request.session["user_id"] = new_user.pid
 			return redirect(beerf_15.views.home)
 	else:
