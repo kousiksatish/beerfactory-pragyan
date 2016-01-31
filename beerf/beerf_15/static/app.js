@@ -219,7 +219,7 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
 //controller for the data inside tabs
 app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions', '$scope', 'toastr', function(AnyTimeFunctions, TurnStageBasedFunctions, $scope, toastr){					
-
+	$scope.Math = window.Math;
 	var vm = this;
 
 	//object which is used for all front-end purposes
@@ -404,7 +404,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	    		progressbar.html("Stage 3 of 3");
 	    		break;
     	}
-		vm.level = Math.floor(parseInt(vm.status.data.turn)/5)+1;
+		vm.level = Math.floor(parseInt(vm.status.data.turn-1)/5)+1;
 	});
 
 	AnyTimeFunctions.getMapDetails(id).success(function(json){
@@ -427,7 +427,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			console.log('demand details', vm.demandDetails);
 
 				var i=0;
-				for(var order of vm.products[0].orders){
+				for(;i<(Math.floor((vm.status.data.turn-1)/5)+1)*3;){
 					order.order_no = vm.demandDetails.data.demand[i];
 					i++;
 				}
@@ -450,7 +450,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			vm.demandDetails = json;
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
-
+			var x = angular.element(demandpopup);
+					x.css('display','block');
+					console.log("DEMAND POPUP",x);
 				var i=0;
 				for(var order of vm.products[0].orders){
 					order.order_no = vm.demandDetails.data.demand[i];
@@ -464,15 +466,19 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.send = function(){
 		console.log('Initial Products', vm.products);
 		console.log('Supply values', vm.supplyValues);
-
+		vm.level = Math.floor(parseInt(vm.status.data.turn-1)/5)+1;
 		var i=0;
-		for(var order of vm.products[0].orders){
-			order.to_no = vm.supplyValues[i];
-			i++;
+		// for(var order of vm.products[0].orders){
+		// 	order.to_no = vm.supplyValues[i];
+		// 	i++;
+		// }
+		for(i=0;i<3*vm.level;i++){
+			vm.supplyValues[i]=vm.products[0].orders[i].to_no;
 		}
 
+
 		var supply = '';
-		vm.level = Math.floor(parseInt(vm.status.data.turn)/5)+1;
+		
 
 		console.log('level', vm.level);
 
@@ -494,6 +500,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var progressbar = angular.element(progressbartop);
 		   		progressbar.css('width','100%');
 		    	progressbar.html("Stage 3 of 3");
+		    	angular.element(demandpopup).css('display','none');
 				toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
 
 			}
@@ -509,7 +516,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('New products is', vm.products);
 	};
 
-
+	vm.closepopup = function() {
+    angular.element(demandpopup).css('display','none');
+}
 	vm.placeOrder = function(){
 		
 		AnyTimeFunctions.getStatusDetails(id).success(function(json){
@@ -540,14 +549,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.mapclicked = function(e){
 		console.log('MAP CLICKED ',e);
-		if(e>0&&e<4){
+		if(e>0&&e<=(Math.floor((vm.status.data.turn-1)/5)+1)*3){
 			console.log('EEEE',e);
 		var xref='';
 		var ret = vm.products[0].orders[e-1]
         xref = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' min='0' max='"+ret.order_no+"' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
 		angular.element(selections).html(xref);
 		}
-		else if(e>=4){
+		else if(e>(Math.floor((vm.status.data.turn-1)/5)+1)*3){
 			var xref="RETAILER "+e+" NOT UNLOCKED YET!<br>KEEP PLAYING TO UNLOCK THEM!<br>";
 			angular.element(selections).html(xref);
 
@@ -590,3 +599,19 @@ app.controller('ZoneController',function(){
 
 
 })();
+function confirmorder(x) {
+	console.log('IN CONFIRM ORDER');
+	var $element = $("#main-content");
+	var scope = angular.element($element).scope();
+    var ret = scope.store.products[0].orders[x-1];
+    var tono = $("#tono").val();
+    if(tono>0&&tono<=ret.order_no)
+    ret.to_no = parseInt(tono);
+	else ret.to_no = 0
+    for(i=0;i<3;i++){
+        ret = scope.store.products[0].orders[i];
+        console.log("tonooo",i,ret.to_no);
+    }
+    console.log("products",scope.store.products);
+    console.log("supply values", scope.store.supplyvalues);
+}

@@ -1,6 +1,3 @@
-/*body{
-	background-color: #252326;
-}*/
 .nav-container{
 	background-color: #252326;
 	color: #C3A96A;
@@ -16,9 +13,8 @@
 	float: left;
 }
 #progressbartop{
-	position: fixed;
+	position: absolute;
 	top:5rem;
-	z-index:1;
 }
 #main-content{
 	position: absolute;
@@ -32,6 +28,35 @@
 	width:30%;
 	height:100%;
 }
+#right_half
+{
+	position:fixed;
+	left:40%;
+	width:50%;
+	height: 90%;
+	border: 1px solid black;
+	overflow-y: auto;
+	font-size: 1.5rem;
+	line-height: 3.5rem;
+
+}
+.btn.btn-default{
+	font-size: 1.5rem;
+	line-height: 3.5rem;
+	margin-top: 1rem;
+}
+input{
+	padding: 0.5rem;
+}
+#demandtabs>li{
+	width: 50%;
+}
+#historytab>table{
+	margin-left:5%; 
+	width: 90%;
+	font-size: 1.5rem;
+	line-height: 3.5rem;
+}
 #selections{
 	border: 1px solid black;
 	height: 60%;
@@ -42,26 +67,46 @@
 	padding: 1rem;
 	overflow: auto;
 }
-#right_half
-{
-	position:fixed;
-	left:35%;
-	width:65%;
-	overflow: hidden;
+#getdemand{
+	position: absolute;
+	bottom: 5%;
+	left: 2.5%;
+	width: 20%;
+	font-size: 1.5rem;
+}
+.container{
+    width: 70%;
+}
+#demandpopup{
+    display: none;
+    width: 70%;
+    position: absolute;
+    left:15%;
+    top:10%;
+    box-shadow: 0 0 2.5rem -0.5rem  black;
+    text-align: center;
+    font-size: 1.5rem;
+    background-color: white;
 }
 
-#right_half_bottom
-{
-	position:fixed;
-	top:60%;
-	left:40%;
-	width:50%;
-	height: 60%;
+#send{
+    margin: 1rem;
+}
+#ordertabs li{
+	width: 50%;
+}
+#ordertab{
+	padding: 1rem;
 	border: 1px solid black;
-	overflow-y: auto;
-	font-size: 2rem;
-	line-height: 3.5rem;
-
+	width: 95%;
+	margin: 1% 0 0 2.5%;
+}
+#ordertab table{
+	font-size: 1.5rem;
+	line-height: 4.5rem;
+}
+#ordertab td{
+	width: 62%;
 }
 .home-tables{
 	background-color: #fff;

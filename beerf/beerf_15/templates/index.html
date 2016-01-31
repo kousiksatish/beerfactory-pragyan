@@ -51,7 +51,7 @@
 			<map name="map1">
 		    	<area alt="" title="fact1" name="fact1" href="#" ng-click="store.mapclicked(-1)"shape="poly" coords="508,558,138,559,132,547,137,539,145,538,144,467,165,467,164,435,172,429,173,278,180,279,180,267,200,266,200,409,210,408,209,236,230,235,232,218,248,218,250,377,264,372,264,391,279,392,280,310,295,295,297,284,319,280,326,280,327,205,333,205,333,191,368,189,368,203,377,204,376,335,396,335,398,347,409,344,412,266,404,266,407,259,413,258,414,243,431,243,432,257,439,258,440,265,432,266,439,342,458,343,465,350,469,363,469,419,494,419,502,427,503,437,504,534,513,540,518,549,516,556" />
 
-		    	<area alt="" title="fact2" name="fact2" href="#" shape="poly" coords=" " ng-click="store.mapclicked(-2)"/>
+		    	 <area alt="" title="fact2" name="fact2" href="#" ng-click="store.mapclicked(-2)" shape="poly" coords="873,502,873,490,879,488,878,428,882,422,896,422,896,388,902,380,910,379,913,336,910,336,910,332,914,330,915,322,925,320,925,330,928,330,929,337,926,338,928,380,932,380,933,376,942,375,942,303,949,302,948,294,964,292,965,301,969,300,970,343,980,344,986,350,986,354,994,360,994,425,998,426,999,394,1008,400,1006,307,1018,306,1018,318,1029,318,1029,414,1033,417,1032,334,1044,335,1044,343,1047,342,1047,429,1050,430,1050,448,1056,447,1055,460,1059,474,1062,490,1068,489,1068,501" />
 
 		    	<area alt="" title="ret1" name="1" href="#" shape="poly" ng-click="store.mapclicked(1)" coords="708,726,709,635,688,635,722,581,810,581,810,555,828,555,827,582,852,582,880,635,860,635,860,725" />
 		    
@@ -97,244 +97,141 @@
 			<script type="text/javascript" src="{% static "mapp.js" %}"></script>
 		</div>
 
-		<div id="right_half">
-			<div class="container">
-
-				<ul class="list-group">
-					<li ng-repeat="product in store.products" > 
-							<section ng-controller="PanelController as panel">
-
-							<ul class="nav nav-pills nav-justified">
-								<li ng-class="{active:panel.istab(1)}"> <a href ng-click="panel.settab(1)"> Orders </a> </li>
-								<li ng-class="{active:panel.istab(2)}"> <a href ng-click="panel.settab(2)"> History </a> </li>
-							</ul>
-							<!-- Orders - tab 1-->
-							<div class="panel home-tables" ng-show="panel.istab(1)" ng-controller="ZoneController as zone">
-								
-								<ul class="nav nav-pills nav-justified">
-									<li ng-class="{active:zone.iszone(1)}"> <a href ng-click="zone.setzone(1)"> Zone 1 </a> </li>
-									<li ng-class="{active:zone.iszone(2)}"> <a href ng-click="zone.setzone(2)"> Zone 2 </a> </li>
-									<li ng-class="{active:zone.iszone(3)}"> <a href ng-click="zone.setzone(3)"> Zone 3 </a> </li>
-									<li ng-class="{active:zone.iszone(4)}"> <a href ng-click="zone.setzone(4)"> Zone 4 </a> </li>
-									<li ng-class="{active:zone.iszone(5)}"> <a href ng-click="zone.setzone(5)"> Zone 5 </a> </li>
-								</ul>
-
-								<br><br>
-								<!-- ZONE 1 INFO -->
-								<div class="zone" ng-show="zone.iszone(1)">
-									<div ng-show="store.status.data.stage=='1'">
-										<table class="table table-bordered table-striped" style="width:90%">
-											<thead>
-												<tr> 
-													<th><center> RETAILER </center></th>
-													<th><center> ORDERS </center></th>
-													<th><center> DELIVER </center></th>
-								 				</tr>
-							 				</thead>
-
-							 				<tbody>
-							 				<tr ng-repeat="order in product.orders" ng-if="$index>=0 && $index<=2">
-								 					<td class="col-md-1"> {$order.from$} </td>
-								 					<td class="col-md-1"> {$order.order_no$}</td>
-								 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-							 				</tr>
-							 				</tbody>
-							 			</table>
-							 		</div>	
-					 			</div>
-
-								<!-- ZONE 2 INFO -->
-								<div class="zone" ng-show="zone.iszone(2)">
-									<!--gets unlocked only after turn 2-->
-									<div ng-show="store.level>=2">
-										<div ng-show="store.status.data.stage=='1'">
-											<table class="table table-bordered table-striped" style="width:90%">
-												<thead>
-													<tr> 
-														<th><center> RETAILER </center></th>
-														<th><center> ORDERS </center></th>
-														<th><center> DELIVER </center></th>
-									 				</tr>
-								 				</thead>
-
-								 				<tbody>
-								 				<tr ng-repeat="order in product.orders" ng-if="$index>=3 && $index<=5">
-														<td class="col-md-1"> {$order.from$}</td>
-									 					<td class="col-md-1"> {$order.order_no$}</td>
-									 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-								 				</tr>
-								 				</tbody>
-								 			</table>
-								 		</div>
-								 	</div>
-
-								 	<div ng-hide="store.level>=2">
-								 		<h3><center> Zone hasn't been unlocked yet. Keep playing! </center></h3>
-								 	</div>
-
-					 			</div>
-
-					 			<!-- ZONE 3 INFO -->
-					 			<div class="zone" ng-show="zone.iszone(3)">
-									<!--gets unlocked only after turn 3-->
-					 				<div ng-show="store.level>=3">
-										<div ng-show="store.status.data.stage=='1'">
-											<table class="table table-bordered table-striped" style="width:90%">
-												<thead>
-													<tr> 
-														<th><center> RETAILER </center></th>
-														<th><center> ORDERS </center></th>
-														<th><center> DELIVER </center></th>
-									 				</tr>
-								 				</thead>
-
-								 				<tbody>
-								 				<tr ng-repeat="order in product.orders" ng-if="$index>=6 && $index<=8">
-									 					<td class="col-md-1"> {$order.from$}</td>
-									 					<td class="col-md-1"> {$order.order_no$}</td>
-									 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-								 				</tr>
-								 				</tbody>
-								 			</table>
-								 		</div>
-								 	</div>
-
-								 	<div ng-hide="store.level>=3">
-								 		<h3><center> Zone hasn't been unlocked yet. Keep playing! </center></h3>
-								 	</div>
-					 			</div>
-			 					
-			 					<!-- ZONE 4 INFO -->
-					 			<div class="zone" ng-show="zone.iszone(4)">
-									<!--gets unlocked only after turn 4-->
-					 				<div ng-show="store.level>=4">
-										<div ng-show="store.status.data.stage=='1'">
-											<table class="table table-bordered table-striped" style="width:90%">
-												<thead>
-													<tr> 
-														<th><center> RETAILER </center></th>
-														<th><center> ORDERS </center></th>
-														<th><center> DELIVER </center></th>
-									 				</tr>
-								 				</thead>
-
-								 				<tbody>
-								 				<tr ng-repeat="order in product.orders" ng-if="$index>=9 && $index<=11">
-									 					<td class="col-md-1"> {$order.from$}</td>
-									 					<td class="col-md-1"> {$order.order_no$}</td>
-									 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-								 				</tr>
-								 				</tbody>
-								 			</table>
-								 		</div>
-								 	</div>
-
-								 	<div ng-hide="store.level>=4">
-								 		<h3><center> Zone hasn't been unlocked yet. Keep playing! </center></h3>
-								 	</div>
-					 			</div>
-
-					 			<!-- ZONE 5 INFO -->
-					 			<div class="zone" ng-show="zone.iszone(5)">
-									<!--gets unlocked only after turn 5-->
-					 				<div ng-show="store.level>=5">
-										<div ng-show="store.status.data.stage=='1'">
-											<table class="table table-bordered table-striped" style="width:90%">
-												<thead>
-													<tr> 
-														<th><center> RETAILER </center></th>
-														<th><center> ORDERS </center></th>
-														<th><center> DELIVER </center></th>
-									 				</tr>
-								 				</thead>
-
-								 				<tbody>
-								 				<tr ng-repeat="order in product.orders" ng-if="$index>=12 && $index<=14">
-									 					<td class="col-md-1"> {$order.from$}</td>
-									 					<td class="col-md-1"> {$order.order_no$}</td>
-									 					<td class="col-md-1"> <input type="number" value="{$order.to_no$}" ng-model="store.supplyValues[$index]" class="col-sm-12">  </input></td>
-								 				</tr>
-								 				</tbody>
-								 			</table>
-								 		</div>
-								 	</div>
-
-								 	<div ng-hide="store.level>=5">
-								 		<h3><center> Zone hasn't been unlocked yet. Keep playing! </center></h3>
-								 	</div>
-					 			</div>
-			 				<!-- END OF ZONE INFO -->
-
-								<div ng-show="store.status.data.stage=='1'">
-			 						<center><input type = "button" class="btn btn-primary btn-lg" value = "Send" ng-click="store.send()"></center>
-							 	</div>
-							 	<div ng-show="store.status.data.stage=='2'">
-								 		<input type = "text" class="form-control"placeholder="Place the order for the next round here!" ng-model="store.order">
-								 	<center>
-										<input type = "button" class="btn btn-primary btn-lg" value = "Order" ng-click="store.placeOrder()">
-									</center>
-								</div>
-							</div>
-
-							<!-- History - tab 2-->
-							<div class="panel home-tables" ng-show="panel.istab(2)">
-								<p> History of previous transactions come here! </p>
-							</div>
-
-					</li>
-				</ul>
-
-				
-			</div>
 
 
-			<!-- <div class="container">
-				<h3> Factory details </h3>
-				<table class = "table home-tables table-responsive" style="width:50%">
-					<tr>
-						<th> </th>
-						<th> Factory Code </th>
-						<th> Money </th>
-						<th> Capacity </th>
-						<th> Inventory </th>
-					</tr>
-
-					<tr>
-						<td> Factory 1 </td>
-						<td> {$ store.factoryDetails.data.factory_1.fcode $} </td>
-						<td> {$ store.factoryDetails.data.factory_1.money $} </td>
-						<td> {$ store.factoryDetails.data.factory_1.capacity $} </td>
-						<td> {$ store.factoryDetails.data.factory_1.inventory $} </td>
-					</tr>
-
-					<tr>
-						<td> Factory 2 </td>
-						<td> {$ store.factoryDetails.data.factory_2.fcode $} </td>
-						<td> {$ store.factoryDetails.data.factory_2.money $} </td>
-						<td> {$ store.factoryDetails.data.factory_2.capacity $} </td>
-						<td> {$ store.factoryDetails.data.factory_2.inventory $} </td>
-					</tr>
-				</table>
-			</div> -->
 
 
-			<div ng-show="store.status.data.stage=='0'">
-				<center><input type = "button" class = "btn btn-primary btn-lg" value = "Get Demand" ng-click = "store.getDemand()"></center>
-			</div>
 
-		</div>
-		<div class="row" id="right_half_bottom">
-				
-	            <div id="selections" class="rightcontent">
+ <div id="right_half">
+    <!-- <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'||store.status.data.stage=='2'"> -->
+    <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'">
 
-	            CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND
-	            </div>
-	            
-		    </div>
-	</div>
+      <ul id="demandtabs" class="nav nav-tabs" role="tablist">
+      <li class="active">
+          <a href="#demandtab" role="tab" data-toggle="tab"> DEMAND
+          </a>
+      </li>
+      <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY
+          </a>
+      </li>
+    </ul>
+        <!-- <button class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()" onclick="getDemand()">GET DEMAND</button> -->
+        <!-- <button ui-sref="stage1">Click here!</button> -->
+<div class="tab-content">
+            <div id="demandtab" class="tab-pane fade active in">
+        <div id="selections" class="rightcontent">
 
+            CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND
+             </div>
+<div id="demandpopup">
+    <div class="close" ng-click="store.closepopup()">close</div>
+    <table class="table table-striped" style="width:100%"> 
+        <thead>
+            <tr> 
+                <th> RETAILER </th>
+                <th> ORDER <br> AMOUNT </th>
+                <th> AMOUNT TO <br> DELIVER </th>
+                </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="order in store.products[0].orders|limitTo:(Math.floor((store.status.data.turn-1)/5)+1)*3">
+                <td class="col-md-3"> {$order.from$}</td>
+                <td class="col-md-3"> {$order.order_no$}</td>
+                <td class="col-md-3"> <input type="number" min="0" max="{$order.order_no$}" class="form-control" ng-model="order.to_no" class="col-sm-12">  </input></td>
+                <!-- <td>{$(Math.floor((store.status.data.turn-1)/5-1)+1)*3$}</td> -->
+            </tr>
+        </tbody>
+    </table>
+    <button id="send" class="btn btn-default" value = "Send" ng-click="store.send()">SEND</button> 
 </div>
-
+        <button id="getdemand" class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()">SHOW DEMAND</button>
+</div>
+<div id = "historytab" class="tab-pane fade">
+     <table class="table table-striped"> <thead>
+                    <tr> 
+                        <th> DAY </th>
+                        <th> PRODUCED <br> AMOUNT </th>
+                        <th> AMOUNT<br> SOLD </th>
+                        <th> INVENTORY </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="inv in store.products[0].inventory">
+                        <td> {$inv.day$}</td>
+                        <td> {$inv.no_produced$}</td>
+                        <td> {$inv.no_sold$}</td>
+                        <td> {$inv.no_inv$}</td>
+                    </tr>
+                    </tbody>
+                </table>
+</div> 
+</div>
+     </div>
+<div ng-show="store.status.data.stage=='2'">
+    <ul id="ordertabs" class="nav nav-tabs" role="tablist">
+      <li class="active">
+          <a href="#ordertab" role="tab" data-toggle="tab"> ORDER
+          </a>
+      </li>
+      <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY
+          </a>
+      </li>
+    </ul>
+<div class="tab-content">
+            <div id="ordertab" class="tab-pane fade active in">
+                <table>
+                    <tr>
+                        <td>
+                            AMOUNT IN INVENTORY
+                        </td>
+                        <td>
+                            {$ store.factoryDetails.data.factory_1.inventory $} 
+                        </td>
+                    </tr> 
+                    <tr>
+                        <td>MONEY</td>
+                        <td>{$ store.factoryDetails.data.factory_1.money $}</td>
+                    </tr>
+                    <tr>
+                        <td>PRICE PER UNIT</td>
+                        <td>100</td>
+                    </tr>
+                    <tr>
+                        <td>TOTAL DEMAND LAST TURN</td>
+                        <td>450</td>
+                    </tr>
+                    <tr>
+                        <td>AMOUNT TO BE ORDERED</td>
+                        <td><input type="text" placeholder="Place the order for the next round here!" ng-model="store.order"></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default" ng-click="store.placeOrder()">ORDER!</button>  </td>
+                    </tr>
+                </table>
+            </div>
+<div id = "historytab" class="tab-pane fade">
+     <table class="table table-striped"> <thead>
+                    <tr> 
+                        <th> DAY </th>
+                        <th> PRODUCED <br> AMOUNT </th>
+                        <th> AMOUNT<br> SOLD </th>
+                        <th> INVENTORY </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="inv in store.products[0].inventory">
+                        <td> {$inv.day$}</td>
+                        <td> {$inv.no_produced$}</td>
+                        <td> {$inv.no_sold$}</td>
+                        <td> {$inv.no_inv$}</td>
+                    </tr>
+                    </tbody>
+                </table>
+</div> 
+</div>
+</div>
+</div>
+</div>
 <script>
 // script to feed in ids and necessary urls to app.js
 
