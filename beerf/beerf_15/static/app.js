@@ -566,10 +566,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		var ret = vm.products[0].orders[e-1]
 		console.log('ret orders', ret);
         xref = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' min='0' max='"+ret.order_no+"' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
+
 		angular.element(selections).html(xref);
 		}
 		else if(e>(Math.floor((vm.status.data.turn-1)/5)+1)*3){
-			var xref="RETAILER "+e+" NOT UNLOCKED YET!<br>KEEP PLAYING TO UNLOCK THEM!<br>";
+			var name = vm.mapDetails.data.rcode[e-1];
+			var xref="RETAILER "+name+" NOT UNLOCKED YET!<br>KEEP PLAYING TO UNLOCK THEM!<br>";
 			angular.element(selections).html(xref);
 
 		}
