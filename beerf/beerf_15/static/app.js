@@ -426,11 +426,19 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
 
+			var x = angular.element(demandpopup);
+			x.css('display','block');
+			console.log("DEMAND POPUP",x);
+
 				var i=0;
-				for(;i<(Math.floor((vm.status.data.turn-1)/5)+1)*3;){
-					order.order_no = vm.demandDetails.data.demand[i];
-					i++;
+				for(var order of vm.products[0].orders){
+					if(i<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+						order.order_no = vm.demandDetails.data.demand[i];
+						i++;
+					}
+						
 				}
+				console.log('order when getDemanded', order)
 				if(json.status === "200" || json.status === 200){
 					var stage = parseInt(vm.status.data.stage)+1;
 					vm.status.data.stage = stage.toString();
@@ -450,9 +458,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			vm.demandDetails = json;
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
+
 			var x = angular.element(demandpopup);
-					x.css('display','block');
-					console.log("DEMAND POPUP",x);
+			x.css('display','block');
+			console.log("DEMAND POPUP",x);
+			
 				var i=0;
 				for(var order of vm.products[0].orders){
 					order.order_no = vm.demandDetails.data.demand[i];
@@ -466,6 +476,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.send = function(){
 		console.log('Initial Products', vm.products);
 		console.log('Supply values', vm.supplyValues);
+		console.log('vm.level', vm.level);
 		vm.level = Math.floor(parseInt(vm.status.data.turn-1)/5)+1;
 		var i=0;
 		// for(var order of vm.products[0].orders){
@@ -553,6 +564,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			console.log('EEEE',e);
 		var xref='';
 		var ret = vm.products[0].orders[e-1]
+		console.log('ret orders', ret);
         xref = ret.name+"<br>STORYYYY FOR 5 LINES?<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' min='0' max='"+ret.order_no+"' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
 		angular.element(selections).html(xref);
 		}
