@@ -337,18 +337,21 @@ def map(request):
 			retailers1 = factory_retailer.objects.filter(fid_id=user.factory_id)
 			rcode = []
 			zone = []
+			popularity = []
 			unlocked = []
 			for retailer in retailers1:
 				retailer_details = retailers.objects.get(pk=retailer.rid_id)
 				rcode.append(retailer_details.rcode)
 				zone.append(retailer_details.zone)
 				unlocked.append(retailer_details.unlocked)
+				popularity.append(retailer.popularity)
 			
 			json={}
 			json["status"] = "200"
 			data = {}
 			data["fcode"] = fcode
 			data["rcode"] = rcode
+			data["popularity"] = popularity
 			json["data"] = data
 			json["zone"] = zone
 			json["unlocked"] = unlocked
@@ -871,3 +874,5 @@ def testhome(request):
 	id = request.session["user_id"]
 	user = users.objects.get(pid = id)
 	return render(request, "index.html",{ "name" : user.name })
+def instructions(request):
+	return render(request,"instructions.html")

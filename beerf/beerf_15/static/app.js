@@ -566,7 +566,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		var ret = vm.products[0].orders[e-1]
 		console.log('ret orders', ret);
 		var name = vm.mapDetails.data.rcode[e-1];
-        xref = "Retailer name : " + name+"<br>STORY FOR 5 LINES<br>2<br>3<br>4<br>5<br>POPULARITY<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' min='0' max='"+ret.order_no+"' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
+		var popularity = vm.mapDetails.data.popularity[e-1];
+        xref = "Retailer name : " + name+"<br>STORY FOR 5 LINES<br>2<br>3<br>4<br>5<br>POPULARITY: "+popularity+"<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' min='0' max='"+ret.order_no+"' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
 
 		angular.element(selections).html(xref);
 		}
