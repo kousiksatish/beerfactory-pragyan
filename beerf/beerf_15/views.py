@@ -27,8 +27,6 @@ def register(request):
 		form = userForm(request.POST)
 		if form.is_valid():
 			new_user = form.save()
-			stat = status(pid = new_user,turn = 1,stage=0)
-			stat.save()
 			request.session["user_id"] = new_user.pid
 			return redirect(beerf_15.views.home)
 	else:
@@ -95,8 +93,8 @@ def get_sp_details():
 
 def unlocked_ret(frids, fid):
 	rids = factory_retailer.objects.filter(frid__in = frids).values_list('rid_id', flat = True)
-	# unlocked_rids = retailers.objects.filter(rid__in = rids , unlocked = 1).values_list('rid', flat = True)
-	unlocked_rids = retailers.objects.filter(rid__in = rids).values_list('rid', flat = True)
+	unlocked_rids = retailers.objects.filter(rid__in = rids , unlocked = 1).values_list('rid', flat = True)
+	#unlocked_rids = retailers.objects.filter(rid__in = rids).values_list('rid', flat = True)
 	unlocked_frids = factory_retailer.objects.filter(rid_id__in = unlocked_rids, fid_id = fid).values_list('frid',flat = True)
 	return unlocked_frids
 
@@ -160,7 +158,7 @@ def updateInventory(id,turn,stage):
 				return 105 #return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch"}})
 			else:
 				factory = user.factory
-				order = factory_order.objects.get(fid_id = factory.fid)
+				order = factory_order.objects.get(fid_id = factory.fid, turn = turn)
 				inventory.increase(factory.fid, order.quantity, int(turn))
 				
 				return 200 #return JsonResponse({"status":"200", "data":{"description":"success.Inventory updated."}})
@@ -339,18 +337,21 @@ def map(request):
 			retailers1 = factory_retailer.objects.filter(fid_id=user.factory_id)
 			rcode = []
 			zone = []
+			popularity = []
 			unlocked = []
 			for retailer in retailers1:
 				retailer_details = retailers.objects.get(pk=retailer.rid_id)
 				rcode.append(retailer_details.rcode)
 				zone.append(retailer_details.zone)
 				unlocked.append(retailer_details.unlocked)
+				popularity.append(retailer.popularity)
 			
 			json={}
 			json["status"] = "200"
 			data = {}
 			data["fcode"] = fcode
 			data["rcode"] = rcode
+			data["popularity"] = popularity
 			json["data"] = data
 			json["zone"] = zone
 			json["unlocked"] = unlocked
@@ -755,7 +756,6 @@ def placeOrder(request):
 			new_order.save()
 			try:
 				money.moneyPlaceOrder(factory.fid, quantity, int(turn))
-				inventory.increase(factory.fid, quantity, int(turn))
 				#calculate the order of the simulated factory
 				dummy_algo.calculate_order(factory,int(turn))
 			except ValueError as err:
@@ -939,3 +939,5 @@ def testhome(request):
 	id = request.session["user_id"]
 	user = users.objects.get(pid = id)
 	return render(request, "index.html",{ "name" : user.name })
+def instructions(request):
+	return render(request,"instructions.html")

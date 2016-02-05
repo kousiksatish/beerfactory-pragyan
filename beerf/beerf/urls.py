@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^getStatus$', views.getStatus, name="getStatus"),
     url(r'^fac_details$', views.fac_details, name="fac_details"),
     url(r'^getSellingPrice$', views.get_selling_price, name="get_selling_price"),
+    url(r'^instructions$',views.instructions,name="instructions"),
     url(r'^getDemand$', views.get_demand, name="get_demand"),
     url(r'^map$', views.map, name="map"),
     url(r'^supply$', views.supply, name="supply"),

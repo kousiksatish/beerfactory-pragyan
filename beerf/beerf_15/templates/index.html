@@ -1,144 +1,108 @@
 {% load staticfiles %}
-<!-- 
-PROBLEMS: 1)confirm order
- -->
 <html ng-app="store">
-<head>
-	<title>The Beer Factory</title>
+<title>The Beer Factory</title>
+
+<head> 
 	<script type="text/javascript" src="{% static "angular/angular.min.js" %}"> </script>
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
 	<link rel="stylesheet" type="text/css" href="{% static "css/left.css" %}" />
-
-	<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script> -->
+	<link rel="stylesheet" href="https://npmcdn.com/angular-toastr/dist/angular-toastr.css" />
+	<script src="http://foxandxss.github.io/angular-toastr/vendor/angular-animate.js"></script>
+	<script src="https://npmcdn.com/angular-toastr/dist/angular-toastr.tpls.js"></script>
+	
 	<script src="{% static "js/jquery.min.js" %}"></script>
 	<script src="{% static "js/jquery.imagemapster.js" %}"></script>
-    <script src="{% static "bootstrap-3.3.6-dist/js/bootstrap.min.js" %}"></script>
-
-	
 </head>
-<body>
-<!--NAVBAR -->
-<nav class="navbar navbar-default navbar-fixed-top nav-container"  ng-controller="StoreController as store">
-  <div class="container-fluid"  ng-repeat="product in store.products">
-    <div class="navbar-header col-md-3">
-      <a class="navbar-brand" href="#">BEER-FACTORY</a>
-    </div>
-    <ul class="top-info col-md-9">
-    <!-- <ng-repeat="x in product.inventory" ng-hide="$index!==product.inventory.length-1"> -->
-      <li class="col-md-3"> DAY: {$product.inventory[product.inventory.length-1].day$} </li>
-	  <li class="col-md-3"> INVENTORY: {$product.inventory[product.inventory.length-1].no_inv$}</li>
-	  <li class="col-md-3">MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
-	  <li class="col-md-3">Hi {{name}}</li>
-    </ul>
-  </div>
-</nav>
-<!--END OF NAVBAR-->
 
-<div class="progress">
-  <div id="progressbartop" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50"
-  aria-valuemin="0" aria-valuemax="100" style="width:50%; height:2rem;">
-    Stage 1 of 2
-  </div>
-</div>
+<body ng-cloak>
 
-<!-- LEFTTTT -->
-<div id="main-content" ng-controller="StoreController as store">
+<div ng-controller = "StoreController as store">
+	<nav class="navbar navbar-default navbar-fixed-top nav-container">
+	  	<div class="container-fluid"   ng-repeat="product in store.products">
+	   		<div class="navbar-header col-md-3">
+	   		  <a class="navbar-brand" href="#">BEER-FACTORY</a>
+	   		</div>
+	    		
+	   		<ul class="top-info col-md-9">
+	   		  <li class="col-md-2"> DAY: {$ store.status.data.turn $} </li>
+	   		  <li class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
+			  <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
+			  <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
+			  <li class="col-md-2"> Hi {{ name }}</li>	
+	   		</ul>
+		</div>
+	</nav>
 
 
-<div id = "map_left">
+	<div class="progress">
+	  <div id="progressbartop" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50"
+	  aria-valuemin="0" aria-valuemax="100" style="width:33%; height:2rem;">
+	    Stage 1 of 3
+	  </div>
+	</div>
+	<!-- LEFTTTT -->
+	<div id="main-content">
+		<div id = "map_left">
+			<div style="width:100%;border:0;background-color:black;"> 
+				<img style="width:100%;border:0;" id="map1" src="{% static "images/map1.gif" %}" alt="map1" usemap="#map1">
+			</div>
+		
+			<map name="map1">
+		    	<area alt="" title="fact1" name="fact1" href="#" ng-click="store.mapclicked(-1)"shape="poly" coords="508,558,138,559,132,547,137,539,145,538,144,467,165,467,164,435,172,429,173,278,180,279,180,267,200,266,200,409,210,408,209,236,230,235,232,218,248,218,250,377,264,372,264,391,279,392,280,310,295,295,297,284,319,280,326,280,327,205,333,205,333,191,368,189,368,203,377,204,376,335,396,335,398,347,409,344,412,266,404,266,407,259,413,258,414,243,431,243,432,257,439,258,440,265,432,266,439,342,458,343,465,350,469,363,469,419,494,419,502,427,503,437,504,534,513,540,518,549,516,556" />
 
-<div style="width:100%;border:0;background-color:black;"> 
-<!-- <div style="clear: both; width: 500px; height: 50px; border: 1px solid blackth;" id="selections"></div> -->
-<img style="width:100%;border:0;" id="map1" src="{% static "images/map1.gif" %}" alt="map1" usemap="#map1">
-</div>
-<map name="map1">
-    <area alt="" title="fact1" name="fact1" href="#" ng-click="store.mapclicked(-1)" shape="poly" coords="508,558,138,559,132,547,137,539,145,538,144,467,165,467,164,435,172,429,173,278,180,279,180,267,200,266,200,409,210,408,209,236,230,235,232,218,248,218,250,377,264,372,264,391,279,392,280,310,295,295,297,284,319,280,326,280,327,205,333,205,333,191,368,189,368,203,377,204,376,335,396,335,398,347,409,344,412,266,404,266,407,259,413,258,414,243,431,243,432,257,439,258,440,265,432,266,439,342,458,343,465,350,469,363,469,419,494,419,502,427,503,437,504,534,513,540,518,549,516,556" />
+		    	 <area alt="" title="fact2" name="fact2" href="#" ng-click="store.mapclicked(-2)" shape="poly" coords="873,502,873,490,879,488,878,428,882,422,896,422,896,388,902,380,910,379,913,336,910,336,910,332,914,330,915,322,925,320,925,330,928,330,929,337,926,338,928,380,932,380,933,376,942,375,942,303,949,302,948,294,964,292,965,301,969,300,970,343,980,344,986,350,986,354,994,360,994,425,998,426,999,394,1008,400,1006,307,1018,306,1018,318,1029,318,1029,414,1033,417,1032,334,1044,335,1044,343,1047,342,1047,429,1050,430,1050,448,1056,447,1055,460,1059,474,1062,490,1068,489,1068,501" />
 
-    <area alt="" title="fact2" name="fact2" href="#" shape="poly" coords=" " ng-click="store.mapclicked(-2)" />
-<div id = "zone1">
-    <area alt="" title="ret1" name="1" href="#" ng-click="store.mapclicked(1)" shape="poly" coords="708,726,709,635,688,635,722,581,810,581,810,555,828,555,827,582,852,582,880,635,860,635,860,725" />
-    
-    <area alt="" title="ret2" name="2" href="#" ng-click="store.mapclicked(2)" shape="poly" coords="123,886,122,804,104,803,135,756,216,757,216,731,231,733,231,757,253,755,280,804,261,805,261,885" />
+		    	<area alt="" title="ret1" name="1" href="#" shape="poly" ng-click="store.mapclicked(1)" coords="708,726,709,635,688,635,722,581,810,581,810,555,828,555,827,582,852,582,880,635,860,635,860,725" />
+		    
+		   		<area alt="" title="ret2" name="2" href="#" shape="poly" ng-click="store.mapclicked(2)" coords="123,886,122,804,104,803,135,756,216,757,216,731,231,733,231,757,253,755,280,804,261,805,261,885" />
 
-    <area alt="" title="ret3" name="3" href="#" ng-click="store.mapclicked(3)" shape="poly" coords="926,915,926,836,911,836,940,790,1014,792,1014,769,1028,769,1028,790,1048,792,1072,835,1057,837,1058,913" />
-</div>
-<div id = "zone2">
-    <area alt="" title="ret4" name="4" href="#" ng-click="store.mapclicked(4)" shape="poly" coords="782,1183,782,1097,764,1096,795,1045,879,1045,878,1019,895,1021,896,1045,920,1045,946,1096,927,1097,926,1182" />
+		    	<area alt="" title="ret3" name="3" href="#" shape="poly" ng-click="store.mapclicked(3)" coords="926,915,926,836,911,836,940,790,1014,792,1014,769,1028,769,1028,790,1048,792,1072,835,1057,837,1058,913" />
+				
+				<div id = "zone2">
+		    		<area alt="" title="ret4" name="4" href="#" shape="poly" ng-click="store.mapclicked(4)" coords="782,1183,782,1097,764,1096,795,1045,879,1045,878,1019,895,1021,896,1045,920,1045,946,1096,927,1097,926,1182" />
 
-    <area alt="" title="ret5" name="5" href="#" ng-click="store.mapclicked(5)" shape="poly" coords="378,1250,378,1136,354,1136,392,1069,505,1069,505,1037,526,1036,529,1068,559,1068,594,1136,568,1136,568,1250" />
+		    		<area alt="" title="ret5" name="5" href="#" shape="poly" ng-click="store.mapclicked(5)" coords="378,1250,378,1136,354,1136,392,1069,505,1069,505,1037,526,1036,529,1068,559,1068,594,1136,568,1136,568,1250" />
 
-    <area alt="" title="ret6" name="6" href="#" ng-click="store.mapclicked(6)" shape="poly" coords="896,1372,896,1286,877,1287,908,1234,992,1235,993,1209,1008,1209,1009,1234,1034,1236,1060,1284,1041,1286,1040,1370" />
-</div>
-<div id="zone3">
-    <area alt="" title="ret7" name="7" href="#" ng-click="store.mapclicked(7)" shape="poly" coords="286,1727,286,1617,262,1616,301,1552,410,1552,409,1520,430,1519,431,1552,463,1554,495,1616,471,1618,471,1726" />
+		    		<area alt="" title="ret6" name="6" href="#" shape="poly" ng-click="store.mapclicked(6)" coords="896,1372,896,1286,877,1287,908,1234,992,1235,993,1209,1008,1209,1009,1234,1034,1236,1060,1284,1041,1286,1040,1370" />
+				</div>
 
-    <area alt="" title="ret8" name="8" href="#" ng-click="store.mapclicked(8)" shape="poly" coords="698,1723,699,1643,682,1644,710,1597,786,1597,788,1572,802,1575,802,1597,823,1598,842,1634,831,1642,824,1656,824,1685,830,1694,830,1723" />
+				<div id="zone3">
+		    		<area alt="" title="ret7" name="7" href="#" shape="poly" ng-click="store.mapclicked(7)" coords="286,1727,286,1617,262,1616,301,1552,410,1552,409,1520,430,1519,431,1552,463,1554,495,1616,471,1618,471,1726" />
 
-    <area alt="" title="ret9" name="9" href="#" ng-click="store.mapclicked(9)" shape="poly" coords="500,2023,500,1937,482,1937,514,1885,597,1885,598,1862,613,1861,614,1886,636,1885,663,1935,645,1937,644,2023" />
-</div>
-<div id="zone4">
-    <area alt="" title="ret10" name="10" href="#" ng-click="store.mapclicked(10)" shape="poly" coords="138,2498,138,2389,114,2389,152,2324,260,2323,260,2292,281,2291,282,2323,309,2325,344,2388,319,2388,318,2496" />
+		    		<area alt="" title="ret8" name="8" href="#" shape="poly" ng-click="store.mapclicked(8)" coords="698,1723,699,1643,682,1644,710,1597,786,1597,788,1572,802,1575,802,1597,823,1598,842,1634,831,1642,824,1656,824,1685,830,1694,830,1723" />
 
-    <area alt="" title="ret11" name="11" href="#" ng-click="store.mapclicked(11)" shape="poly" coords="432,2496,431,2477,444,2467,452,2457,458,2435,460,2417,456,2407,450,2397,440,2385,432,2379,432,2359,402,2358,451,2275,589,2277,590,2235,616,2235,616,2277,652,2277,693,2349,682,2349,674,2357,666,2356,665,2371,644,2407,665,2408,663,2497"  />
+		    		<area alt="" title="ret9" name="9" href="#" shape="poly" ng-click="store.mapclicked(9)" coords="500,2023,500,1937,482,1937,514,1885,597,1885,598,1862,613,1861,614,1886,636,1885,663,1935,645,1937,644,2023" />
+				</div>
 
-    <area alt="" title="ret12" name="12" href="#" ng-click="store.mapclicked(12)" shape="poly" coords="665,2505,668,2406,646,2406,682,2351,778,2349,776,2319,796,2319,796,2349,823,2348,853,2405,832,2408,832,2505" />
-</div>
-<div id="zone5">
-    <area alt="" title="ret13" name="13" href="#" ng-click="store.mapclicked(13)" shape="poly" coords="494,2902,492,2803,472,2804,508,2744,603,2746,604,2716,624,2714,624,2746,650,2746,680,2803,659,2804,658,2900" />
+				<div id="zone4">
+		    		<area alt="" title="ret10" name="10" href="#" shape="poly" ng-click="store.mapclicked(10)" coords="138,2498,138,2389,114,2389,152,2324,260,2323,260,2292,281,2291,282,2323,309,2325,344,2388,319,2388,318,2496" />
 
-    <area alt="" title="ret14" name="14" href="#" ng-click="store.mapclicked(14)" shape="poly" coords="744,2988,743,2848,710,2848,762,2764,898,2764,898,2724,926,2724,926,2764,963,2764,1008,2848,976,2848,976,2922,962,2932,956,2944,955,2959,954,2972,964,2984,966,2986" />
+		    		<area alt="" title="ret11" name="11" href="#" shape="poly" ng-click="store.mapclicked(11)" coords="432,2496,431,2477,444,2467,452,2457,458,2435,460,2417,456,2407,450,2397,440,2385,432,2379,432,2359,402,2358,451,2275,589,2277,590,2235,616,2235,616,2277,652,2277,693,2349,682,2349,674,2357,666,2356,665,2371,644,2407,665,2408,663,2497"  />
 
-    <area alt="" title="ret15" name="15" href="#" ng-click="store.mapclicked(15)" shape="poly" coords="270,3136,276,3121,276,3100,268,3084,265,3078,266,3052,247,3053,276,3002,354,3004,356,2978,370,2978,372,3001,394,3001,420,3052,402,3052,402,3135" />
-</div>
-</map>
+		    		<area alt="" title="ret12" name="12" href="#" shape="poly" ng-click="store.mapclicked(12)" coords="665,2505,668,2406,646,2406,682,2351,778,2349,776,2319,796,2319,796,2349,823,2348,853,2405,832,2408,832,2505" />
+				</div>
 
-{% load staticfiles %}
-<script src="{% static "js/jquery.imagemapster.js" %}"></script>
-<script type="text/javascript" src="{% static "mapp.js" %}"></script>
-</div>
-<script type="text/javascript">
-var i1 = document.getElementById("i1");
-var f1 = document.getElementById("f1");
-function fact1()
-{
-	i1.style.display="inline-block";
-	
-}
-function unfact1()
-{
-	i1.style.display="none";
-	
-}
-function fact2()
-{
-	i2.style.display="inline-block";
-	
-}
-function unfact2()
-{
-	i2.style.display="none";
-	
-}
-var id = "{{request.session.user_id}}";
-console.log('user id is', id);
-var factoryDetailsUrl = "{% url 'fac_details' %}";
-console.log('url is', factoryDetailsUrl);
-var getStatusUrl = "{% url 'getStatus' %}";
-console.log('getStatusUrl is', getStatusUrl);
-var getDemandUrl = "{% url 'get_demand' %}";
-console.log('getDemandUrl is', getDemandUrl);
-var viewDemandUrl = "{% url 'viewDemand' %}";
-console.log('viewDemandUrl is', viewDemandUrl);
-var supplyUrl = "{% url 'supply' %}";
-console.log('supplyUrl is', supplyUrl);
-var placeOrderUrl = "{% url 'placeOrder' %}";
-console.log('placeOrderUrl is', placeOrderUrl	);
-var mapUrl = "{% url 'map' %}";
-console.log('mapUrl is', mapUrl );
-</script>
+				<div id="zone5">
+		    		<area alt="" title="ret13" name="13" href="#" shape="poly" click="store.mapclicked(13)" coords="494,2902,492,2803,472,2804,508,2744,603,2746,604,2716,624,2714,624,2746,650,2746,680,2803,659,2804,658,2900" />
 
-<div id="right_half">
+		    		<area alt="" title="ret14" name="14" href="#" shape="poly" click="store.mapclicked(14)" coords="744,2988,743,2848,710,2848,762,2764,898,2764,898,2724,926,2724,926,2764,963,2764,1008,2848,976,2848,976,2922,962,2932,956,2944,955,2959,954,2972,964,2984,966,2986" />
+
+		    		<area alt="" title="ret15" name="15" href="#" shape="poly" click="store.mapclicked(15)" coords="270,3136,276,3121,276,3100,268,3084,265,3078,266,3052,247,3053,276,3002,354,3004,356,2978,370,2978,372,3001,394,3001,420,3052,402,3052,402,3135" />
+				</div>
+			</map>
+
+			{% load staticfiles %}
+			<script src="{% static "js/jquery.imagemapster.js" %}"></script>
+			<script type="text/javascript" src="{% static "mapp.js" %}"></script>
+		</div>
+
+
+
+
+
+
+ <div id="right_half">
     <!-- <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'||store.status.data.stage=='2'"> -->
     <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'">
 
@@ -170,10 +134,11 @@ console.log('mapUrl is', mapUrl );
                 </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="order in store.products[0].orders track by $index">
+            <tr ng-repeat="order in store.products[0].orders|limitTo:(Math.floor((store.status.data.turn-1)/5)+1)*3">
                 <td class="col-md-3"> {$order.from$}</td>
                 <td class="col-md-3"> {$order.order_no$}</td>
                 <td class="col-md-3"> <input type="number" min="0" max="{$order.order_no$}" class="form-control" ng-model="order.to_no" class="col-sm-12">  </input></td>
+                <!-- <td>{$(Math.floor((store.status.data.turn-1)/5-1)+1)*3$}</td> -->
             </tr>
         </tbody>
     </table>
@@ -267,6 +232,35 @@ console.log('mapUrl is', mapUrl );
 </div>
 </div>
 </div>
-<script type="text/javascript" src="{% static "app.js" %}"> </script>
+<script>
+// script to feed in ids and necessary urls to app.js
+
+var id = "{{request.session.user_id}}";
+console.log('user id is', id);
+
+var factoryDetailsUrl = "{% url 'fac_details' %}";
+console.log('url is', factoryDetailsUrl);
+
+var getStatusUrl = "{% url 'getStatus' %}";
+console.log('getStatusUrl is', getStatusUrl);
+
+var getDemandUrl = "{% url 'get_demand' %}";
+console.log('getDemandUrl is', getDemandUrl);
+
+var viewDemandUrl = "{% url 'viewDemand' %}";
+console.log('viewDemandUrl is', viewDemandUrl);
+
+var supplyUrl = "{% url 'supply' %}";
+console.log('supplyUrl is', supplyUrl);
+
+var placeOrderUrl = "{% url 'placeOrder' %}";
+console.log('placeOrderUrl is', placeOrderUrl	);
+
+var mapUrl = "{% url 'map' %}";
+console.log('mapUrl is', mapUrl	);
+</script>
+
+	<script type="text/javascript" src="{% static "app.js" %}"> </script>
+	
 </body>
 </html>

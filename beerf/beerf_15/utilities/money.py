@@ -3,6 +3,7 @@ from beerf_15.models import *
 
 def moneyDecrease (fid, amount, turn):
 	fac = factories.objects.get(fid = fid)
+	print fac.money
 	if fac.money < amount:
 		raise ValueError("Not enough cash!")
 	fac.money -= amount
@@ -24,6 +25,7 @@ def moneySupply (fid, units, turn):
 
 def moneyPlaceOrder (fid, units, turn):
 	amount = units * 40
+	print amount
 	moneyDecrease (fid, amount, turn)
 
 def moneyInventory (fid, units, turn):

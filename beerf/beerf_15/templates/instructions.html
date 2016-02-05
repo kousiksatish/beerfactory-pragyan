@@ -1,0 +1,148 @@
+{% load staticfiles %}
+<html>
+<head>
+	<style type="text/css">
+	body
+	{
+		background-repeat: no-repeat;
+		   background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-position: center top;
+    background-attachment: fixed;
+    background-size: cover;
+	}
+
+	#bubble
+	{
+		position: absolute;
+		width:15%;
+		background-color: black;
+		color: yellow;
+		top:15%;
+		padding: 2%;
+		border: 1px solid grey;
+	}
+	</style>
+</head>
+<body>
+	
+<div id="bubble">
+Hello Username! <br>
+Please read the instructions carefully. <br>
+Press any key to continue.
+</div>
+<script type="text/javascript">
+	document.body.style.backgroundImage = "url(\"{% static 'images/screen1.png' %}\")";
+	var i = 0;
+	var j = [
+	
+	{
+		top:"1rem",
+		left:"80%",
+		info:"You can check the amount of beer in your inventory, and your money, current day here.<br>Press any key to continue",
+		height: "15%",
+		borderRadius: "0 40% 40% 40%",
+
+	}
+	,
+	{
+		top: "4rem",
+		left: "20%",
+		info: "Each day has 3 stages, you can view your progress here.<br>Press any key to continue",
+		height: "15%",
+		borderRadius: "0 40% 40% 40%",
+
+	}
+	,
+	{
+		top: "15rem",
+		left: "33%",
+		info: "shows the retailers in various zones. On hover ot click you can view details about each retailer. Zones are unlocked as the days pass.<br>Press any key to continue",
+		height: "20%",
+		borderRadius: "0 40% 40% 40%",
+
+	}
+	,
+	{
+		top: "6rem",
+		left: "80%",
+		info: "Shows your beery past. Hope its not teary. Helps you predict the future. kbye<br>Press any key to continue",
+		height: "15%",
+		borderRadius: "0 40% 40% 40%",
+
+	}
+	,
+	{
+		top: "10rem",
+		left: "60%",
+		info: "Shows details of the element clicked on map.<br>Press any key to continue",
+		height: "15%",
+		borderRadius: "0 40% 40% 40%",
+	}
+	,
+	{
+		top: "65%",
+		left: "50%",
+		info: "Click on this to view the demand and accordingly make a decision on how much you've to supply to each of them.<br>Press any key to continue",
+		height: "20%",
+		borderRadius: "40% 40% 40% 0",
+	},
+	{
+		top: "15%",
+		left: "75%",
+		info: "Enter the amount you wanna supply to each of the retailers. Make sure you don't exceed the amount of beer in your inventory.<br>Press any key to continue",
+		height: "20%",
+		borderRadius: "40% 40% 40% 0",
+	},
+		{
+		top: "35%",
+		left: "65%",
+		info: "Send the order. Cannot be reverted AT ANY COST. (don't contact us. we're not responsible for beer losses).<br>Press any key to continue",
+		height: "20%",
+		borderRadius: "40% 40% 40% 0",
+	},
+		{
+		top: "25%",
+		left: "80%",
+		info: "When you decide you need more time to decide.<br>Press any key to continue",
+		height: "10%",
+		borderRadius: "0 40% 40% 40%",
+	},
+		{
+		top: "35%",
+		left: "75%",
+		info: "Place order for next round here.<br>Press any key to continue",
+		height: "10%",
+		borderRadius: "40% 40% 40% 0",
+	},
+		{
+		top: "15%",
+		left: "45%",
+		info: "<br>Based on your history and your mispredictions which caused losses in popularity, and gains in inventory cost (which is basically a loss for you), please do make a better decision today. The past is in the past, and it will haunt you. The future is in the future and you can make it better. kenjoybeerbye.<br>Press any key to continue",
+		height: "40%",
+		borderRadius: "40% 40% 40% 0",
+	}
+
+	];
+	window.addEventListener("keydown",function showinfo(){
+		if(i==6)
+			document.body.style.backgroundImage = "url(\"{% static 'images/screen2.png' %}\")";
+		if(i==9)
+			document.body.style.backgroundImage = "url(\"{% static 'images/Screen3.png' %}\")";
+
+
+		var b = document.getElementById("bubble");
+		b.style.top = j[i].top;
+		b.style.left = j[i].left;
+		b.innerHTML = j[i].info;
+		b.style.height = j[i].height;
+		b.style.borderRadius = j[i].borderRadius;
+		i++;
+	});
+	
+
+</script>
+
+</body>
+
+</html>
