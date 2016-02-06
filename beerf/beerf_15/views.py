@@ -20,9 +20,8 @@ INITIAL FUNCTIONS
 4. /home
 '''
 
+@decorator_from_middleware(middleware.loggedIn)
 def register(request):
-	if 'user_id' in request.session:
-		return redirect(beerf_15.views.home)
 	if request.method == 'POST':
 		form = userForm(request.POST)
 		if form.is_valid():
@@ -34,8 +33,6 @@ def register(request):
 		return render(request, "register.html", {"form" : form})
 	
 def login(request,error=''):
-	if 'user_id' in request.session:
-		return redirect(beerf_15.views.home)
 	if request.method == 'POST':
 		email = request.POST.get('email')
 		try:
@@ -52,13 +49,14 @@ def login(request,error=''):
 		form = userLoginForm()
 		return render(request, "login.html", {"form" : form,"error" : error})
 
-@decorator_from_middleware(middleware.UserAuth)
+@decorator_from_middleware(middleware.loggedIn)
 def home(request):
 	id = request.session["user_id"]
-	user = users.objects.get(pid = id)
-	return render(request, "home.html",{ "name" : user.name })
+	user  = users.objects.get(pk=id)
+	if (user.factory_id):
+		return redirect(beerf_15.views.testhome)
 
-@decorator_from_middleware(middleware.UserAuth)
+@decorator_from_middleware(middleware.loggedIn)
 def logout(request):
 	request.session.flush()
 	form = userLoginForm()
@@ -935,6 +933,7 @@ def mapp(request):
 def testmap(request):
 	return render(request, "map_test.html")
 
+@decorator_from_middleware(middleware.loggedIn)
 def testhome(request):
 	id = request.session["user_id"]
 	user = users.objects.get(pid = id)
