@@ -20,7 +20,6 @@ INITIAL FUNCTIONS
 4. /home
 '''
 
-@decorator_from_middleware(middleware.loggedIn)
 def register(request):
 	if request.method == 'POST':
 		form = userForm(request.POST)
@@ -134,7 +133,7 @@ def unlockRetailers(id,turn,stage):
 		#return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 #@csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+#@decorator_from_middleware(middleware.SessionPIDAuth))	
 def updateInventory(id,turn,stage):
 	
 	#if request.method == 'POST':
