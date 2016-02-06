@@ -665,8 +665,8 @@ def supply(request):
 					 		i=i+1
 						dummy_algo.calculate_supply(factory.fid,int(turn))
 						money.moneySupply(factory.fid, quantity_sum, int(turn))
-						inventory.decrease(factory.fid, quantity_sum, int(turn))
-						money.moneyInventory(factory.fid, factory.inventory, int(turn))
+						inventory.decrease(factory.fid, factory.inventory, int(turn))
+						money.moneyInventory(factory.fid, factory.inventory-quantity_sum, int(turn))
 						stat.stage = stat.stage+1
 						stat.save()
 						return JsonResponse({"status":"200", "data":{"description":"Success"}})
