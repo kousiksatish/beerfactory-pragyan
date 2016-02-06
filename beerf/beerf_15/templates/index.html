@@ -97,141 +97,134 @@
 			<script type="text/javascript" src="{% static "mapp.js" %}"></script>
 		</div>
 
+        <div id="right_half">
+            <!-- <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'||store.status.data.stage=='2'"> -->
+            <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'">
 
+                <ul id="demandtabs" class="nav nav-tabs" role="tablist">
+                    <li class="active">
+                        <a href="#demandtab" role="tab" data-toggle="tab"> DEMAND </a>
+                    </li>
+                    <li>
+                    <a href="#historytab" role="tab" data-toggle="tab"> HISTORY </a>
+                    </li>
+                </ul>
+                    <!-- <button class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()" onclick="getDemand()">GET DEMAND</button> -->
+                    <!-- <button ui-sref="stage1">Click here!</button> -->
+                <div class="tab-content">
+                    <div id="demandtab" class="tab-pane fade active in">
+                        <div id="selections" class="rightcontent">
+                            CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND
+                        </div>
+                        <div id="demandpopup">
+                            <div class="close" ng-click="store.closepopup()">close</div>
+                                <table class="table table-striped" style="width:100%"> 
+                                    <thead>
+                                        <tr> 
+                                            <th> RETAILER </th>
+                                            <th> ORDER <br> AMOUNT </th>
+                                            <th> AMOUNT TO <br> DELIVER </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="order in store.products[0].orders|limitTo:(Math.floor((store.status.data.turn-1)/5)+1)*3">
+                                            <td class="col-md-3"> {$order.from$}</td>
+                                            <td class="col-md-3"> {$order.order_no$}</td>
+                                            <td class="col-md-3"> <input type="number" min="0" max="{$order.order_no$}" class="form-control" ng-model="order.to_no" class="col-sm-12">  </input></td>
+                                            <!-- <td>{$(Math.floor((store.status.data.turn-1)/5-1)+1)*3$}</td> -->
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <button id="send" class="btn btn-default" value = "Send" ng-click="store.send()">SEND</button> 
+                        </div>
+                        <button id="getdemand" class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()">SHOW DEMAND</button>
+                    </div>
 
-
-
-
- <div id="right_half">
-    <!-- <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'||store.status.data.stage=='2'"> -->
-    <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'">
-
-      <ul id="demandtabs" class="nav nav-tabs" role="tablist">
-      <li class="active">
-          <a href="#demandtab" role="tab" data-toggle="tab"> DEMAND
-          </a>
-      </li>
-      <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY
-          </a>
-      </li>
-    </ul>
-        <!-- <button class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()" onclick="getDemand()">GET DEMAND</button> -->
-        <!-- <button ui-sref="stage1">Click here!</button> -->
-<div class="tab-content">
-            <div id="demandtab" class="tab-pane fade active in">
-        <div id="selections" class="rightcontent">
-
-            CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND
-             </div>
-<div id="demandpopup">
-    <div class="close" ng-click="store.closepopup()">close</div>
-    <table class="table table-striped" style="width:100%"> 
-        <thead>
-            <tr> 
-                <th> RETAILER </th>
-                <th> ORDER <br> AMOUNT </th>
-                <th> AMOUNT TO <br> DELIVER </th>
-                </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="order in store.products[0].orders|limitTo:(Math.floor((store.status.data.turn-1)/5)+1)*3">
-                <td class="col-md-3"> {$order.from$}</td>
-                <td class="col-md-3"> {$order.order_no$}</td>
-                <td class="col-md-3"> <input type="number" min="0" max="{$order.order_no$}" class="form-control" ng-model="order.to_no" class="col-sm-12">  </input></td>
-                <!-- <td>{$(Math.floor((store.status.data.turn-1)/5-1)+1)*3$}</td> -->
-            </tr>
-        </tbody>
-    </table>
-    <button id="send" class="btn btn-default" value = "Send" ng-click="store.send()">SEND</button> 
-</div>
-        <button id="getdemand" class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()">SHOW DEMAND</button>
-</div>
-<div id = "historytab" class="tab-pane fade">
-     <table class="table table-striped"> <thead>
-                    <tr> 
-                        <th> DAY </th>
-                        <th> PRODUCED <br> AMOUNT </th>
-                        <th> AMOUNT<br> SOLD </th>
-                        <th> INVENTORY </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="inv in store.products[0].inventory">
-                        <td> {$inv.day$}</td>
-                        <td> {$inv.no_produced$}</td>
-                        <td> {$inv.no_sold$}</td>
-                        <td> {$inv.no_inv$}</td>
-                    </tr>
-                    </tbody>
-                </table>
-</div> 
-</div>
-     </div>
-<div ng-show="store.status.data.stage=='2'">
-    <ul id="ordertabs" class="nav nav-tabs" role="tablist">
-      <li class="active">
-          <a href="#ordertab" role="tab" data-toggle="tab"> ORDER
-          </a>
-      </li>
-      <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY
-          </a>
-      </li>
-    </ul>
-<div class="tab-content">
-            <div id="ordertab" class="tab-pane fade active in">
-                <table>
-                    <tr>
-                        <td>
-                            AMOUNT IN INVENTORY
-                        </td>
-                        <td>
-                            {$ store.factoryDetails.data.factory_1.inventory $} 
-                        </td>
-                    </tr> 
-                    <tr>
-                        <td>MONEY</td>
-                        <td>{$ store.factoryDetails.data.factory_1.money $}</td>
-                    </tr>
-                    <tr>
-                        <td>PRICE PER UNIT</td>
-                        <td>100</td>
-                    </tr>
-                    <tr>
-                        <td>TOTAL DEMAND LAST TURN</td>
-                        <td>450</td>
-                    </tr>
-                    <tr>
-                        <td>AMOUNT TO BE ORDERED</td>
-                        <td><input type="text" placeholder="Place the order for the next round here!" ng-model="store.order"></td>
-                    </tr>
-                    <tr>
-                        <td><button class="btn btn-default" ng-click="store.placeOrder()">ORDER!</button>  </td>
-                    </tr>
-                </table>
+                    <div id = "historytab" class="tab-pane fade">
+                        <table class="table table-striped"> 
+                            <thead>
+                                <tr> 
+                                    <th> DAY </th>
+                                    <th> PRODUCED <br> AMOUNT </th>
+                                    <th> AMOUNT<br> SOLD </th>
+                                    <th> INVENTORY </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="inv in store.products[0].inventory">
+                                    <td> {$inv.day$}</td>
+                                    <td> {$inv.no_produced$}</td>
+                                    <td> {$inv.no_sold$}</td>
+                                    <td> {$inv.no_inv$}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> 
+                </div>
             </div>
-<div id = "historytab" class="tab-pane fade">
-     <table class="table table-striped"> <thead>
-                    <tr> 
-                        <th> DAY </th>
-                        <th> PRODUCED <br> AMOUNT </th>
-                        <th> AMOUNT<br> SOLD </th>
-                        <th> INVENTORY </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="inv in store.products[0].inventory">
-                        <td> {$inv.day$}</td>
-                        <td> {$inv.no_produced$}</td>
-                        <td> {$inv.no_sold$}</td>
-                        <td> {$inv.no_inv$}</td>
-                    </tr>
-                    </tbody>
-                </table>
-</div> 
+
+            <div ng-show="store.status.data.stage=='2'">
+                <ul id="ordertabs" class="nav nav-tabs" role="tablist">
+                  <li class="active">
+                      <a href="#ordertab" role="tab" data-toggle="tab"> ORDER </a>
+                  </li>
+                  <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY </a>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="ordertab" class="tab-pane fade active in">
+                        <table>
+                            <tr>
+                                <td>  AMOUNT IN INVENTORY </td>
+                                <td> {$ store.factoryDetails.data.factory_1.inventory $} </td>
+                            </tr> 
+                            <tr>
+                                <td>MONEY</td>
+                                <td>{$ store.factoryDetails.data.factory_1.money $}</td>
+                            </tr>
+                            <tr>
+                                <td>PRICE PER UNIT</td>
+                                <td>100</td>
+                            </tr>
+                            <tr>
+                                <td>TOTAL DEMAND LAST TURN</td>
+                                <td>450</td>
+                            </tr>
+                            <tr>
+                                <td>AMOUNT TO BE ORDERED</td>
+                                <td><input type="text" placeholder="Place the order for the next round here!" ng-model="store.order"></td>
+                            </tr>
+                            <tr>
+                                <td><button class="btn btn-default" ng-click="store.placeOrder()">ORDER!</button>  </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id = "historytab" class="tab-pane fade">
+                        <table class="table table-striped"> 
+                            <thead>
+                                <tr> 
+                                    <th> DAY </th>
+                                    <th> PRODUCED <br> AMOUNT </th>
+                                    <th> AMOUNT<br> SOLD </th>
+                                    <th> INVENTORY </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="inv in store.products[0].inventory">
+                                    <td> {$inv.day$}</td>
+                                    <td> {$inv.no_produced$}</td>
+                                    <td> {$inv.no_sold$}</td>
+                                    <td> {$inv.no_inv$}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</div>
-</div>
-</div>
+
 <script>
 // script to feed in ids and necessary urls to app.js
 
