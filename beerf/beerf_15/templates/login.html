@@ -44,11 +44,19 @@
 	        <div class="panel-body">
 				<form role="form" class="form-horizontal" action="/" method="post">
 					<div>
+						<span><b>{{error}}</b></span><br>
 						{% csrf_token %}
-						{{form}}
-					</div>
+						<div class="form-group">
+				            <label for="name" class="col-lg-2 control-label">Email</label>
+				            <div class="col-lg-10">
+				                <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+				            </div>
+				        </div>
 					<input class="btn btn-yellow" type="submit" value="Submit">
 				</form>
+				<div>
+				<a href="register">Click to Register</a>
+				</div>
 			</div>
 		</div>
 	</div>

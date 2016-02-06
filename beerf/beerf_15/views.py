@@ -52,14 +52,16 @@ def login(request,error=''):
 def home(request):
 	id = request.session["user_id"]
 	user  = users.objects.get(pk=id)
-	if (user.factory_id):
-		return redirect(beerf_15.views.testhome)
+	#if (user.factory_id):
+		#return redirect(beerf_15.views.testhome)
+	#else:
+	return render(request, "home.html", {"name" : user.name})
 
 @decorator_from_middleware(middleware.loggedIn)
 def logout(request):
 	request.session.flush()
 	form = userLoginForm()
-	return render(request, "login.html", {"form" : form,"error" : "logged out"})
+	return render(request, "login.html", {"form" : form,"error" : "Successfully logged out"})
 
 
 '''
