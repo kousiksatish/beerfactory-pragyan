@@ -405,6 +405,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 		vm.factoryDetails = json;
 		console.log('factory details', vm.factoryDetails);
+		if(json.status === '200' || json.status === 200)
+		{
+			toastr.success('Factory details obtained successfully!');
+		}
+		else
+		{
+			toastr.warning(json.data.description);
+		}
 	});
 
 	AnyTimeFunctions.getStatusDetails(id).success(function(json){
@@ -412,6 +420,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('status details', vm.status);
 		var progressbar = angular.element(progressbartop);
 		console.log(vm.status.data.stage);
+		if(json.status === '200' || json.status === 200)
+		{
+			toastr.success('Status of user obtained successfully!');
+		}
+		else
+		{
+			toastr.warning(json.data.description);
+		}
 		switch(vm.status.data.stage)
 		{
 			case "0":
@@ -470,8 +486,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			   		progressbar.css('width','66%');
 			    	progressbar.html("Stage 2 of 3");
 					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
-
 				}
+				else
+				{
+					toastr.warning(json.data.description);
+				}
+
 			});
 		}
 
@@ -539,6 +559,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
 
 			}
+			else
+			{
+				toastr.warning(json.data.description);
+			}
 			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 			vm.factoryDetails = json;
 			console.log('factory details after supplying', vm.factoryDetails);
@@ -574,8 +598,13 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		   		progressbar.css('width','33%');
 		    	progressbar.html("Stage 1 of 3");
 				toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
-
+				
 			}
+			else
+			{
+				toastr.warning(json.data.description);
+			}
+
 			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 			vm.factoryDetails = json;
 			console.log('factory details after placing order', vm.factoryDetails);
