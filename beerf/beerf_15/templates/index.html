@@ -100,6 +100,8 @@
 
         <div id="right_half">
             <!-- <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'||store.status.data.stage=='2'"> -->
+
+            <!-- stage 0 or 1. Getting demand stage or placing order to the retailers stage-->
             <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'">
 
                 <ul id="demandtabs" class="nav nav-tabs" role="tablist">
@@ -164,6 +166,7 @@
                 </div>
             </div>
 
+            <!-- stage 2 placing order stage-->
             <div ng-show="store.status.data.stage=='2'">
                 <ul id="ordertabs" class="nav nav-tabs" role="tablist">
                   <li class="active">
@@ -222,6 +225,55 @@
                     </div> 
                 </div>
             </div>
+
+            <!-- stage 3 option to upgrade factory stage-->
+            <div ng-show="store.status.data.stage=='3'">
+                <ul id="ordertabs" class="nav nav-tabs" role="tablist">
+                  <li class="active">
+                      <a href="#ordertab" role="tab" data-toggle="tab"> ORDER </a>
+                  </li>
+                  <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY </a>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="ordertab" class="tab-pane fade active in">
+                        <table>
+                            <!-- put current details of player here -->
+                        </table>
+
+                        <div class="jumbotron">
+                            <h3><center> Do you want to upgrade your factory? </center></h3>
+
+                            <button type="button" class="btn btn-primary" style="position: relative; left: 150px;" ng-click="store.upgradeFactory(1)"> Yes! </button>
+                            <button type="button" class="btn btn-primary" style="position: relative; left: 250px;" ng-click="store.upgradeFactory(0)"> No thanks! </button>
+
+                        </div>
+                    </div>
+                    <div id = "historytab" class="tab-pane fade">
+                        <table class="table table-striped"> 
+                            <thead>
+                                <tr> 
+                                    <th> DAY </th>
+                                    <th> PRODUCED <br> AMOUNT </th>
+                                    <th> AMOUNT<br> SOLD </th>
+                                    <th> INVENTORY </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="inv in store.products[0].inventory">
+                                    <td> {$inv.day$}</td>
+                                    <td> {$inv.no_produced$}</td>
+                                    <td> {$inv.no_sold$}</td>
+                                    <td> {$inv.no_inv$}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> 
+                </div>
+
+            </div>
+
+
         </div>
     </div>
 </div>
@@ -252,6 +304,9 @@ console.log('placeOrderUrl is', placeOrderUrl	);
 
 var mapUrl = "{% url 'map' %}";
 console.log('mapUrl is', mapUrl	);
+
+var updateCapacityUrl = "{% url 'updateCapacity' %}";
+console.log('updateCapacityUrl is', updateCapacityUrl );
 </script>
 
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>
