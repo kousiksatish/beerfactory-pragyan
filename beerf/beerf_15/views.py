@@ -9,9 +9,10 @@ from django.utils.decorators import decorator_from_middleware
 from beerf_15.models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from beerf_algo.beerf_algo import dummy_algo
+from beerf_algo.beerf_algo import algo
 from utilities import money
 from utilities import inventory
+import random
 '''
 INITIAL FUNCTIONS
 1. /register
@@ -176,19 +177,23 @@ def retailer_allocate(fac1, zone, unlocked, retailer_no):
 	#create the retailer
 	rcodes = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o']
 	retDetails = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o']
+	initial_demands = [[70,75,80][random.randint(0,2)] for i in range(2)]
 	ret = retailers(rcode = rcodes[retailer_no], zone = zone, details = retDetails[retailer_no], unlocked=unlocked)
 	ret.save()
 
 	fac_fac_relation = factory_factory.objects.get(fac1=fac1)
 	fac2 = fac_fac_relation.fac2
 
-	pop = calculate_popularity(retailer_no)
 	#create the factory-retailer link
-	fac_ret_relation = factory_retailer(fid = fac1, rid = ret, popularity = pop)
+	fac_ret_relation = factory_retailer(fid = fac1, rid = ret, popularity = 1)
 	fac_ret_relation.save()
-
-	fac_ret_relation = factory_retailer(fid = fac2, rid = ret, popularity = 1-pop)
+	demand_turn = (zone-1)*5
+	user_demand = fac_ret_demand(frid=fac_ret_relation,turn=demand_turn,quantity = initial_demands[0])
+	user_demand.save()
+	fac_ret_relation = factory_retailer(fid = fac2, rid = ret, popularity = 1)
 	fac_ret_relation.save()
+	opponent_demand = fac_ret_demand(frid=fac_ret_relation,turn=demand_turn,quantity = initial_demands[1])
+	opponent_demand.save()
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
@@ -230,6 +235,7 @@ def assign(request):
 						retailer_allocate(fac1, zone, 1, (zone-1)*3+i)
 					else:
 						retailer_allocate(fac1, zone, 0, (zone-1)*3+i)
+
 
 			return JsonResponse({"status":"200","data":{"description":"Successfully allocated Factories and Retailers"}})
 		else:
@@ -549,7 +555,7 @@ def get_demand(request):
 					demand = []
 					#get the demand from the algo foreach retailer
 					for frid in unlocked_frids:
-						retailer_demand = dummy_algo.calculate_demand(frid,turn)
+						retailer_demand = algo.calculate_demand(frid,turn)
 						demand.append(retailer_demand)
 						fac_ret = factory_retailer.objects.get(pk=frid)
 						fr_demand = fac_ret_demand( frid = fac_ret, turn = turn,quantity = retailer_demand)
@@ -662,7 +668,7 @@ def supply(request):
 					 		supply_value = fac_ret_supply(turn = int(turn), quantity = int(quantity1[i]), frid_id = demand.frid_id )
 					 		supply_value.save()
 					 		i=i+1
-						dummy_algo.calculate_supply(factory.fid,int(turn))
+						algo.calculate_supply(factory.fid,int(turn))
 						money.moneySupply(factory.fid, quantity_sum, int(turn))
 						inventory.decrease(factory.fid, quantity_sum, int(turn))
 						money.moneyInventory(factory.fid, factory.inventory-quantity_sum, int(turn))
@@ -699,6 +705,7 @@ def viewDemandSupply(request):
 					data={}
 					demand = []
 					supply = []
+					frids = unlocked_ret(frids,factory)
 					for frid in frids:
 						fac_ret = factory_retailer.objects.get(pk=frid)
 						fr_demand = fac_ret_demand.objects.get(frid=fac_ret, turn=turn)
@@ -755,7 +762,7 @@ def placeOrder(request):
 			try:
 				money.moneyPlaceOrder(factory.fid, quantity, int(turn))
 				#calculate the order of the simulated factory
-				dummy_algo.calculate_order(factory,int(turn))
+				algo.calculate_order(factory,int(turn))
 			except ValueError as err:
 				new_order.delete()
 				return JsonResponse({"status":"111","data":{"description":str(err)}})
@@ -876,6 +883,7 @@ def updateCapacity(request):
 					else:
 						cap = capacity(turn = int(turn)+1,capacity=cap_old,fid_id=user.factory_id)
 						cap.save()
+					algo.calculate_capacity_upgrade(user.factory_id, int(turn))
 					stat.turn = int(turn) + 1
 					stat.stage = 0
 					stat.save()

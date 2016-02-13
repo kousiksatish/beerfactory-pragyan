@@ -22,8 +22,11 @@ def moneySupply (fid, units, turn):
 	amount = units * 50
 	moneyIncrease (fid, amount, turn)
 
+def getMoneyForOrder():
+	return 40
+
 def moneyPlaceOrder (fid, units, turn):
-	amount = units * 40
+	amount = units * getMoneyForOrder()
 	print amount
 	moneyDecrease (fid, amount, turn)
 
