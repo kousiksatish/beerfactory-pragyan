@@ -204,11 +204,11 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
 	};
 
-	upgradeFactory = function(id, flag){
+	upgradeFactory = function(id, _turn, _stage, flag){
 
 		return $http({
 	   		 	method: 'POST',
-	    		url: placeOrderUrl,
+	    		url: updateCapacityUrl,
 	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 	    		transformRequest: function(obj) {
 	    		    var str = [];
@@ -216,7 +216,7 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
 	        		return str.join("&");
 	    		},
-	    		data: {user_id: id, flag: flag}
+	    		data: {user_id: id, turn: _turn, stage: _stage, flag: flag}
 				})
 				.success(function(json) {
 	    					return json;
@@ -397,6 +397,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	// supply value holds the values that are to be submitted by the user. This is ngmodeled in the html
 	vm.supplyValues = [];
 	vm.order=0;
+	vm.flag=0;
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
@@ -431,17 +432,21 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		switch(vm.status.data.stage)
 		{
 			case "0":
-				progressbar.css('width','33%');
-	    		progressbar.html("Stage 1 of 3");
+				progressbar.css('width','25%');
+	    		progressbar.html("Stage 1 of 4");
 	    		break;
 	    	case "1":
-	    		progressbar.css('width','66%');
-	    		progressbar.html("Stage 2 of 3");
+	    		progressbar.css('width','50%');
+	    		progressbar.html("Stage 2 of 4");
 	    		break;
 	    	case "2":
 	    		console.log("ds");
+	    		progressbar.css('width','75%');
+	    		progressbar.html("Stage 3 of 4");
+	    		break;
+	    	case "3":
 	    		progressbar.css('width','100%');
-	    		progressbar.html("Stage 3 of 3");
+	    		progressbar.html("Stage 4 of 4");
 	    		break;
     	}
 		vm.level = Math.floor(parseInt(vm.status.data.turn-1)/5)+1;
@@ -483,8 +488,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					var stage = parseInt(vm.status.data.stage)+1;
 					vm.status.data.stage = stage.toString();
 					var progressbar = angular.element(progressbartop);
-			   		progressbar.css('width','66%');
-			    	progressbar.html("Stage 2 of 3");
+			   		progressbar.css('width','50%');
+			    	progressbar.html("Stage 2 of 4");
 					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
 				}
 				else
@@ -553,8 +558,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var stage = parseInt(vm.status.data.stage)+1;
 				vm.status.data.stage = stage.toString();
 				var progressbar = angular.element(progressbartop);
-		   		progressbar.css('width','100%');
-		    	progressbar.html("Stage 3 of 3");
+		   		progressbar.css('width','75%');
+		    	progressbar.html("Stage 3 of 4");
 		    	angular.element(demandpopup).css('display','none');
 				toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
 
@@ -593,10 +598,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			if(json.status === "200" || json.status === 200){
 				var turn = parseInt(vm.status.data.turn) + 1;
 				vm.status.data.turn = turn.toString();
-				vm.status.data.stage = '0';
+				vm.status.data.stage = '3';
 				var progressbar = angular.element(progressbartop);
-		   		progressbar.css('width','33%');
-		    	progressbar.html("Stage 1 of 3");
+		   		progressbar.css('width','100%');
+		    	progressbar.html("Stage 4 of 4");
 				toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
 				
 			}
@@ -612,11 +617,38 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		})
 	}
 
-	vm.upgradeFactory = function(){
+	vm.upgradeFactory = function(flag){
+
+		vm.flag=flag;
 		
 		AnyTimeFunctions.getStatusDetails(id).success(function(json){
 		vm.status = json;
 		console.log('status details', vm.status);
+		});
+
+		TurnStageBasedFunctions.upgradeFactory(id, vm.status.data.turn, vm.status.data.stage, vm.flag).success(function(json){
+			console.log('Respose from updateCapacity', json);
+
+			if(json.status === "200" || json.status === 200){
+				var turn = parseInt(vm.status.data.turn) + 1;
+				vm.status.data.turn = turn.toString();
+				vm.status.data.stage = '0';
+				var progressbar = angular.element(progressbartop);
+		   		progressbar.css('width','25%');
+		    	progressbar.html("Stage 1 of 4");
+				toastr.success('upgrade factory called', 'upgrade !');
+				
+			}
+			else
+			{
+				toastr.warning(json.data.description);
+			}
+
+			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
+			vm.factoryDetails = json;
+			console.log('factory details after upgrade factory option', vm.factoryDetails);
+			});
+
 		});
 
 

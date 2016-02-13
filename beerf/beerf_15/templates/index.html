@@ -226,6 +226,53 @@
                 </div>
             </div>
 
+            <!-- stage 3 option to upgrade factory stage-->
+            <div ng-show="store.status.data.stage=='3'">
+                <ul id="ordertabs" class="nav nav-tabs" role="tablist">
+                  <li class="active">
+                      <a href="#ordertab" role="tab" data-toggle="tab"> ORDER </a>
+                  </li>
+                  <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY </a>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="ordertab" class="tab-pane fade active in">
+                        <table>
+                            <!-- put current details of player here -->
+                        </table>
+
+                        <div class="jumbotron">
+                            <h3><center> Do you want to upgrade your factory? </center></h3>
+
+                            <button type="button" class="btn btn-primary" style="position: relative; left: 150px;" ng-click="store.upgradeFactory(1)"> Yes! </button>
+                            <button type="button" class="btn btn-primary" style="position: relative; left: 250px;" ng-click="store.upgradeFactory(0)"> No thanks! </button>
+
+                        </div>
+                    </div>
+                    <div id = "historytab" class="tab-pane fade">
+                        <table class="table table-striped"> 
+                            <thead>
+                                <tr> 
+                                    <th> DAY </th>
+                                    <th> PRODUCED <br> AMOUNT </th>
+                                    <th> AMOUNT<br> SOLD </th>
+                                    <th> INVENTORY </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="inv in store.products[0].inventory">
+                                    <td> {$inv.day$}</td>
+                                    <td> {$inv.no_produced$}</td>
+                                    <td> {$inv.no_sold$}</td>
+                                    <td> {$inv.no_inv$}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> 
+                </div>
+
+            </div>
+
 
         </div>
     </div>
