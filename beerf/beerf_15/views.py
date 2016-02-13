@@ -159,7 +159,6 @@ def updateInventory(id,turn,stage):
 				factory = user.factory
 				order = factory_order.objects.get(fid_id = factory.fid, turn = turn)
 				inventory.increase(factory.fid, order.quantity, int(turn))
-				
 				return 200 #return JsonResponse({"status":"200", "data":{"description":"success.Inventory updated."}})
 	#else:
 		#return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
@@ -517,7 +516,7 @@ TURN & STAGE BASED OPERATIONS
 4. viewDemandSupply (Turn, Stage = 2)
 5. placeOrder(Turn, Stage = 2)
 6. update_selling_price(Turn, Stage=)
-7. updateValues(Turn, stage = )
+7. updateCapacity(Turn, stage = 3)
 
 
 '''
@@ -771,12 +770,11 @@ def placeOrder(request):
 			if int(turn) % 5 == 0 :
 				result2 =unlockRetailers(str(id), str(turn), str(3))
 			if result1 == 200 and result2 == 200:
-				cur_status.turn=turn+1
-				cur_status.stage = 0
+				cur_status.turn=turn
+				cur_status.stage = 3
 				cur_status.save()
 	
-			cap = capacity(turn = cur_status.turn,capacity=cur_capacity,fid=factory)
-			cap.save()
+			
 			return JsonResponse({"status":"200","data":{"description":"Successfully placed the order"}})
 
 	
@@ -831,12 +829,20 @@ def updateSellingPrice(request):
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
+def calculate_next_capacity(cap):
+	cap_array = [200, 400, 700, 1000, 1400, 1800, 2300];
+	cap_index = cap_array.index(cap)
+	return cap_array[cap_index + 1]
 
+def calculate_money(cap):
+	cap_array = [200, 400, 700, 1000, 1400, 1800, 2300];
+	cap_index = cap_array.index(cap)
+	cap_money = [2000, 8000, 12000, 18000, 18000, 18000, 18000];
+	return cap_money[cap_index + 1]
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
-def updateValues(request):
-	
+def updateCapacity(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
 		try:
@@ -848,7 +854,6 @@ def updateValues(request):
 		if id and user:
 			turn = request.POST.get("turn")
 			stage = request.POST.get("stage")
-			
 			if(not (stage) or not (turn)):
 				return JsonResponse({"status":"104", "data":{"description":"Invalid request parameters. user_id,turn and stage should be provided."}})
 			else:
@@ -856,19 +861,25 @@ def updateValues(request):
 				if((turn != str(stat.turn)) or (stage != str(stat.stage)) or stage !="3"):
 					return JsonResponse({"status":"105", "data":{"description":"Turn or Stage mismatch."}})
 				else:
-					updates = request.POST.get("values").split(',')
-					for u in updates:
-				 		if not(u.isdigit()):
-				 			return JsonResponse({"status":"106", "data":{"description":"Invalid value. It must be an integer"}})
+					flag = request.POST.get("flag")
+					cap_old = capacity.objects.get(turn = int(turn), fid_id = user.factory_id).capacity
+					if(int(flag)==1):
+						cost = calculate_money(cap_old)
+						cur_money = money.getMoney(user.factory_id)
+						if(cur_money < cost):
+							return JsonResponse({"status":"106", "data":{"description":"Not enough money for upgrade!"}})
 
-															 		
-					new_capacity = capacity(turn = int(turn), capacity = int(updates[0]) , fid_id = user.factory_id)
-					new_capacity.save()
-	
-					stat.stage = stat.stage+1
+						cap = capacity(turn = int(turn)+1 , fid_id = user.factory_id)
+						cap.capacity = calculate_next_capacity(cap_old)
+						cap.save()
+						money.moneyDecrease(user.factory_id, cost, int(turn))
+					else:
+						cap = capacity(turn = int(turn)+1,capacity=cap_old,fid_id=user.factory_id)
+						cap.save()
+					stat.turn = int(turn) + 1
+					stat.stage = 0
 					stat.save()
 					return JsonResponse({"status":"200", "data":{"description":"Success"}})
-
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
