@@ -1,13 +1,81 @@
-<html>
-<head>
-<title>Home - Beer Factory</title>
+{% load staticfiles %}
+<html ng-app="store">
+<title>The Beer Factory</title>
+
+<head> 
+	<script type="text/javascript" src="{% static "angular/angular.min.js" %}"> </script>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
+	<link rel="stylesheet" type="text/css" href="{% static "css/left.css" %}" />
+	
+	<script src="{% static "js/jquery.min.js" %}"></script>
+	<script src="{% static "js/jquery.imagemapster.js" %}"></script>
+    <script src="{% static "bootstrap-3.3.6-dist/js/bootstrap.min.js" %}"></script>
+    <style>
+	.panel-yellow {
+		border-color: #f1c40f;
+	}
+
+	.panel-yellow > .panel-heading {
+		 background: #f1c40f;
+	}
+
+	.btn-yellow {
+		 background: #f1c40f;
+	}
+	
+	.box
+	{
+		margin-top:15%;
+	}
+
+	@media only screen and (min-width : 1200px)
+	{
+		.box
+		{
+			margin-top:30%;
+		}
+	}
+</style>
 </head>
+
 <body>
-<h1>Hi {{name}}, Welcome</h1>
-<button id="assign_factories">Click me to allocate factory and retailers.</button>
-<a href="{% url 'logout' %}"><button>Logout</button></a>
-<p id="status"></p>
-<p id="msg"></p>
+
+<div>
+	<nav class="navbar navbar-default navbar-fixed-top nav-container">
+	  	<div class="container-fluid"   ng-repeat="product in store.products">
+	   		<div class="navbar-header col-md-3">
+	   		  <a class="navbar-brand" href="#">BEER-FACTORY</a>
+	   		</div>
+	    		
+	   		<ul class="top-info col-md-9">
+	   		  <li class="col-md-2"></li>
+	   		  <li class="col-md-2"></li>
+			  <li class="col-md-2"></li>
+			  <li class="col-md-2"></li>
+			  <li class="col-md-2"> Hi {{ name }}</li>	
+	   		</ul>
+		</div>
+	</nav>
+	<div class="container">
+	<div class="box col-xs-12 col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4 text-center">
+
+		<a href="instructions" target="blank">
+		<button class="col-md-12 btn btn-large btn-yellow">You really wanna see the instructions!
+		</button>
+		</a>
+		<br><br><br>
+		<a>
+		<button id="assign_factories" class="col-md-12 btn btn-large btn-yellow">Let's start!
+		</button>
+		</a>
+		
+	</div>
+	</div>
+</div>
+
+</div>
+</body>
 {% load staticfiles %}
 <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
 <script type="text/javascript">
@@ -23,11 +91,11 @@
 	        success : function(json) {
 	        	var status;
 	        	if(json.status == "200")
+	        	{
 	        		status = "Success !!";
-	        	else if(json.status == "100" || json.status == "101")
-	        		status = "Error !!";
-	           	$("#status").html(status);
-	           	$("#msg").html(json.data.description);
+
+	        	}
+	        	window.location.replace("{% url 'testhome' %}");
 	        },
 	        error : function(xhr,errmsg,err) {
 	           $("#status").html("ERROR");
