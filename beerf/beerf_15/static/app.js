@@ -202,13 +202,37 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 	    					return err;
 	  					});
 
-	}
+	};
+
+	upgradeFactory = function(id, flag){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: placeOrderUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id, flag: flag}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+
+	};
 
 	return  {
 		getDemandDetails: getDemandDetails,
 		viewDemandDetails: viewDemandDetails,
 		supply: supply,
-		placeOrder: placeOrder
+		placeOrder: placeOrder,
+		upgradeFactory: upgradeFactory
 	};
 
 }]);
@@ -529,7 +553,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.closepopup = function() {
     angular.element(demandpopup).css('display','none');
-}
+	}
+
 	vm.placeOrder = function(){
 		
 		AnyTimeFunctions.getStatusDetails(id).success(function(json){
@@ -556,6 +581,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			console.log('factory details after placing order', vm.factoryDetails);
 			});
 		})
+	}
+
+	vm.upgradeFactory = function(){
+		
+		AnyTimeFunctions.getStatusDetails(id).success(function(json){
+		vm.status = json;
+		console.log('status details', vm.status);
+		});
+
+
 	}
 
 	vm.mapclicked = function(e){
