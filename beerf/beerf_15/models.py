@@ -101,6 +101,19 @@ class inventory_log(models.Model):
 	inventory_change = models.IntegerField()
 	fid = models.ForeignKey(factories)
 
+class popularity_log(models.Model):
+	popid = models.AutoField(primary_key=True)
+	turn = models.IntegerField()
+	popularity = models.IntegerField()
+	frid = models.ForeignKey(factory_retailer)
+
+class score(models.Model):
+	scoreid = models.AutoField(primary_key=True)
+	pid = models.ForeignKey(users)
+	turn = models.IntegerField()
+	score = models.IntegerField()
+
+
 class userForm(ModelForm):
     class Meta:
         model = users
