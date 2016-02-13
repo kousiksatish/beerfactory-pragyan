@@ -254,6 +254,7 @@ ANY TIME FUNCTIONS
 4. getPopularity
 5. restart
 6. history
+7. getCapacityDetails
 '''
 
 @csrf_exempt
@@ -512,6 +513,29 @@ def history(request):
 			return JsonResponse({"status":"200", "data":{"description":"Success","history":history}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def getCapacityDetails(request):
+	id = request.POST.get("user_id")
+	try:
+		user = users.objects.get(pk=id)
+	except users.DoesNotExist:
+		return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+		user = None
+	if id and user:
+		stat = status.objects.get(pid = id)
+		cur_capacity = capacity.objects.get(fid = user.factory, turn = stat.turn).capacity
+		next_upgrade_capacity = calculate_next_capacity(cur_capacity)
+		upgrade_cost = calculate_money(cur_capacity)
+		json = {}
+		json["status"] = 200
+		data = {}
+		data["current_capacity"] = cur_capacity
+		data["next_upgrade_capacity"] = next_upgrade_capacity
+		data["upgrade_cost"] = upgrade_cost
+		json["data"] = data
+		return JsonResponse(json)
 
 '''
 TURN & STAGE BASED OPERATIONS
