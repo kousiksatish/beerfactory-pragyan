@@ -1,5 +1,6 @@
 var path='static/images/map1.gif' ;
-
+   //var $element = $('#main-content');
+     //       var scope = angular.element($element).scope();
 
 
 
@@ -131,35 +132,8 @@ singleSelect: false,
         isSelectable: false,
         fillOpacity: 1,
         render_select : { altImage : 'black'},
-        areas: [
-                {
-
-                    key: 'fact1',
-                    render_select : { altImage : path},
-                    toolTip: "YOUR FACTORY"
-                    
-                    
-               },
-               {
-
-                    key: 'fact2',
-                    render_select : { altImage : path},
-                    toolTip: "OPPONENT FACTORY"
-                    
-               },
-               {
-                    key:'1',
-                    render_select : {altImage:'color'}
-               },
-               {
-                    key: '2',
-                    render_select : {altImage : 'color'}
-               },
-               {
-                    key: '3',
-                    render_select : {altImage : 'color'}
-               }],    
-        onMouseover: function(x) {
+           
+    onMouseover: function(x) {
             
         var $element = $('#main-content');
         var scope = angular.element($element).scope();
@@ -197,7 +171,34 @@ singleSelect: false,
         },
         showToolTip: true,
         toolTipClose: ["tooltip-click", "area-click"],
-});
+        areas: (function() {
+            // var $element = $('#main-content');
+            // var scope = angular.element($element).scope();
+            // console.log("areas",scope)
+            // var c=(Math.floor((scope.store.status.data.turn-1)/5)+1)*3;
+            var myArray = [];
+            myArray.push({
+                key: 'fact1',
+                render_select : { altImage : path},
+                toolTip: "YOUR FACTORY"
+            });
+            myArray.push({
+                key: 'fact2',
+                render_select : { altImage : path},
+                toolTip: "OPPONENT FACTORY"
+            })
+            for(var i=1;i<=3;i++)
+            {
+                myArray.push({
+                   key: ''+i,
+                   render_select : { altImage : path}
+                });
+            }
+            return myArray;
+        })()
+
+    });
+    
 
 
 }
