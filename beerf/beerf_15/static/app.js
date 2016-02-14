@@ -528,10 +528,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('vm.level', vm.level);
 		vm.level = Math.floor(parseInt(vm.status.data.turn-1)/5)+1;
 		var i=0;
-		// for(var order of vm.products[0].orders){
-		// 	order.to_no = vm.supplyValues[i];
-		// 	i++;
-		// }
+
 		for(i=0;i<3*vm.level;i++){
 			vm.supplyValues[i]=vm.products[0].orders[i].to_no;
 		}
@@ -541,38 +538,59 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		
 
 		console.log('level', vm.level);
-
+		sum_of_supply = 0;
+		checkint_flag = 0;
+		lessthandemand_flag = 0;
 		for(var i=0; i<3*(vm.level); i++){
+			if (! /^\+?(0|[1-9]\d*)$/.test(vm.supplyValues[i]) && checkint_flag == 0)
+				checkint_flag = 1;
+			if(vm.supplyValues[i] > vm.demandDetails.data.demand[i] && lessthandemand_flag == 0)
+				lessthandemand_flag = 1;
 			supply += (vm.supplyValues[i] + ',');
+			sum_of_supply += vm.supplyValues[i];
 		}
 
 		supply = supply.substr(0, supply.length-1);
 
 		console.log('Supply to be sent', supply);
 		console.log('Status before sending', vm.status.data);
+		if(checkint_flag == 1)
+		{
+			toastr.warning('Invalid Quantity. Quantity must be a positive integer');
+		}
+		else if(vm.factoryDetails.data.inventory  < sum_of_supply)
+		{
+			toastr.warning('Invalid Quantity. supply must be less than inventory');
+		}
+		else if(lessthandemand_flag == 1)
+		{
+			toastr.warning('Invalid supply quantity. Supply should not be greater than demand');
+		}
+		else
+		{
+			TurnStageBasedFunctions.supply(id, supply, vm.status.data.turn, vm.status.data.stage).success(function(json){
+				console.log('Response for supply', json);
+				if(json.status === "200" || json.status === 200){
+					var stage = parseInt(vm.status.data.stage)+1;
+					vm.status.data.stage = stage.toString();
+					var progressbar = angular.element(progressbartop);
+			   		progressbar.css('width','75%');
+			    	progressbar.html("Stage 3 of 4");
+			    	angular.element(demandpopup).css('display','none');
+					toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
 
-
-		TurnStageBasedFunctions.supply(id, supply, vm.status.data.turn, vm.status.data.stage).success(function(json){
-			console.log('Response for supply', json);
-			if(json.status === "200" || json.status === 200){
-				var stage = parseInt(vm.status.data.stage)+1;
-				vm.status.data.stage = stage.toString();
-				var progressbar = angular.element(progressbartop);
-		   		progressbar.css('width','75%');
-		    	progressbar.html("Stage 3 of 4");
-		    	angular.element(demandpopup).css('display','none');
-				toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
-
-			}
-			else
-			{
-				toastr.warning(json.data.description);
-			}
-			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
-			vm.factoryDetails = json;
-			console.log('factory details after supplying', vm.factoryDetails);
+				}
+				else
+				{
+					toastr.warning(json.data.description);
+				}
+				AnyTimeFunctions.getFactoryDetails(id).success(function(json){
+				vm.factoryDetails = json;
+				console.log('factory details after supplying', vm.factoryDetails);
+				});
 			});
-		})
+		}
+
 		
 
 
@@ -641,7 +659,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var progressbar = angular.element(progressbartop);
 		   		progressbar.css('width','25%');
 		    	progressbar.html("Stage 1 of 4");
-				toastr.success('upgrade factory called', 'upgrade !');
+		    	if(vm.flag==0)
+		    		toastr.success('Postponed for later!', 'Upgrade');
+		    	else
+		    		toastr.success('Factory upgraded to produce more capacity!', 'Upgrade');
 				
 			}
 			else
