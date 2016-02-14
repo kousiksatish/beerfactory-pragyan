@@ -411,12 +411,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			toastr.success('Factory details obtained successfully!');
 			vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
         	vm.factoryDetails.data.factory_1.profit = 0;
-        	vm.getDemand();
-        	vm.factoryDetails.data.factory_1.total_demand = 0;
-        	for(var order of vm.products[0].orders)
-        	{
-        	vm.factoryDetails.data.factory_1.total_demand += order.order_no;
-        	}
 		}
 		else
 		{

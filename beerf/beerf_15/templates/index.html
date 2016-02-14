@@ -203,7 +203,7 @@
                             </tr>
                             <tr>
                                 <td>PRICE PER UNIT</td>
-                                <td>50</td>
+                                <td>40</td>
                             </tr>
                             <tr>
                                 <td>TOTAL DEMAND LAST TURN</td>
@@ -212,8 +212,11 @@
                             <tr>
                                 <td>AMOUNT TO BE ORDERED</td>
                                 <td><input id='ordertext' type="number" placeholder="Place the order for the next round here!" ng-model="store.order">
-                                    <span id='price'>Order amount: 0</span>
                                 </td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td><span id='price'>Order amount: 0</span></td>
                             </tr>
                             <tr>
                                 <td><button class="btn btn-default" ng-click="store.placeOrder()">ORDER!</button>  </td>
@@ -326,7 +329,7 @@ var updateCapacityUrl = "{% url 'updateCapacity' %}";
 console.log('updateCapacityUrl is', updateCapacityUrl );
 $('#ordertext').keyup(function(){
     var x = this.value;
-    $("#price").html("Order amount: "+(x*50));
+    $("#price").html("Order amount: "+(x*40));
 });
 </script>
 
