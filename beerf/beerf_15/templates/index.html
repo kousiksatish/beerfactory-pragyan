@@ -109,13 +109,13 @@
                         <a href="#demandtab" role="tab" data-toggle="tab"> DEMAND </a>
                     </li>
                     <li>
-                    <a href="#historytab" role="tab" data-toggle="tab"> HISTORY </a>
+                    <a href="#history1tab" role="tab" data-toggle="tab"> HISTORY </a>
                     </li>
                 </ul>
                     <!-- <button class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()" onclick="getDemand()">GET DEMAND</button> -->
                     <!-- <button ui-sref="stage1">Click here!</button> -->
                 <div class="tab-content">
-                    <div id="demandtab" class="tab-pane fade active in">
+                    <div id="demandtab" class="tab-pane fade in active">
                         <div id="selections" class="rightcontent">
                             CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND
                         </div>
@@ -143,7 +143,7 @@
                         <button id="getdemand" class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()">SHOW DEMAND</button>
                     </div>
 
-                    <div id = "historytab" class="tab-pane fade">
+                    <div id = "history1tab" class="tab-pane fade">
                         <table class="table table-striped table-bordered"> 
                             <thead>
                                 <tr> 
@@ -187,15 +187,18 @@
 
             <!-- stage 2 placing order stage-->
             <div ng-show="store.status.data.stage=='2'">
+                
                 <ul id="ordertabs" class="nav nav-tabs" role="tablist">
-                  <li class="active">
-                      <a href="#ordertab" role="tab" data-toggle="tab"> ORDER </a>
-                  </li>
-                  <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY </a>
-                  </li>
+                    <li class="active">
+                        <a href="#ordertab" role="tab" data-toggle="tab"> DEMAND </a>
+                    </li>
+                    <li>
+                    <a href="#history2tab" role="tab" data-toggle="tab"> HISTORY </a>
+                    </li>
                 </ul>
+
                 <div class="tab-content">
-                    <div id="ordertab" class="tab-pane fade active in">
+                    <div id="ordertab" class="tab-pane fade in active">
                         <table>
                             <tr>
                                 <td>  AMOUNT IN INVENTORY </td>
@@ -222,7 +225,8 @@
                             </tr>
                         </table>
                     </div>
-                    <div id = "historytab" class="tab-pane fade">
+
+                    <div id = "history2tab" class="tab-pane fade">
                         <table class="table table-striped table-bordered"> 
                             <thead>
                                 <tr> 
@@ -232,8 +236,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="day in store.history track by $index ">
-                                    <td class="col-md-3"> <center> {$ $index+1 $} </center> </td>
+                                <tr ng-repeat="(key,day) in store.history track by $index">
+                                    <td class="col-md-3"> <center> {$ key $} </center> </td>
                                     <td class="col-md-3"> 
                                         <table class="table table-striped table-bordered">
                                             <thead>
@@ -265,15 +269,16 @@
 
             <!-- stage 3 option to upgrade factory stage-->
             <div ng-show="store.status.data.stage=='3'">
-                <ul id="ordertabs" class="nav nav-tabs" role="tablist">
-                  <li class="active">
-                      <a href="#ordertab" role="tab" data-toggle="tab"> ORDER </a>
-                  </li>
-                  <li><a href="#historytab" role="tab" data-toggle="tab"> HISTORY </a>
-                  </li>
+                <ul id="upgradetabs" class="nav nav-tabs nav-justified" role="tablist">
+                    <li class="active">
+                        <a href="#upgradetab" role="tab" data-toggle="tab"> DEMAND </a>
+                    </li>
+                    <li>
+                    <a href="#history3tab" role="tab" data-toggle="tab"> HISTORY </a>
+                    </li>
                 </ul>
                 <div class="tab-content">
-                    <div id="ordertab" class="tab-pane fade active in">
+                    <div id="upgradetab" class="tab-pane fade in active">
                         <table>
                             <!-- put current details of player here -->
                         </table>
@@ -286,7 +291,8 @@
 
                         </div>
                     </div>
-                    <div id = "historytab" class="tab-pane fade">
+                    
+                    <div id = "history3tab" class="tab-pane fade">
                         <table class="table table-striped table-bordered"> 
                             <thead>
                                 <tr> 
@@ -296,8 +302,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="day in store.history track by $index ">
-                                    <td class="col-md-3"> <center> {$ $index+1 $} </center> </td>
+                                <tr ng-repeat="(key,day) in store.history track by $index">
+                                    <td class="col-md-3"> <center> {$ key $} </center> </td>
                                     <td class="col-md-3"> 
                                         <table class="table table-striped table-bordered">
                                             <thead>
@@ -324,6 +330,7 @@
                             </tbody>
                         </table>
                     </div> 
+
                 </div>
 
             </div>

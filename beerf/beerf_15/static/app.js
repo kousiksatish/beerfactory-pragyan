@@ -491,11 +491,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.getDemand = function(){
 
-		AnyTimeFunctions.getStatusDetails(id).success(function(json){
-		vm.status = json;
-		console.log('status details', vm.status);
-		});
-
 		if(vm.status.data.stage === '0'){
 
 			TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
@@ -519,6 +514,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				if(json.status === "200" || json.status === 200){
 					var stage = parseInt(vm.status.data.stage)+1;
 					vm.status.data.stage = stage.toString();
+					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
+					vm.history = json.data.history;
+					console.log('vm.history', vm.history);
+					console.log('history', json.data);
+					});
 					var progressbar = angular.element(progressbartop);
 			   		progressbar.css('width','50%');
 			    	progressbar.html("Stage 2 of 4");
@@ -605,6 +605,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				if(json.status === "200" || json.status === 200){
 					var stage = parseInt(vm.status.data.stage)+1;
 					vm.status.data.stage = stage.toString();
+					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
+					vm.history = json.data.history;
+					console.log('vm.history', vm.history);
+					console.log('history', json.data);
+					});
 					var progressbar = angular.element(progressbartop);
 			   		progressbar.css('width','75%');
 			    	progressbar.html("Stage 3 of 4");
@@ -650,9 +655,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			TurnStageBasedFunctions.placeOrder(id, vm.order, vm.status.data.turn, vm.status.data.stage).success(function(json){
 				console.log('Response for place order', json);
 				if(json.status === "200" || json.status === 200){
-					var turn = parseInt(vm.status.data.turn) + 1;
-					vm.status.data.turn = turn.toString();
 					vm.status.data.stage = '3';
+					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
+					vm.history = json.data.history;
+					console.log('vm.history', vm.history);
+					console.log('history', json.data);
+					});
 					var progressbar = angular.element(progressbartop);
 			   		progressbar.css('width','100%');
 			    	progressbar.html("Stage 4 of 4");
@@ -675,11 +683,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.upgradeFactory = function(flag){
 
 		vm.flag=flag;
-		
-		AnyTimeFunctions.getStatusDetails(id).success(function(json){
-		vm.status = json;
-		console.log('status details', vm.status);
-		});
 
 		TurnStageBasedFunctions.upgradeFactory(id, vm.status.data.turn, vm.status.data.stage, vm.flag).success(function(json){
 			console.log('Respose from updateCapacity', json);
@@ -688,6 +691,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var turn = parseInt(vm.status.data.turn) + 1;
 				vm.status.data.turn = turn.toString();
 				vm.status.data.stage = '0';
+				AnyTimeFunctions.getHistoryDetails(id).success(function(json){
+				vm.history = json.data.history;
+				console.log('vm.history', vm.history);
+				console.log('history', json.data);
+				});
 				var progressbar = angular.element(progressbartop);
 		   		progressbar.css('width','25%');
 		    	progressbar.html("Stage 1 of 4");
