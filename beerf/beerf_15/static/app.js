@@ -229,6 +229,29 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
 	};
 
+	capacityDetails = function(id){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: capacityDetailsUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+
+	};
+
 	upgradeFactory = function(id, _turn, _stage, flag){
 
 		return $http({
@@ -257,7 +280,8 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 		viewDemandDetails: viewDemandDetails,
 		supply: supply,
 		placeOrder: placeOrder,
-		upgradeFactory: upgradeFactory
+		upgradeFactory: upgradeFactory,
+		capacityDetails: capacityDetails
 	};
 
 }]);
@@ -424,10 +448,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.order=0;
 	vm.flag=0;
 	vm.history={};
+	vm.capacityDetails={};
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
 	}
+
+	TurnStageBasedFunctions.capacityDetails(id).success(function(json){
+		vm.capacityDetails = json.data;
+		console.log('vm.capacity details', vm.capacityDetails);
+	});
 
 	AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 		vm.history = json.data.history;
@@ -656,11 +686,18 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				console.log('Response for place order', json);
 				if(json.status === "200" || json.status === 200){
 					vm.status.data.stage = '3';
+
 					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
-					vm.history = json.data.history;
-					console.log('vm.history', vm.history);
-					console.log('history', json.data);
+						vm.history = json.data.history;
+						console.log('vm.history', vm.history);
+						console.log('history', json.data);
 					});
+
+					TurnStageBasedFunctions.capacityDetails(id).success(function(json){
+						vm.capacityDetails = json.data;
+						console.log('vm.capacity details', vm.capacityDetails);
+					});
+
 					var progressbar = angular.element(progressbartop);
 			   		progressbar.css('width','100%');
 			    	progressbar.html("Stage 4 of 4");

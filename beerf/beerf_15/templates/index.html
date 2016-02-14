@@ -279,16 +279,31 @@
                 </ul>
                 <div class="tab-content">
                     <div id="upgradetab" class="tab-pane fade in active">
-                        <table>
-                            <!-- put current details of player here -->
-                        </table>
-
+                        
                         <div class="jumbotron">
-                            <h3><center> Do you want to upgrade your factory? </center></h3>
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-2">Cost for next upgrade: </div> <div class="col-md-3"> {$ store.capacityDetails.upgrade_cost $}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-2"> Current Capacity:  </div> <div class="col-md-3"> {$ store.capacityDetails.current_capacity $} </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-2"> Capacity if upgraded:  </div> <div class="col-md-3"> {$ store.capacityDetails.next_upgrade_capacity $}</div>
+                            </div>
 
-                            <button type="button" class="btn btn-primary" style="position: relative; left: 150px;" ng-click="store.upgradeFactory(1)"> Yes! </button>
-                            <button type="button" class="btn btn-primary" style="position: relative; left: 250px;" ng-click="store.upgradeFactory(0)"> No thanks! </button>
+                            <br>
+        
+                            <div ng-if="store.capacityDetails.upgrade_cost < store.factoryDetails.data.factory_1.money">
+                                <h3><center> Do you want to upgrade your factory? </center></h3>
+                                <button type="button" class="btn btn-primary" style="position: relative; left: 150px;" ng-click="store.upgradeFactory(1)"> Yes! </button>
+                                <button type="button" class="btn btn-primary" style="position: relative; left: 250px;" ng-click="store.upgradeFactory(0)"> No thanks! </button>
+                            </div>
 
+                            <div ng-if="store.capacityDetails.upgrade_cost > store.factoryDetails.data.factory_1.money">
+                                <h4><center> You do not have enough cash to update your factory  </center></h4>  
+                                <br>
+                                <button type="button" class="btn btn-primary" style="position: relative; left: 400px;" ng-click="store.upgradeFactory(0)"> Go on! </button>
+                            </div>    
                         </div>
                     </div>
                     
@@ -372,6 +387,9 @@ console.log('updateCapacityUrl is', updateCapacityUrl );
 
 var historyUrl = "{% url 'history' %}";
 console.log('historyUrl is', historyUrl );
+
+var capacityDetailsUrl = "{% url 'getCapacityDetails' %}";
+console.log('historyUrl is', capacityDetailsUrl );
 </script>
 
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>
