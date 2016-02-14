@@ -474,7 +474,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			vm.demandDetails = json;
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
-			var y=0;
 			var x = angular.element(demandpopup);
 			x.css('display','block');
 			console.log("DEMAND POPUP",x);
@@ -510,17 +509,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			vm.demandDetails = json;
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
-			try
-			{
 			var x = angular.element(demandpopup);
 			x.css('display','block');
-			console.log("DEMAND POPUP",x);
-		}
-		catch(err){
-			console.log("on map click");
-		}
-			
-			
+			console.log("DEMAND POPUP",x);			
 				var i=0;
 				for(var order of vm.products[0].orders){
 					order.order_no = vm.demandDetails.data.demand[i];
