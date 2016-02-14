@@ -31,6 +31,8 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	console.log('factoryDetailsUrl from app.js', factoryDetailsUrl);
 	console.log('getStatusUrl from app.js', getStatusUrl);
 	console.log('mapUrl from app.js', mapUrl);
+	console.log('historyUrl from app.js', historyUrl);
+
 
 	getFactoryDetails = function(id) {
 
@@ -98,10 +100,33 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 	  					});
 	};
 
+	getHistoryDetails = function(id){
+
+		return $http({
+	   		 	method: 'POST',
+	    		url: historyUrl,
+	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	    		transformRequest: function(obj) {
+	    		    var str = [];
+	        		for(var p in obj)
+	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+	        		return str.join("&");
+	    		},
+	    		data: {user_id: id}
+				})
+				.success(function(json) {
+	    					return json;
+	  					})
+	  			.error(function(err) {
+	    					return err;
+	  					});
+	};
+
 	return {
 		getFactoryDetails: getFactoryDetails,
 		getStatusDetails: getStatusDetails,
-		getMapDetails: getMapDetails
+		getMapDetails: getMapDetails,
+		getHistoryDetails: getHistoryDetails
 	};
 
 }]);
@@ -398,10 +423,17 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.supplyValues = [];
 	vm.order=0;
 	vm.flag=0;
+	vm.history={};
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
 	}
+
+	AnyTimeFunctions.getHistoryDetails(id).success(function(json){
+		vm.history = json.data.history;
+		console.log('vm.history', vm.history);
+		console.log('history', json.data);
+	});
 
 	AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 		vm.factoryDetails = json;
@@ -693,6 +725,23 @@ app.filter('startFrom', function() {
         return [];
     }
 });
+
+// check this out later. to display day details in reverse order so that player gets to see the most recent day first or ask in reverse order itelf from backend
+
+/*app.filter('orderObjectBy', function() {
+  return function(items, field, reverse) {
+    var filtered = [];
+    angular.forEach(items, function(item) {
+      filtered.push(item);
+    });
+    filtered.sort(function (a, b) {
+      return (a[field] > b[field] ? 1 : -1);
+    });
+    if(reverse) filtered.reverse();
+    return filtered;
+  };
+});*/
+
 
 // controller for the panel
 app.controller('PanelController',function(){         							       

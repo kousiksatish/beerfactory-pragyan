@@ -144,25 +144,44 @@
                     </div>
 
                     <div id = "historytab" class="tab-pane fade">
-                        <table class="table table-striped"> 
+                        <table class="table table-striped table-bordered"> 
                             <thead>
                                 <tr> 
-                                    <th> DAY </th>
-                                    <th> PRODUCED <br> AMOUNT </th>
-                                    <th> AMOUNT<br> SOLD </th>
-                                    <th> INVENTORY </th>
+                                    <th> <center> DAY </center> </th>
+                                    <th> <center> DETAILS </center> </th>
+                                    <th> <center> ORDERS </center> </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="inv in store.products[0].inventory">
-                                    <td> {$inv.day$}</td>
-                                    <td> {$inv.no_produced$}</td>
-                                    <td> {$inv.no_sold$}</td>
-                                    <td> {$inv.no_inv$}</td>
+                                <tr ng-repeat="(key,day) in store.history track by $index">
+                                    <td class="col-md-3"> <center> {$ key $} </center> </td>
+                                    <td class="col-md-3"> 
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th> <center>RETAILER </center></th>
+                                                    <th> <center>DEMANDS </center></th>
+                                                    <th> <center>SUPPLIED </center></th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr ng-repeat="demand in day.demand track by $index">
+                                                    <td class="col-md-3"><center> R{$ $index+1 $} </center></td>
+                                                    <td class="col-md-3"><center> {$ demand $} </center></td>
+                                                    <td class="col-md-3"><center> {$ day.supply[$index] $} </center></td>
+                                                </tr>
+                                            </tbody>
+
+                                        </table>
+                                    </td>
+                                    <td class="col-md-3"> <center> {$ day.order $} </center> </td>
+
                                 </tr>
                             </tbody>
                         </table>
                     </div> 
+
                 </div>
             </div>
 
@@ -204,25 +223,43 @@
                         </table>
                     </div>
                     <div id = "historytab" class="tab-pane fade">
-                        <table class="table table-striped"> 
+                        <table class="table table-striped table-bordered"> 
                             <thead>
                                 <tr> 
-                                    <th> DAY </th>
-                                    <th> PRODUCED <br> AMOUNT </th>
-                                    <th> AMOUNT<br> SOLD </th>
-                                    <th> INVENTORY </th>
+                                    <th> <center> DAY </center> </th>
+                                    <th> <center> DETAILS </center> </th>
+                                    <th> <center> ORDERS </center> </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="inv in store.products[0].inventory">
-                                    <td> {$inv.day$}</td>
-                                    <td> {$inv.no_produced$}</td>
-                                    <td> {$inv.no_sold$}</td>
-                                    <td> {$inv.no_inv$}</td>
+                                <tr ng-repeat="day in store.history track by $index ">
+                                    <td class="col-md-3"> <center> {$ $index+1 $} </center> </td>
+                                    <td class="col-md-3"> 
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th> <center>RETAILER </center></th>
+                                                    <th> <center>DEMANDS </center></th>
+                                                    <th> <center>SUPPLIED </center></th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr ng-repeat="demand in day.demand track by $index">
+                                                    <td class="col-md-3"><center> R{$ $index+1 $} </center></td>
+                                                    <td class="col-md-3"><center> {$ demand $} </center></td>
+                                                    <td class="col-md-3"><center> {$ day.supply[$index] $} </center></td>
+                                                </tr>
+                                            </tbody>
+
+                                        </table>
+                                    </td>
+                                    <td class="col-md-3"> <center> {$ day.order $} </center> </td>
+
                                 </tr>
                             </tbody>
                         </table>
-                    </div> 
+                    </div>  
                 </div>
             </div>
 
@@ -250,21 +287,39 @@
                         </div>
                     </div>
                     <div id = "historytab" class="tab-pane fade">
-                        <table class="table table-striped"> 
+                        <table class="table table-striped table-bordered"> 
                             <thead>
                                 <tr> 
-                                    <th> DAY </th>
-                                    <th> PRODUCED <br> AMOUNT </th>
-                                    <th> AMOUNT<br> SOLD </th>
-                                    <th> INVENTORY </th>
+                                    <th> <center> DAY </center> </th>
+                                    <th> <center> DETAILS </center> </th>
+                                    <th> <center> ORDERS </center> </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="inv in store.products[0].inventory">
-                                    <td> {$inv.day$}</td>
-                                    <td> {$inv.no_produced$}</td>
-                                    <td> {$inv.no_sold$}</td>
-                                    <td> {$inv.no_inv$}</td>
+                                <tr ng-repeat="day in store.history track by $index ">
+                                    <td class="col-md-3"> <center> {$ $index+1 $} </center> </td>
+                                    <td class="col-md-3"> 
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th> <center>RETAILER </center></th>
+                                                    <th> <center>DEMANDS </center></th>
+                                                    <th> <center>SUPPLIED </center></th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr ng-repeat="demand in day.demand track by $index">
+                                                    <td class="col-md-3"><center> R{$ $index+1 $} </center></td>
+                                                    <td class="col-md-3"><center> {$ demand $} </center></td>
+                                                    <td class="col-md-3"><center> {$ day.supply[$index] $} </center></td>
+                                                </tr>
+                                            </tbody>
+
+                                        </table>
+                                    </td>
+                                    <td class="col-md-3"> <center> {$ day.order $} </center> </td>
+
                                 </tr>
                             </tbody>
                         </table>
@@ -307,6 +362,9 @@ console.log('mapUrl is', mapUrl	);
 
 var updateCapacityUrl = "{% url 'updateCapacity' %}";
 console.log('updateCapacityUrl is', updateCapacityUrl );
+
+var historyUrl = "{% url 'history' %}";
+console.log('historyUrl is', historyUrl );
 </script>
 
 	<script type="text/javascript" src="{% static "app.js" %}"> </script>
