@@ -94,7 +94,6 @@ def get_sp_details():
 def unlocked_ret(frids, fid):
 	rids = factory_retailer.objects.filter(frid__in = frids).values_list('rid_id', flat = True)
 	unlocked_rids = retailers.objects.filter(rid__in = rids , unlocked = 1).values_list('rid', flat = True)
-	#unlocked_rids = retailers.objects.filter(rid__in = rids).values_list('rid', flat = True)
 	unlocked_frids = factory_retailer.objects.filter(rid_id__in = unlocked_rids, fid_id = fid).values_list('frid',flat = True)
 	return unlocked_frids
 
@@ -490,26 +489,35 @@ def history(request):
 			fid = user.factory
 			history = dict()
 			frids = [f.frid for f in factory_retailer.objects.filter(fid=fid)]
-			fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid) for frid in frids]
+			unlocked_frids = unlocked_ret(frids, fid)
+			fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid) for frid in unlocked_frids]
+			# fac_ret_demands.reverse()
 			for fac_ret in fac_ret_demands:
 				for demand in fac_ret:
+					zone = int(demand.frid.rid.zone)
 					turn = int(demand.turn)
-					quantity = int(demand.quantity)
-					if turn not in history:
-						history[turn] = dict()
-						history[turn]['demand'] = []
-						history[turn]['supply'] = []
-					history[turn]['demand'].append(quantity)
-			fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid) for frid in frids]
+					print turn
+					if turn > (zone-1)*5:
+						quantity = int(demand.quantity)
+						if turn not in history:
+							history[turn] = dict()
+							history[turn]['demand'] = []
+							history[turn]['supply'] = []
+						history[turn]['demand'].append(quantity)
+			fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid) for frid in unlocked_frids]
 			for fac_ret in fac_ret_supplies:
 				for supply in fac_ret:
+					zone = int(demand.frid.rid.zone)
 					turn = int(demand.turn)
-					quantity = int(demand.quantity)
-					history[turn]['supply'].append(quantity)
+					if turn > (zone-1)*5:
+						quantity = int(supply.quantity)
+						history[turn]['supply'].append(quantity)
 			factory_orders = factory_order.objects.filter(fid=fid)
 			for order in factory_orders:
 				turn = int(order.turn)
 				history[turn]['order'] = int(order.quantity)
+
+			
 			return JsonResponse({"status":"200", "data":{"description":"Success","history":history}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
