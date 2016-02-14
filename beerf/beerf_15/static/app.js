@@ -586,35 +586,40 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.placeOrder = function(){
 		
-		AnyTimeFunctions.getStatusDetails(id).success(function(json){
-		vm.status = json;
-		console.log('status details', vm.status);
-		});
-
+		
 		console.log('order is ', vm.order);
 
-		TurnStageBasedFunctions.placeOrder(id, vm.order, vm.status.data.turn, vm.status.data.stage).success(function(json){
-			console.log('Response for place order', json);
-			if(json.status === "200" || json.status === 200){
-				var turn = parseInt(vm.status.data.turn) + 1;
-				vm.status.data.turn = turn.toString();
-				vm.status.data.stage = '3';
-				var progressbar = angular.element(progressbartop);
-		   		progressbar.css('width','100%');
-		    	progressbar.html("Stage 4 of 4");
-				toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
-				
-			}
-			else
-			{
-				toastr.warning(json.data.description);
-			}
+		if(! /^\+?(0|[1-9]\d*)$/.test(vm.order))
+			toastr.warning('Invalid Quantity. It must be a positive integer!');
+		else if(vm.order > vm.factoryDetails.data.factory_1.capacity)
+			toastr.warning('Not enough cash!');
+		else if(vm.order * 40 > vm.factoryDetails.data.factory_1.money)
+			toastr.warning('Quantity exceeded capacity of the factory');
+		else
+		{
+			TurnStageBasedFunctions.placeOrder(id, vm.order, vm.status.data.turn, vm.status.data.stage).success(function(json){
+				console.log('Response for place order', json);
+				if(json.status === "200" || json.status === 200){
+					var turn = parseInt(vm.status.data.turn) + 1;
+					vm.status.data.turn = turn.toString();
+					vm.status.data.stage = '3';
+					var progressbar = angular.element(progressbartop);
+			   		progressbar.css('width','100%');
+			    	progressbar.html("Stage 4 of 4");
+					toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
+					
+				}
+				else
+				{
+					toastr.warning(json.data.description);
+				}
 
-			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
-			vm.factoryDetails = json;
-			console.log('factory details after placing order', vm.factoryDetails);
-			});
-		})
+				AnyTimeFunctions.getFactoryDetails(id).success(function(json){
+				vm.factoryDetails = json;
+				console.log('factory details after placing order', vm.factoryDetails);
+				});
+			})
+		}
 	}
 
 	vm.upgradeFactory = function(flag){
