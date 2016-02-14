@@ -94,7 +94,6 @@ def get_sp_details():
 def unlocked_ret(frids, fid):
 	rids = factory_retailer.objects.filter(frid__in = frids).values_list('rid_id', flat = True)
 	unlocked_rids = retailers.objects.filter(rid__in = rids , unlocked = 1).values_list('rid', flat = True)
-	#unlocked_rids = retailers.objects.filter(rid__in = rids).values_list('rid', flat = True)
 	unlocked_frids = factory_retailer.objects.filter(rid_id__in = unlocked_rids, fid_id = fid).values_list('frid',flat = True)
 	return unlocked_frids
 
@@ -254,6 +253,7 @@ ANY TIME FUNCTIONS
 4. getPopularity
 5. restart
 6. history
+7. getCapacityDetails
 '''
 
 @csrf_exempt
@@ -443,7 +443,7 @@ def restart(request):
 			capacity.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
 			money_log.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
 			inventory_log.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
-			
+			score.objects.filter(pid = user).delete()
 			return JsonResponse({"status":"200", "data":{"description":"Success!"}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
@@ -489,29 +489,61 @@ def history(request):
 			fid = user.factory
 			history = dict()
 			frids = [f.frid for f in factory_retailer.objects.filter(fid=fid)]
-			fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid) for frid in frids]
+			unlocked_frids = unlocked_ret(frids, fid)
+			fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid) for frid in unlocked_frids]
+			# fac_ret_demands.reverse()
 			for fac_ret in fac_ret_demands:
 				for demand in fac_ret:
+					zone = int(demand.frid.rid.zone)
 					turn = int(demand.turn)
-					quantity = int(demand.quantity)
-					if turn not in history:
-						history[turn] = dict()
-						history[turn]['demand'] = []
-						history[turn]['supply'] = []
-					history[turn]['demand'].append(quantity)
-			fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid) for frid in frids]
+					print turn
+					if turn > (zone-1)*5:
+						quantity = int(demand.quantity)
+						if turn not in history:
+							history[turn] = dict()
+							history[turn]['demand'] = []
+							history[turn]['supply'] = []
+						history[turn]['demand'].append(quantity)
+			fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid) for frid in unlocked_frids]
 			for fac_ret in fac_ret_supplies:
 				for supply in fac_ret:
+					zone = int(demand.frid.rid.zone)
 					turn = int(demand.turn)
-					quantity = int(demand.quantity)
-					history[turn]['supply'].append(quantity)
+					if turn > (zone-1)*5:
+						quantity = int(supply.quantity)
+						history[turn]['supply'].append(quantity)
 			factory_orders = factory_order.objects.filter(fid=fid)
 			for order in factory_orders:
 				turn = int(order.turn)
 				history[turn]['order'] = int(order.quantity)
+
+			
 			return JsonResponse({"status":"200", "data":{"description":"Success","history":history}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+@csrf_exempt
+@decorator_from_middleware(middleware.SessionPIDAuth)
+def getCapacityDetails(request):
+	id = request.POST.get("user_id")
+	try:
+		user = users.objects.get(pk=id)
+	except users.DoesNotExist:
+		return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+		user = None
+	if id and user:
+		stat = status.objects.get(pid = id)
+		cur_capacity = capacity.objects.get(fid = user.factory, turn = stat.turn).capacity
+		next_upgrade_capacity = calculate_next_capacity(cur_capacity)
+		upgrade_cost = calculate_money(cur_capacity)
+		json = {}
+		json["status"] = 200
+		data = {}
+		data["current_capacity"] = cur_capacity
+		data["next_upgrade_capacity"] = next_upgrade_capacity
+		data["upgrade_cost"] = upgrade_cost
+		json["data"] = data
+		return JsonResponse(json)
 
 '''
 TURN & STAGE BASED OPERATIONS
@@ -884,6 +916,7 @@ def updateCapacity(request):
 						cap = capacity(turn = int(turn)+1,capacity=cap_old,fid_id=user.factory_id)
 						cap.save()
 					algo.calculate_capacity_upgrade(user.factory_id, int(turn))
+					algo.calculate_score(user.factory,int(turn))
 					stat.turn = int(turn) + 1
 					stat.stage = 0
 					stat.save()
