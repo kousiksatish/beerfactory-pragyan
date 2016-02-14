@@ -443,7 +443,7 @@ def restart(request):
 			capacity.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
 			money_log.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
 			inventory_log.objects.filter(Q(fid=fid)|Q(fid=opp_fid)).delete()
-			
+			score.objects.filter(pid = user).delete()
 			return JsonResponse({"status":"200", "data":{"description":"Success!"}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
@@ -916,6 +916,7 @@ def updateCapacity(request):
 						cap = capacity(turn = int(turn)+1,capacity=cap_old,fid_id=user.factory_id)
 						cap.save()
 					algo.calculate_capacity_upgrade(user.factory_id, int(turn))
+					algo.calculate_score(user.factory,int(turn))
 					stat.turn = int(turn) + 1
 					stat.stage = 0
 					stat.save()
