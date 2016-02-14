@@ -18,6 +18,9 @@ class factories(models.Model):
 @python_2_unicode_compatible
 class users(models.Model):
 	pid = models.AutoField(primary_key=True)
+	prag_userid = models.IntegerField(default = 0)
+	prag_username = models.CharField(max_length=200, blank=True, default='')
+	prag_fullname = models.CharField(max_length=200, blank=True, default ='')
 	name = models.CharField(max_length=150)
 	email = models.EmailField()
 	factory = models.ForeignKey(factories, null=True)

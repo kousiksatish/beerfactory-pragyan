@@ -13,6 +13,9 @@ from beerf_algo.beerf_algo import algo
 from utilities import money
 from utilities import inventory
 import random
+import urllib
+import json
+
 '''
 INITIAL FUNCTIONS
 1. /register
@@ -35,28 +38,43 @@ def register(request):
 def login(request,error=''):
 	if request.method == 'POST':
 		email = request.POST.get('email')
+		password = request.POST.get('password')
+		post_data = [('user_email',email), ('user_pass',password), ('event_id','34')]
+
+		result = urllib.urlopen('https://api.pragyan.org/user/eventauth', urllib.urlencode(post_data))
+
+		response = result.read()	
+
+		res = json.loads(response)
+		print res['status']
+		if res['status']==0:
+			return render(request, "login.html", {"error" : res['data']})
+		elif res['status']==3:
+			return render(request, "login.html", {"error" : 'Oh! You have not yet registered for the fun. Please register at <a href="http://prgy.in/beerf">prgy.in/beerf</a>'})
+
 		try:
-			user  = users.objects.get(email=email)
-		except users.DoesNotExist:
-			user = None
-		if(user):
-			request.session["user_id"] = user.pid
-			return redirect(beerf_15.views.home)
-		else:
-			form = userLoginForm()
-			return render(request, "login.html", {"form" : form,"error" : "No user. Please Register...."})
+			user = users.objects.get(email = email)
+		except users.DoesNotExist:			
+			post_data = [('user_email',email), ('user_pass',password)]
+			result = urllib.urlopen('https://api.pragyan.org/user/getDetails', urllib.urlencode(post_data))
+			response = result.read()
+			res = json.loads(response)
+			if(res['status'] != 2):
+				return render(request, "login.html", {"error" : 'There has been an error :( Please come back in sometime...'})
+			user = users(prag_userid = res['data']['user_id'], prag_username = res['data']['user_name'], prag_fullname = res['data']['user_fullname'], email = res['data']['user_email'])
+			user.save()
+
+		request.session['user_id'] = user.pid
+		return redirect(beerf_15.views.home)
+
 	else:
-		form = userLoginForm()
-		return render(request, "login.html", {"form" : form,"error" : error})
+		return render(request, "login.html")
 
 @decorator_from_middleware(middleware.loggedIn)
 def home(request):
 	id = request.session["user_id"]
 	user  = users.objects.get(pk=id)
-	#if (user.factory_id):
-		#return redirect(beerf_15.views.testhome)
-	#else:
-	return render(request, "home.html", {"name" : user.name})
+	return render(request, "home.html", {"name" : user.prag_fullname})
 
 @decorator_from_middleware(middleware.loggedIn)
 def logout(request):
