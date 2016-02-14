@@ -409,11 +409,21 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		if(json.status === '200' || json.status === 200)
 		{
 			toastr.success('Factory details obtained successfully!');
+			vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
+        	vm.factoryDetails.data.factory_1.profit = 0;
+        	vm.getDemand();
+        	vm.factoryDetails.data.factory_1.total_demand = 0;
+        	for(var order of vm.products[0].orders)
+        	{
+        	vm.factoryDetails.data.factory_1.total_demand += order.order_no;
+        	}
 		}
 		else
 		{
 			toastr.warning(json.data.description);
 		}
+		
+        
 	});
 
 	AnyTimeFunctions.getStatusDetails(id).success(function(json){
@@ -470,17 +480,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			vm.demandDetails = json;
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
-
+			var y=0;
 			var x = angular.element(demandpopup);
 			x.css('display','block');
 			console.log("DEMAND POPUP",x);
-
-				var i=0;
-				for(var order of vm.products[0].orders){
-					if(i<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
-						order.order_no = vm.demandDetails.data.demand[i];
-						i++;
-					}
+			var i=0;
+			for(var order of vm.products[0].orders){
+				if(i<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+					order.order_no = vm.demandDetails.data.demand[i];
+					i++;
+				}
 						
 				}
 				console.log('order when getDemanded', order)
@@ -507,10 +516,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			vm.demandDetails = json;
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
-
+			try
+			{
 			var x = angular.element(demandpopup);
 			x.css('display','block');
 			console.log("DEMAND POPUP",x);
+		}
+		catch(err){
+			console.log("on map click");
+		}
+			
 			
 				var i=0;
 				for(var order of vm.products[0].orders){
@@ -660,6 +675,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}
 
 	vm.mapclicked = function(e){
+		// vm.getDemand();
 		console.log('MAP CLICKED ',e);
 		if(e>0&&e<=(Math.floor((vm.status.data.turn-1)/5)+1)*3){
 			console.log('EEEE',e);
@@ -722,12 +738,16 @@ function confirmorder(x) {
 	var scope = angular.element($element).scope();
     var ret = scope.store.products[0].orders[x-1];
     var tono = $("#tono").val();
+    scope.store.factoryDetails.data.factory_1.inventory_remaining = scope.store.factoryDetails.data.factory_1.inventory;
+    scope.store.factoryDetails.data.factory_1.profit = 0;
     if(tono>0&&tono<=ret.order_no)
     ret.to_no = parseInt(tono);
 	else ret.to_no = 0
-    for(i=0;i<3;i++){
+    for(i=0;i<=(Math.floor((scope.store.status.data.turn-1)/5)+1)*3;i++){
         ret = scope.store.products[0].orders[i];
-        console.log("tonooo",i,ret.to_no);
+        scope.store.factoryDetails.data.factory_1.inventory_remaining -= ret.to_no;
+        scope.store.factoryDetails.data.factory_1.profit += ret.to_no*40;
+        console.log("remaining in inventory",i,scope.store.factoryDetails.data.factory_1.inventory_remaining);
     }
     console.log("products",scope.store.products);
     console.log("supply values", scope.store.supplyvalues);
