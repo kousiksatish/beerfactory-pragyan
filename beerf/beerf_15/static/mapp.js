@@ -160,12 +160,13 @@ singleSelect: false,
                     render_select : {altImage : 'color'}
                }],    
         onMouseover: function(x) {
-            if(x.key<4){
+            
         var $element = $('#main-content');
         var scope = angular.element($element).scope();
         var ret = scope.store.products[0].orders[x.key-1];
         var name = scope.store.mapDetails.data.rcode[x.key-1];
         var stage = scope.store.status.data.stage;
+        if(x.key<=(Math.floor((scope.store.status.data.turn-1)/5)+1)*3){
         if(stage==0||stage==1)
             hovered = name+"<br>POPULARITY<br>DEMAND:"+ret.order_no;
         else
