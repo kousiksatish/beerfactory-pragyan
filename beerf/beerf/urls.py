@@ -44,4 +44,6 @@ urlpatterns = [
     url(r'^getPopularity$', views.getPopularity, name='getPopularity'),
     url(r'^restart$',views.restart, name='restart'),
     url(r'^history$',views.history, name='history'),
+    url(r'^graph$',views.graph, name='graph'),
+    url(r'^graph_back$',views.graph_back, name='graph_back'),
 ]

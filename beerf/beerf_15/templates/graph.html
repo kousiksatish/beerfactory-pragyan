@@ -1,0 +1,104 @@
+<html>
+<head>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+</head>
+<body>
+<button id="clk">Click me!</button>
+<button id="plot">Plot</button>
+<div id="cont1"></div>
+<div id="ag1"></div>
+<div id="cont2"></div>
+<div id="ag2"></div>
+<div id="cont3"></div>
+<div id="ag3"></div>
+<div id="cont4"></div>
+<div id="ag4"></div>
+<div id="cont5"></div>
+<div id="ag5"></div>
+<div id="cont6"></div>
+<div id="ag6"></div>
+<div id="cont7"></div>
+<div id="ag7"></div>
+<div id="cont8"></div>
+<div id="ag8"></div>
+<div id="cont9"></div>
+<div id="ag9"></div>
+<div id="cont10"></div>
+<div id="ag10"></div>
+
+</body>
+
+
+
+
+</html>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+
+<script>
+var dat;
+var history;
+$("#clk").click(function() {
+	dataString = 'user_id=15';
+
+	$.ajax({
+                    type: "POST",
+                    url: "graph_back",
+                    data: dataString,
+                    success: function(data){
+                        if(data)
+                        {
+                        	dat = data;
+         					history = data.data.history
+                        	console.log(data.data.history);
+                        }
+
+                    }
+
+                });
+});
+
+$('#plot').click(function() {
+	ret_det = dat.data.history;
+	
+	i=1;
+	for(req1 in ret_det)
+	{
+		$("#cont"+i).html('Retailer' + i);
+		$('#ag'+i).empty()
+		req = dat.data.history[i];
+
+		Morris.Area({
+		  element: 'ag'+i,
+		  data: req,
+		  parseTime: false,
+		  xkey: 'turn',
+		  xLabels: 'Turn',
+		  ykeys: ['supply', 'demand'],
+		  labels: ['Supply', 'Demand']
+		});
+		i++;
+	}
+
+});
+/*
+Morris.Area({
+  element: 'ag',
+  data: [
+    { y: '1', a: 100, b: 90 },
+    { y: '2007', a: 75,  b: 65 },
+    { y: '2008', a: 50,  b: 40 },
+    { y: '2009', a: 75,  b: 65 },
+    { y: '2010', a: 50,  b: 40 },
+    { y: '2011', a: 75,  b: 65 },
+    { y: '2012', a: 100, b: 90 }
+  ],
+  xkey: 'y',
+  ykeys: ['a', 'b'],
+  labels: ['Series A', 'Series B']
+});
+*/
+
+</script>

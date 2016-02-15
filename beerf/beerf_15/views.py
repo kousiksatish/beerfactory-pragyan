@@ -1015,3 +1015,85 @@ def instructions(request):
 
 def locked(request):
 	return render(request, "locked.html")
+
+def graph(request):
+	return render(request, "graph.html")
+
+@csrf_exempt
+def graph_back(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		# after all verification is done.
+		if id and user:
+			fid = user.factory
+			retailers = dict
+			demands = dict()
+			supplies = dict()
+			popularity = dict()
+			frids = [f.frid for f in factory_retailer.objects.filter(fid=fid)]
+			unlocked_frids = unlocked_ret(frids, fid)
+			retailer = 0
+			for frid in unlocked_frids:
+				retailer=retailer+1
+				demands[retailer] = []
+				fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid)]
+				for fac_ret in fac_ret_demands:
+					for demand in fac_ret:
+						zone = int(demand.frid.rid.zone)
+						turn = int(demand.turn)
+						if turn > (zone-1)*5:
+							new = dict()
+							new['turn']=turn
+							new['demand']=int(demand.quantity)
+							demands[retailer].append(new)
+			retailer = 0			
+			for frid in unlocked_frids:
+				retailer=retailer+1
+				supplies[retailer] = []
+				fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid)]
+				for fac_ret in fac_ret_supplies:
+					for supply in fac_ret:
+						zone = int(supply.frid.rid.zone)
+						turn = int(supply.turn)
+						if turn > (zone-1)*5:
+							demands[retailer][turn-(zone-1)*5-1]['supply'] = int(supply.quantity)
+
+			return JsonResponse({"status":"200", "data":{"history":demands}})
+
+			# fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid) for frid in unlocked_frids]
+			# # fac_ret_demands.reverse()
+			# for fac_ret in fac_ret_demands:
+			# 	for demand in fac_ret:
+			# 		zone = int(demand.frid.rid.zone)
+			# 		turn = int(demand.turn)
+			# 		print turn
+			# 		if turn > (zone-1)*5:
+			# 			quantity = int(demand.quantity)
+			# 			if turn not in history:
+			# 				history[turn] = dict()
+			# 				history[turn]['demand'] = []
+			# 				history[turn]['supply'] = []
+			# 			history[turn]['demand'].append(quantity)
+			# # fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid) for frid in unlocked_frids]
+			# # for fac_ret in fac_ret_supplies:
+			# # 	for supply in fac_ret:
+			# # 		zone = int(supply.frid.rid.zone)
+			# # 		turn = int(supply.turn)
+			# # 		if turn > (zone-1)*5:
+			# # 			quantity = int(supply.quantity)
+			# # 			history[turn]['supply'].append(quantity)
+			# # factory_orders = factory_order.objects.filter(fid=fid)
+			# # for order in factory_orders:
+			# # 	turn = int(order.turn)
+			# # 	history[turn]['order'] = int(order.quantity)
+
+			
+			# return JsonResponse({"status":"200", "data":{"description":"Success","history":history}})
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
