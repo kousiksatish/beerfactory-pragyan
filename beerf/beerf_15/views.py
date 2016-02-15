@@ -1012,3 +1012,6 @@ def testhome(request):
 	return render(request, "index.html",{ "name" : user.name })
 def instructions(request):
 	return render(request,"instructions.html")
+
+def locked(request):
+	return render(request, "locked.html")
