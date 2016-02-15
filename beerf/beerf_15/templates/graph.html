@@ -1,31 +1,61 @@
+{% load staticfiles %}
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 </head>
 <body>
-<button id="clk">Click me!</button>
-<button id="plot">Plot</button>
-<div id="cont1"></div>
-<div id="ag1"></div>
-<div id="cont2"></div>
-<div id="ag2"></div>
-<div id="cont3"></div>
-<div id="ag3"></div>
-<div id="cont4"></div>
-<div id="ag4"></div>
-<div id="cont5"></div>
-<div id="ag5"></div>
-<div id="cont6"></div>
-<div id="ag6"></div>
-<div id="cont7"></div>
-<div id="ag7"></div>
-<div id="cont8"></div>
-<div id="ag8"></div>
-<div id="cont9"></div>
-<div id="ag9"></div>
-<div id="cont10"></div>
-<div id="ag10"></div>
+<div class="col-md-6">
+	<h1>User</h1>
+	<button class="btn" id="clk">Click me!</button>
+	<button class="btn" id="plot">Plot</button>
+	<div id="cont1"></div>
+	<div id="ag1"></div>
+	<div id="cont2"></div>
+	<div id="ag2"></div>
+	<div id="cont3"></div>
+	<div id="ag3"></div>
+	<div id="cont4"></div>
+	<div id="ag4"></div>
+	<div id="cont5"></div>
+	<div id="ag5"></div>
+	<div id="cont6"></div>
+	<div id="ag6"></div>
+	<div id="cont7"></div>
+	<div id="ag7"></div>
+	<div id="cont8"></div>
+	<div id="ag8"></div>
+	<div id="cont9"></div>
+	<div id="ag9"></div>
+	<div id="cont10"></div>
+	<div id="ag10"></div>
+</div>
 
+<div class="col-md-6">
+	<h1>Opponent</h1>
+	<button class="btn" id="clk_opp">Click me!</button>
+	<button class="btn" id="plot_opp">Plot</button>
+	<div id="contopp1"></div>
+	<div id="agopp1"></div>
+	<div id="contopp2"></div>
+	<div id="agopp2"></div>
+	<div id="contopp3"></div>
+	<div id="agopp3"></div>
+	<div id="contopp4"></div>
+	<div id="agopp4"></div>
+	<div id="contopp5"></div>
+	<div id="agopp5"></div>
+	<div id="contopp6"></div>
+	<div id="agopp6"></div>
+	<div id="contopp7"></div>
+	<div id="agopp7"></div>
+	<div id="contopp8"></div>
+	<div id="agopp8"></div>
+	<div id="contopp9"></div>
+	<div id="agopp9"></div>
+	<div id="contopp10"></div>
+	<div id="agopp10"></div>
+</div>
 </body>
 
 
@@ -39,7 +69,7 @@
 
 <script>
 var dat;
-var history;
+
 $("#clk").click(function() {
 	dataString = 'user_id=15';
 
@@ -51,8 +81,6 @@ $("#clk").click(function() {
                         if(data)
                         {
                         	dat = data;
-         					history = data.data.history
-                        	console.log(data.data.history);
                         }
 
                     }
@@ -72,6 +100,49 @@ $('#plot').click(function() {
 
 		Morris.Area({
 		  element: 'ag'+i,
+		  data: req,
+		  parseTime: false,
+		  xkey: 'turn',
+		  xLabels: 'Turn',
+		  ykeys: ['supply', 'demand'],
+		  labels: ['Supply', 'Demand']
+		});
+		i++;
+	}
+
+});
+var dat_opp;
+$("#clk_opp").click(function() {
+	dataString = 'user_id=15';
+
+	$.ajax({
+                    type: "POST",
+                    url: "graph_opp_back",
+                    data: dataString,
+                    success: function(data){
+                        if(data)
+                        {
+                        	dat_opp = data;
+                        	console.log(dat_opp)
+                        }
+
+                    }
+
+                });
+});
+
+$('#plot_opp').click(function() {
+	ret_det = dat_opp.data.history;
+	console.log(dat_opp);
+	i=1;
+	for(req1 in ret_det)
+	{
+		$("#contopp"+i).html('Retailer' + i);
+		$('#agopp'+i).empty()
+		req = dat_opp.data.history[i];
+
+		Morris.Area({
+		  element: 'agopp'+i,
 		  data: req,
 		  parseTime: false,
 		  xkey: 'turn',
