@@ -403,39 +403,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			to_no:0,
 			transport:"none",
 			zone:5
-		}],
-
-		inventory: [
-		{
-			day:0,
-			no_produced:0,
-			no_sold:0,
-			no_inv:0
-		},
-		{
-			day:1,
-			no_produced:0,
-			no_sold:0,
-			no_inv:0
-		}
-		],
-
-		backlog:[
-		{
-			day:0,
-			no_produced:0,
-			no_ord:0,
-			no_to:0,
-			no_back:0
-		},
-		{
-			day:1,
-			no_produced:0,
-			no_ord:0,
-			no_to:0,
-			no_back:0
-		}
-		]
+		}]
 	}];
 
 	vm.factoryDetails = {};
@@ -449,6 +417,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.flag=0;
 	vm.history={};
 	vm.capacityDetails={};
+	vm.isMapClicked=false;
+	vm.e=-10;
+	vm.map={};
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
@@ -759,8 +730,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.mapclicked = function(e){
 		// vm.getDemand();
-		console.log('MAP CLICKED ',e);
-		if(e>0&&e<=(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+		vm.e=e;
+		console.log('MAP CLICKED ', e);
+
+		vm.map.check1 = (Math.floor((vm.status.data.turn-1)/5)+1)*3;
+		
+		/*if(e>0&&e<=(Math.floor((vm.status.data.turn-1)/5)+1)*3){
 			console.log('EEEE',e);
 		var xref='';
 		var ret = vm.products[0].orders[e-1]
@@ -783,7 +758,32 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		else if(e==-2){
 			angular.element(selections).html("OPPONENET'S FACTORY'S NAME<br>FACTORY STORY<br>FACTORY DETAILS");
 
-		}
+		} */
+	}
+
+	vm.confirmorder = function(x){
+
+		console.log('IN CONFIRM ORDER');
+
+    	var tono = $("#tono").val();
+    	vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
+    	vm.factoryDetails.data.factory_1.profit = 0;
+    	if(tono>0&&tono<=vm.products[0].orders[x-1].order_no){
+    		vm.products[0].orders[x-1].to_no = parseInt(tono);
+    	}
+    		
+		else{
+			vm.products[0].orders[x-1].to_no = 0;	
+		} 
+
+    	for(i=0;i<=(Math.floor((vm.status.data.turn-1)/5)+1)*3;i++){
+        	vm.products[0].orders[x-1] = vm.products[0].orders[i];
+        	vm.factoryDetails.data.factory_1.inventory_remaining -= vm.products[0].orders[x-1].to_no;
+        	vm.factoryDetails.data.factory_1.profit += vm.products[0].orders[x-1].to_no*40;
+        	console.log("remaining in inventory",i,vm.factoryDetails.data.factory_1.inventory_remaining);
+    	}
+    	console.log("products",vm.products);
+    	console.log("supply values", vm.supplyvalues);
 	}
 
 }]);
@@ -832,23 +832,3 @@ app.controller('ZoneController',function(){
 
 
 })();
-function confirmorder(x) {
-	console.log('IN CONFIRM ORDER');
-	var $element = $("#main-content");
-	var scope = angular.element($element).scope();
-    var ret = scope.store.products[0].orders[x-1];
-    var tono = $("#tono").val();
-    scope.store.factoryDetails.data.factory_1.inventory_remaining = scope.store.factoryDetails.data.factory_1.inventory;
-    scope.store.factoryDetails.data.factory_1.profit = 0;
-    if(tono>0&&tono<=ret.order_no)
-    ret.to_no = parseInt(tono);
-	else ret.to_no = 0
-    for(i=0;i<=(Math.floor((scope.store.status.data.turn-1)/5)+1)*3;i++){
-        ret = scope.store.products[0].orders[i];
-        scope.store.factoryDetails.data.factory_1.inventory_remaining -= ret.to_no;
-        scope.store.factoryDetails.data.factory_1.profit += ret.to_no*40;
-        console.log("remaining in inventory",i,scope.store.factoryDetails.data.factory_1.inventory_remaining);
-    }
-    console.log("products",scope.store.products);
-    console.log("supply values", scope.store.supplyvalues);
-}
