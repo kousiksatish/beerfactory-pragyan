@@ -68,7 +68,10 @@ def login(request,error=''):
 		return redirect(beerf_15.views.home)
 
 	else:
-		return render(request, "login.html")
+		if 'user_id' not in request.session:
+			return render(request, "login.html")
+		else:
+			return redirect(beerf_15.views.home)
 
 @decorator_from_middleware(middleware.loggedIn)
 def home(request):
@@ -76,11 +79,9 @@ def home(request):
 	user  = users.objects.get(pk=id)
 	return render(request, "home.html", {"name" : user.prag_fullname})
 
-@decorator_from_middleware(middleware.loggedIn)
 def logout(request):
 	request.session.flush()
-	form = userLoginForm()
-	return render(request, "login.html", {"form" : form,"error" : "Successfully logged out"})
+	return render(request, "login.html", {"error" : "Successfully logged out"})
 
 
 '''
@@ -525,8 +526,8 @@ def history(request):
 			fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid) for frid in unlocked_frids]
 			for fac_ret in fac_ret_supplies:
 				for supply in fac_ret:
-					zone = int(demand.frid.rid.zone)
-					turn = int(demand.turn)
+					zone = int(supply.frid.rid.zone)
+					turn = int(supply.turn)
 					if turn > (zone-1)*5:
 						quantity = int(supply.quantity)
 						history[turn]['supply'].append(quantity)
