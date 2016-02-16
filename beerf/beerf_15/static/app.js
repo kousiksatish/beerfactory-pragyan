@@ -740,11 +740,13 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var turn = parseInt(vm.status.data.turn) + 1;
 				vm.status.data.turn = turn.toString();
 				vm.status.data.stage = '0';
+				//to update history tab at every stage
 				AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 				vm.history = json.data.history;
 				console.log('vm.history', vm.history);
 				console.log('history', json.data);
 				});
+				
 				var progressbar = angular.element(progressbartop);
 		   		progressbar.css('width','25%');
 		    	progressbar.html("Stage 1 of 4");
@@ -752,6 +754,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		    		toastr.success('Postponed for later!', 'Upgrade');
 		    	else
 		    		toastr.success('Factory upgraded to produce more capacity!', 'Upgrade');
+		    	
+				//so that user doesnt need to click getDemand unnecessarily at stage 0
+		    	vm.getDemand();
 				
 			}
 			else
