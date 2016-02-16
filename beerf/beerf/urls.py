@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^testmap$', views.testmap, name="testmap"),
     url(r'^updateSellingPrice$', views.updateSellingPrice, name="updateSellingPrice"),
     url(r'^updateCapacity$', views.updateCapacity, name="updateCapacity"),
-    url(r'^getCapacityDetails$', views.getCapacityDetails, name="getCapacityDetails"),
+    # url(r'^getCapacityDetails$', views.getCapacityDetails, name="getCapacityDetails"),
     url(r'^placeOrder$', views.placeOrder,name='placeOrder'),
     url(r'^viewDemand$', views.viewDemand, name='viewDemand'),
     url(r'^viewDemandSupply$', views.viewDemandSupply, name='viewDemandSupply'),
@@ -46,8 +46,8 @@ urlpatterns = [
     url(r'^history$',views.history, name='history'),
     url(r'^graph$',views.graph, name='graph'),
     url(r'^graph_back$',views.graph_back, name='graph_back'),
-    url(r'^graph_opp_back$',views.graph_opp_back, name='graph_opp_back'),
-    url(r'^getScore$',views.getScore, name='getScore'),
-    url(r'^getTotalScore$',views.getTotalScore, name='getTotalScore')
+    url(r'^graph_opp_back$',views.graph_opp_back, name='graph_opp_back')
+    # url(r'^getScore$',views.getScore, name='getScore'),
+    # url(r'^getTotalScore$',views.getTotalScore, name='getTotalScore')
 ]
 
