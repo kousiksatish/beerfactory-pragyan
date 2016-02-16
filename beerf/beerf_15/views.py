@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from beerf_algo.beerf_algo import algo as algo
 from utilities import money
 from utilities import inventory
+from django.db.models import Sum
 import random
 import urllib
 import json
@@ -304,32 +305,26 @@ def fac_details(request):
 		if id and user:
 			turn = status.objects.get(pid = id).turn
 			factory1 = user.factory
-			factory2 = factory_factory.objects.get(fac1=factory1).fac2
-			
 			capacity1 = capacity.objects.get(fid = factory1.fid,turn = turn)
-			capacity2 = capacity.objects.get(fid = factory2.fid,turn = turn)
-			
-			fac_ret_1 = factory_retailer.objects.filter(fid = factory1).values_list('frid', flat = True)
-			fac_ret_2 = factory_retailer.objects.filter(fid = factory2).values_list('frid', flat = True)
-			
-			sp1 = selling_price.objects.filter(frid__in = fac_ret_1,turn=turn)
-			sp2 = selling_price.objects.filter(frid__in = fac_ret_2,turn=turn)
+			points = score.objects.filter(pid = user).aggregate(Sum('score'))['score__sum']
 			json = {}
 			json["status"] ="200"
 			data = {}
 			fact1={}
-			fact2={}
 			data["description"] = "Success"
 			fact1['fcode'] = factory1.fcode
 			fact1["money"] = factory1.money
 			fact1["capacity"] = capacity1.capacity
 			fact1["inventory"] = factory1.inventory
+			fact1["score"] = points
+			fact1["next_upgrade_capacity"] = algo.calculate_next_capacity(capacity1.capacity)
+			fact1["upgrade_cost"] = algo.calculate_money(capacity1.capacity)
 			data["factory_1"] = fact1
-			fact2['fcode'] = factory2.fcode
-			fact2["money"] = factory2.money
-			fact2["capacity"] = capacity2.capacity
-			fact2["inventory"] = factory2.inventory
-			data["factory_2"] = fact2
+			# fact2['fcode'] = factory2.fcode
+			# fact2["money"] = factory2.money
+			# fact2["capacity"] = capacity2.capacity
+			# fact2["inventory"] = factory2.inventory
+			# data["factory_2"] = fact2
 			json["data"] = data
 			return JsonResponse(json)
 	else:
