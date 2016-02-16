@@ -36,6 +36,7 @@
 	   		  <li class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
 			  <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
 			  <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
+             <li class="col-md-2"> SCORE: {$ store.factoryDetails.data.factory_1.score $}</li>
 			  <li class="col-md-2"> Hi {{ name }} </li>	
 	   		</ul>
 		</div>
@@ -397,28 +398,34 @@
                         
                         <div class="jumbotron">
                             <div class="row">
-                                <div class="col-md-6 col-md-offset-2">Cost for next upgrade: </div> <div class="col-md-3"> {$ store.capacityDetails.upgrade_cost $}</div>
+                                <div class="col-md-6 col-md-offset-2">Cost for next upgrade: </div> <div class="col-md-3"> {$ store.factoryDetails.data.factory_1.upgrade_cost $}</div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 col-md-offset-2"> Current Capacity:  </div> <div class="col-md-3">{$ store.capacityDetails.current_capacity $}</div>
+                                <div class="col-md-6 col-md-offset-2"> Current Capacity:  </div> <div class="col-md-3">{$ store.factoryDetails.data.factory_1.capacity $}</div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 col-md-offset-2"> Capacity if upgraded:  </div> <div class="col-md-3"> {$ store.capacityDetails.next_upgrade_capacity $}</div>
+                                <div class="col-md-6 col-md-offset-2"> Capacity if upgraded:  </div> <div class="col-md-3"> {$ store.factoryDetails.data.factory_1.next_upgrade_capacity $}</div>
                             </div>
 
                             <br>
         
-                            <div ng-if="store.capacityDetails.upgrade_cost < store.factoryDetails.data.factory_1.money">
+                            <div ng-if="store.factoryDetails.data.factory_1.upgrade_cost < store.factoryDetails.data.factory_1.money">
                                 <h3><center> Do you want to upgrade your factory? </center></h3>
                                 <button type="button" class="btn btn-primary" style="position: relative; left: 150px;" ng-click="store.upgradeFactory(1)"> Yes! </button>
                                 <button type="button" class="btn btn-primary" style="position: relative; left: 250px;" ng-click="store.upgradeFactory(0)"> No thanks! </button>
                             </div>
 
-                            <div ng-if="store.capacityDetails.upgrade_cost > store.factoryDetails.data.factory_1.money">
+                            <div ng-if="store.factoryDetails.data.factory_1.upgrade_cost > store.factoryDetails.data.factory_1.money">
                                 <h4><center> You do not have enough cash to update your factory  </center></h4>  
                                 <br>
                                 <button type="button" class="btn btn-primary" style="position: relative; left: 400px;" ng-click="store.upgradeFactory(0)"> Go on! </button>
                             </div>    
+
+                            <div ng-if="store.factoryDetails.data.factory_1.next_upgrade_capacity==0">
+                                <h4><center> You can no longer update your factory </center> </h4>
+                                <br>
+                                <button type="button" class="btn btn-primary" style="position: relative; left: 400px;" ng-click="store.upgradeFactory(0)"> Go on! </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -508,8 +515,6 @@ console.log('updateCapacityUrl is', updateCapacityUrl );
 var historyUrl = "{% url 'history' %}";
 console.log('historyUrl is', historyUrl );
 
-var capacityDetailsUrl = "{% url 'getCapacityDetails' %}";
-console.log('historyUrl is', capacityDetailsUrl );
 
 $('#ordertext').keyup(function(){
     var x = this.value;
