@@ -463,9 +463,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.profit=0;
 	vm.retailersRemaining=[];
 
-	for(order of vm.products[0].orders){
-		vm.retailersRemaining.push(order.from);
-	}
+	
 
 	
 
@@ -499,47 +497,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 		
         
-	});
-
-	AnyTimeFunctions.getStatusDetails(id).success(function(json){
-		vm.status = json;
-		console.log('status details', vm.status);
-		var progressbar = angular.element(progressbartop);
-		console.log(vm.status.data.stage);
-		if(json.status === '200' || json.status === 200)
-		{
-			toastr.success('Status of user obtained successfully!');
-		}
-		else
-		{
-			toastr.warning(json.data.description);
-		}
-		switch(vm.status.data.stage)
-		{
-			case "0":
-				progressbar.css('width','25%');
-	    		progressbar.html("Stage 1 of 4");
-	    		break;
-	    	case "1":
-	    		progressbar.css('width','50%');
-	    		progressbar.html("Stage 2 of 4");
-	    		break;
-	    	case "2":
-	    		console.log("ds");
-	    		progressbar.css('width','75%');
-	    		progressbar.html("Stage 3 of 4");
-	    		break;
-	    	case "3":
-	    		progressbar.css('width','100%');
-	    		progressbar.html("Stage 4 of 4");
-	    		break;
-    	}
-		vm.level = Math.floor(parseInt(vm.status.data.turn-1)/5)+1;
-	});
-
-	AnyTimeFunctions.getMapDetails(id).success(function(json){
-		vm.mapDetails = json;
-		console.log('map details', vm.mapDetails);
 	});
 
 	vm.getDemand = function(){
@@ -603,6 +560,59 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 
 	}
+
+	AnyTimeFunctions.getStatusDetails(id).success(function(json){
+		vm.status = json;
+		console.log('status details', vm.status);
+		var progressbar = angular.element(progressbartop);
+		console.log(vm.status.data.stage);
+		if(json.status === '200' || json.status === 200){
+			if(vm.status.data.stage=="0" || vm.status.data.stage=="1")
+				vm.getDemand();
+			toastr.success('Status of user obtained successfully!');
+			var j=0;
+		for(order of vm.products[0].orders){
+			if(j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+				vm.retailersRemaining.push(order.from);
+			}
+			j++;
+		}
+
+		}
+		else
+		{
+			toastr.warning(json.data.description);
+		}
+		switch(vm.status.data.stage)
+		{
+			case "0":
+				progressbar.css('width','25%');
+	    		progressbar.html("Stage 1 of 4");
+	    		break;
+	    	case "1":
+	    		progressbar.css('width','50%');
+	    		progressbar.html("Stage 2 of 4");
+	    		break;
+	    	case "2":
+	    		console.log("ds");
+	    		progressbar.css('width','75%');
+	    		progressbar.html("Stage 3 of 4");
+	    		break;
+	    	case "3":
+	    		progressbar.css('width','100%');
+	    		progressbar.html("Stage 4 of 4");
+	    		break;
+    	}
+		vm.level = Math.floor(parseInt(vm.status.data.turn-1)/5)+1;
+	});
+
+
+
+	AnyTimeFunctions.getMapDetails(id).success(function(json){
+		vm.mapDetails = json;
+		console.log('map details', vm.mapDetails);
+	});
+
 
 	vm.send = function(){
 		console.log('Initial Products', vm.products);
@@ -748,11 +758,13 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var turn = parseInt(vm.status.data.turn) + 1;
 				vm.status.data.turn = turn.toString();
 				vm.status.data.stage = '0';
+				//to update history tab at every stage
 				AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 				vm.history = json.data.history;
 				console.log('vm.history', vm.history);
 				console.log('history', json.data);
 				});
+				
 				var progressbar = angular.element(progressbartop);
 		   		progressbar.css('width','25%');
 		    	progressbar.html("Stage 1 of 4");
@@ -760,6 +772,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		    		toastr.success('Postponed for later!', 'Upgrade');
 		    	else
 		    		toastr.success('Factory upgraded to produce more capacity!', 'Upgrade');
+
+				//so that user doesnt need to click getDemand unnecessarily at stage 0
+		    	vm.getDemand();
 				
 			}
 			else
