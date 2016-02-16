@@ -68,7 +68,10 @@ def login(request,error=''):
 		return redirect(beerf_15.views.home)
 
 	else:
-		return render(request, "login.html")
+		if 'user_id' not in request.session:
+			return render(request, "login.html")
+		else:
+			return redirect(beerf_15.views.home)
 
 @decorator_from_middleware(middleware.loggedIn)
 def home(request):
@@ -76,11 +79,9 @@ def home(request):
 	user  = users.objects.get(pk=id)
 	return render(request, "home.html", {"name" : user.prag_fullname})
 
-@decorator_from_middleware(middleware.loggedIn)
 def logout(request):
 	request.session.flush()
-	form = userLoginForm()
-	return render(request, "login.html", {"form" : form,"error" : "Successfully logged out"})
+	return render(request, "login.html", {"error" : "Successfully logged out"})
 
 
 '''
@@ -525,8 +526,8 @@ def history(request):
 			fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid) for frid in unlocked_frids]
 			for fac_ret in fac_ret_supplies:
 				for supply in fac_ret:
-					zone = int(demand.frid.rid.zone)
-					turn = int(demand.turn)
+					zone = int(supply.frid.rid.zone)
+					turn = int(supply.turn)
 					if turn > (zone-1)*5:
 						quantity = int(supply.quantity)
 						history[turn]['supply'].append(quantity)
@@ -1011,3 +1012,110 @@ def testhome(request):
 	return render(request, "index.html",{ "name" : user.name })
 def instructions(request):
 	return render(request,"instructions.html")
+
+def locked(request):
+	return render(request, "locked.html")
+
+def graph(request):
+	return render(request, "graph.html")
+
+@decorator_from_middleware(middleware.SessionPIDAuth)
+@csrf_exempt
+def graph_back(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		# after all verification is done.
+		if id and user:
+			fid = user.factory
+			retailers = dict
+			demands = dict()
+			supplies = dict()
+			popularity = dict()
+			frids = [f.frid for f in factory_retailer.objects.filter(fid=fid)]
+			unlocked_frids = unlocked_ret(frids, fid)
+			retailer = 0
+			for frid in unlocked_frids:
+				retailer=retailer+1
+				demands[retailer] = []
+				fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid)]
+				for fac_ret in fac_ret_demands:
+					for demand in fac_ret:
+						zone = int(demand.frid.rid.zone)
+						turn = int(demand.turn)
+						if turn > (zone-1)*5:
+							new = dict()
+							new['turn']=turn
+							new['demand']=int(demand.quantity)
+							demands[retailer].append(new)
+			retailer = 0			
+			for frid in unlocked_frids:
+				retailer=retailer+1
+				supplies[retailer] = []
+				fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid)]
+				for fac_ret in fac_ret_supplies:
+					for supply in fac_ret:
+						zone = int(supply.frid.rid.zone)
+						turn = int(supply.turn)
+						if turn > (zone-1)*5:
+							demands[retailer][turn-(zone-1)*5-1]['supply'] = int(supply.quantity)
+
+			return JsonResponse({"status":"200", "data":{"history":demands}})
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+@decorator_from_middleware(middleware.SessionPIDAuth)
+@csrf_exempt
+def graph_opp_back(request):
+	if request.method == 'POST':
+		id = request.POST.get("user_id")
+		try:
+			user = users.objects.get(pk=id)
+		except users.DoesNotExist:
+			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
+			user = None
+		
+		# after all verification is done.
+		if id and user:
+			fid = user.factory
+			opponent_fac = factory_factory.objects.get(fac1=fid).fac2
+			retailers = dict
+			demands = dict()
+			supplies = dict()
+			popularity = dict()
+			frids = [f.frid for f in factory_retailer.objects.filter(fid=opponent_fac)]
+			unlocked_frids = unlocked_ret(frids, opponent_fac)
+			retailer = 0
+			for frid in unlocked_frids:
+				retailer=retailer+1
+				demands[retailer] = []
+				fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid)]
+				for fac_ret in fac_ret_demands:
+					for demand in fac_ret:
+						zone = int(demand.frid.rid.zone)
+						turn = int(demand.turn)
+						if turn > (zone-1)*5:
+							new = dict()
+							new['turn']=turn
+							new['demand']=int(demand.quantity)
+							demands[retailer].append(new)
+			retailer = 0			
+			for frid in unlocked_frids:
+				retailer=retailer+1
+				supplies[retailer] = []
+				fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid)]
+				for fac_ret in fac_ret_supplies:
+					for supply in fac_ret:
+						zone = int(supply.frid.rid.zone)
+						turn = int(supply.turn)
+						if turn > (zone-1)*5:
+							demands[retailer][turn-(zone-1)*5-1]['supply'] = int(supply.quantity)
+
+			return JsonResponse({"status":"200", "data":{"history":demands}})
+	else:
+		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})

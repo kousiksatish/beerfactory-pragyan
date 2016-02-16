@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^register/$',views.register, name="register"),
     url(r'^$', views.login, name="login"),
+    # url(r'^$', views.locked, name="locked"),
     url(r'^home$', views.home, name="home"),
     url(r'^assign_factory$', views.assign, name="assign_factory"),
     url(r'^logout$', views.logout, name="logout"),
@@ -43,4 +44,7 @@ urlpatterns = [
     url(r'^getPopularity$', views.getPopularity, name='getPopularity'),
     url(r'^restart$',views.restart, name='restart'),
     url(r'^history$',views.history, name='history'),
+    url(r'^graph$',views.graph, name='graph'),
+    url(r'^graph_back$',views.graph_back, name='graph_back'),
+    url(r'^graph_opp_back$',views.graph_opp_back, name='graph_opp_back'),
 ]
