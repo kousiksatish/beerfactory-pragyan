@@ -452,8 +452,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.isMapClicked=false;
 	vm.e=-10;
 	vm.map={};
-	vm.retailersRemaining=[];
 	vm.profit=0;
+	vm.retailersRemaining=[];
+
+	for(order of vm.products[0].orders){
+		vm.retailersRemaining.push(order.from);
+	}
+
+	
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
@@ -802,6 +808,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
     	var tono = $("#tono").val();
     	console.log('tono', tono);
+    	vm.profit=0;
     	vm.remaining=vm.factoryDetails.data.factory_1.inventory;
     	//vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
     	//vm.factoryDetails.data.factory_1.profit = 0;
@@ -815,23 +822,22 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		console.log('vm.products inside confirmorder', vm.products);
 
+		
 
 		for(order of vm.products[0].orders){
-			if(order.to_no===0){
-				if(vm.retailersRemaining.indexOf(order.from)===-1){
-					vm.retailersRemaining.push(order.from);
-				}
-				
-			}
-			else{
+			if(order.to_no!=0){
 				var index=vm.retailersRemaining.indexOf(order.from);
 				if(index>-1){
 					vm.retailersRemaining.splice(index,1);
 				}
-				vm.profit+=(order.to_no*40);
-				vm.remaining-=order.to_no;
+
+				vm.profit += order.to_no*40;
+				vm.remaining -= order.to_no;
 			}
 		}
+
+
+
 
 		console.log('retailers remaining', vm.retailersRemaining);
 
