@@ -697,9 +697,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		if(! /^\+?(0|[1-9]\d*)$/.test(vm.order))
 			toastr.warning('Invalid Quantity. It must be a positive integer!');
 		else if(vm.order > vm.factoryDetails.data.factory_1.capacity)
-			toastr.warning('Not enough cash!');
-		else if(vm.order * 40 > vm.factoryDetails.data.factory_1.money)
 			toastr.warning('Quantity exceeded capacity of the factory');
+		else if(vm.order * 40 > vm.factoryDetails.data.factory_1.money)
+			toastr.warning('Not enough cash!');
 		else
 		{
 			TurnStageBasedFunctions.placeOrder(id, vm.order, vm.status.data.turn, vm.status.data.stage).success(function(json){
