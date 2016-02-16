@@ -139,6 +139,14 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 	console.log('getDemandUrl from app.js', getDemandUrl);
 
 
+
+
+
+
+
+
+
+
 	getDemandDetails = function(id, _turn, _stage){
 
 		return $http({
@@ -449,6 +457,17 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.flag=0;
 	vm.history={};
 	vm.capacityDetails={};
+	vm.isMapClicked=false;
+	vm.e=-10;
+	vm.map={};
+	vm.profit=0;
+	vm.retailersRemaining=[];
+
+	for(order of vm.products[0].orders){
+		vm.retailersRemaining.push(order.from);
+	}
+
+	
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
@@ -538,6 +557,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			for(var order of vm.products[0].orders){
 				if(i<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
 					order.order_no = vm.demandDetails.data.demand[i];
+					order.to_no = 0;
 					i++;
 				}
 						
@@ -759,8 +779,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.mapclicked = function(e){
 		// vm.getDemand();
-		console.log('MAP CLICKED ',e);
-		if(e>0&&e<=(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+		vm.e=e;
+		console.log('MAP CLICKED ', e);
+
+		vm.map.check1 = (Math.floor((vm.status.data.turn-1)/5)+1)*3;
+		
+		/*if(e>0&&e<=(Math.floor((vm.status.data.turn-1)/5)+1)*3){
 			console.log('EEEE',e);
 		var xref='';
 		var ret = vm.products[0].orders[e-1]
@@ -783,7 +807,63 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		else if(e==-2){
 			angular.element(selections).html("OPPONENET FACTORY NAME");
 
+		} */
+	}
+
+	vm.confirmorder = function(x){
+
+		console.log('IN CONFIRM ORDER');
+
+    	var tono = $("#tono").val();
+    	console.log('tono', tono);
+    	vm.profit=0;
+    	vm.remaining=vm.factoryDetails.data.factory_1.inventory;
+    	//vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
+    	//vm.factoryDetails.data.factory_1.profit = 0;
+    	if(tono>0&&tono<=vm.products[0].orders[x-1].order_no){
+    		vm.products[0].orders[x-1].to_no = parseInt(tono);
+    	}
+
+		else{
+			vm.products[0].orders[x-1].to_no = 0;	
+		} 
+
+		console.log('vm.products inside confirmorder', vm.products);
+
+		
+
+		for(order of vm.products[0].orders){
+			if(order.to_no!=0){
+				var index=vm.retailersRemaining.indexOf(order.from);
+				if(index>-1){
+					vm.retailersRemaining.splice(index,1);
+				}
+
+				vm.profit += order.to_no*40;
+				vm.remaining -= order.to_no;
+			}
 		}
+
+
+
+
+		console.log('retailers remaining', vm.retailersRemaining);
+
+
+    	/*for(i=0;i<=(Math.floor((vm.status.data.turn-1)/5)+1)*3;i++){
+        	vm.products[0].orders[x-1] = vm.products[0].orders[i];
+        	vm.factoryDetails.data.factory_1.inventory_remaining -= vm.products[0].orders[x-1].to_no;
+        	vm.factoryDetails.data.factory_1.profit += vm.products[0].orders[x-1].to_no*40;
+        	console.log("remaining in inventory",i,vm.factoryDetails.data.factory_1.inventory_remaining);
+    	}
+    	*/
+
+    	console.log("products",vm.products);
+    	console.log("supply values", vm.supplyvalues);
+	}
+
+	vm.getPopPercent = function(p){
+		return Math.floor(p*50);
 	}
 
 }]);
@@ -832,23 +912,51 @@ app.controller('ZoneController',function(){
 
 
 })();
-function confirmorder(x) {
-	console.log('IN CONFIRM ORDER');
-	var $element = $("#main-content");
-	var scope = angular.element($element).scope();
-    var ret = scope.store.products[0].orders[x-1];
-    var tono = $("#tono").val();
-    scope.store.factoryDetails.data.factory_1.inventory_remaining = scope.store.factoryDetails.data.factory_1.inventory;
-    scope.store.factoryDetails.data.factory_1.profit = 0;
-    if(tono>0&&tono<=ret.order_no)
-    ret.to_no = parseInt(tono);
-	else ret.to_no = 0
-    for(i=0;i<=(Math.floor((scope.store.status.data.turn-1)/5)+1)*3;i++){
-        ret = scope.store.products[0].orders[i];
-        scope.store.factoryDetails.data.factory_1.inventory_remaining -= ret.to_no;
-        scope.store.factoryDetails.data.factory_1.profit += ret.to_no*40;
-        console.log("remaining in inventory",i,scope.store.factoryDetails.data.factory_1.inventory_remaining);
+
+
+(function($) {
+	
+    $.fn.drags = function(opt) {
+
+        opt = $.extend({handle:"",cursor:"move"}, opt);
+
+        if(opt.handle === "") {
+            var $el = this;
+        } else {
+            var $el = this.find(opt.handle);
+        }
+
+        return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
+            if(opt.handle === "") {
+                var $drag = $(this).addClass('draggable');
+            } else {
+                var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+            }
+            var z_idx = $drag.css('z-index'),
+                drg_h = $drag.outerHeight(),
+                drg_w = $drag.outerWidth(),
+                pos_y = $drag.offset().top + drg_h - e.pageY,
+                pos_x = $drag.offset().left + drg_w - e.pageX;
+            $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
+                $('.draggable').offset({
+                    top:e.pageY + pos_y - drg_h,
+                    left:e.pageX + pos_x - drg_w
+                }).on("mouseup", function() {
+                    $(this).removeClass('draggable').css('z-index', z_idx);
+                });
+            });
+            e.preventDefault(); // disable selection
+        }).on("mouseup", function() {
+            if(opt.handle === "") {
+                $(this).removeClass('draggable');
+            } else {
+                $(this).removeClass('active-handle').parent().removeClass('draggable');
+            }
+        });
+
     }
-    console.log("products",scope.store.products);
-    console.log("supply values", scope.store.supplyvalues);
-}
+})(jQuery);
+
+
+$('#man').drags();
+
