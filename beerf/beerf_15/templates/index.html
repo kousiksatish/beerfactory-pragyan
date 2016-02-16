@@ -3,21 +3,18 @@
 <title>The Beer Factory</title>
 
 <head> 
-	<script type="text/javascript" src="{% static "angular/angular.min.js" %}"> </script>
-	<meta charset="utf-8"/>
-	<link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
-	<link rel="stylesheet" type="text/css" href="{% static "css/left.css" %}" />
-	<link rel="stylesheet" type="text/css" href="{% static "css/angular-toastr.css" %}" />
-	<!--<script src="https://foxandxss.github.io/angular-toastr/vendor/angular-animate.js"></script>
-	<script src="https://npmcdn.com/angular-toastr/dist/angular-toastr.tpls.js"></script>-->
-
+    <script type="text/javascript" src="{% static "angular/angular.min.js" %}"> </script>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/left.css" %}" />
+    <link rel="stylesheet" href="{% static "css/angular-toastr.css" %}" />
+    <script src="{% static "js/jquery.min.js" %}"></script>
+    <script src="{% static "js/jquery.imagemapster.js" %}"></script>
+    <script src="{% static "bootstrap-3.3.6-dist/js/bootstrap.min.js" %}"></script>
     <script src="{% static "js/angular-animate.js" %}"></script>
     <script src="{% static "js/angular-toastr.tpls.js" %}"></script>
-
-	
-	<script src="{% static "js/jquery.min.js" %}"></script>
-	<script src="{% static "js/jquery.imagemapster.js" %}"></script>
     <script src="{% static "bootstrap-3.3.6-dist/js/bootstrap.min.js" %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "css/left.css" %}" />
 </head>
 
 <body ng-cloak>
@@ -34,7 +31,7 @@
 	   		  <li class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
 			  <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
 			  <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
-			  <li class="col-md-2"> Hi {{ name }}</li>	
+			  <li class="col-md-2"> Hi {{ name }} </li>	
 	   		</ul>
 		</div>
 	</nav>
@@ -101,11 +98,29 @@
 			<script src="{% static "js/jquery.imagemapster.js" %}"></script>
 			<script type="text/javascript" src="{% static "mapp.js" %}"></script>
 		</div>
+  <!--       <div id="man">
+            <div class="msg">
+                <div id="msg1" ng-show="store.factoryDetails.data.factory_1.money>5000 && store.factoryDetails.data.factory_1.money<10000" style="position:absolute;z-index:999;">
+                    Playing Good! Keep it up!
+                </div>
+                <div id="msg2" ng-show="store.factoryDetails.data.factory_1.money>10000" style="position:absolute;z-index:999;">
+                    Excellent Job!
+                </div>
+                 <div id="msg3" ng-show="store.factoryDetails.data.factory_1.money>3000 && store.factoryDetails.data.factory_1.money<5000" style="position:absolute;z-index:999;">
+                   Can do better!
+                </div>
+                <div id="msg4" ng-show="store.factoryDetails.data.factory_1.money<3000" style="position:absolute;z-index:999;">
+                    &nbsp; &nbsp; &nbsp; Uh oh! &nbsp; &nbsp; &nbsp; 
+                </div>
+            </div>
+            <div id="image">
+                <img src="{% static "images/hp.gif" %}" style="position:absolute;z-index:999;">
+            </div>
+        </div> -->
+
+
 
         <div id="right_half">
-            <!-- <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'||store.status.data.stage=='2'"> -->
-
-            <!-- stage 0 or 1. Getting demand stage or placing order to the retailers stage-->
             <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'">
 
                 <ul id="demandtabs" class="nav nav-tabs" role="tablist">
@@ -116,10 +131,8 @@
                     <a href="#history1tab" role="tab" data-toggle="tab"> HISTORY </a>
                     </li>
                 </ul>
-                    <!-- <button class = "btn btn-default" value = "Get Demand" ng-click = "store.getDemand()" onclick="getDemand()">GET DEMAND</button> -->
-                    <!-- <button ui-sref="stage1">Click here!</button> -->
                 <div class="tab-content">
-                    <div id="demandtab" class="tab-pane fade in active">
+                    <div id="demandtab" class="tab-pane fade in active" style="opacity:0.99;">
                         <div id="selections" class="rightcontent">
                             <div class="well" ng-hide="store.e>0"><center>CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND</center></div>
 
@@ -194,10 +207,12 @@
 
                             </div>
                         </div>
+
                         <div id="cashinfo">
                             YOU ARE YET TO SUPPLY TO:  &nbsp; &nbsp;
                             <span ng-repeat="retailer in store.retailersRemaining track by $index">
                                     {$ retailer $}
+
                                     &nbsp;&nbsp;
                             </span>
                             <br>
@@ -211,7 +226,7 @@
                         </div>
                         <div id="demandpopup">
                             <div class="close" ng-click="store.closepopup()">close</div>
-                                <table class="table table-striped" style="width:100%; "> 
+                                <table class="dtab table table-striped" style="width:100%;"> 
                                     <thead>
                                         <tr> 
                                             <th> RETAILER </th>
@@ -443,13 +458,18 @@
 
                 </div>
 
+
             </div>
 
 
         </div>
+
     </div>
 </div>
-
+</div>
+<div id="movable" style="z-index:1000; width:10%; position:fixed; top:60%; left:80%">
+<img src="{% static  "genius.svg" %}" width="100%">
+</div>
 <script>
 // script to feed in ids and necessary urls to app.js
 
@@ -472,10 +492,10 @@ var supplyUrl = "{% url 'supply' %}";
 console.log('supplyUrl is', supplyUrl);
 
 var placeOrderUrl = "{% url 'placeOrder' %}";
-console.log('placeOrderUrl is', placeOrderUrl	);
+console.log('placeOrderUrl is', placeOrderUrl   );
 
 var mapUrl = "{% url 'map' %}";
-console.log('mapUrl is', mapUrl	);
+console.log('mapUrl is', mapUrl );
 
 var updateCapacityUrl = "{% url 'updateCapacity' %}";
 console.log('updateCapacityUrl is', updateCapacityUrl );
@@ -503,10 +523,53 @@ $('#ordertext').keyup(function(){
         $("#price").html("Invalid amount entered!");
 });
 
-
 </script>
 
-	<script type="text/javascript" src="{% static "app.js" %}"> </script>
-	
+    <script type="text/javascript" src="{% static "app.js" %}"> </script>
+    <script>
+    (function($) {
+    $.fn.drags = function(opt) {
+
+        opt = $.extend({handle:"",cursor:"move"}, opt);
+
+        if(opt.handle === "") {
+            var $el = this;
+        } else {
+            var $el = this.find(opt.handle);
+        }
+
+        return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
+            if(opt.handle === "") {
+                var $drag = $(this).addClass('draggable');
+            } else {
+                var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+            }
+            var z_idx = $drag.css('z-index'),
+                drg_h = $drag.outerHeight(),
+                drg_w = $drag.outerWidth(),
+                pos_y = $drag.offset().top + drg_h - e.pageY,
+                pos_x = $drag.offset().left + drg_w - e.pageX;
+            $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
+                $('.draggable').offset({
+                    top:e.pageY + pos_y - drg_h,
+                    left:e.pageX + pos_x - drg_w
+                }).on("mouseup", function() {
+                    $(this).removeClass('draggable').css('z-index', z_idx);
+                });
+            });
+            e.preventDefault(); // disable selection
+        }).on("mouseup", function() {
+            if(opt.handle === "") {
+                $(this).removeClass('draggable');
+            } else {
+                $(this).removeClass('active-handle').parent().removeClass('draggable');
+            }
+        });
+
+    }
+})(jQuery);
+$('#movable').drags();
+</script>
+
 </body>
 </html>

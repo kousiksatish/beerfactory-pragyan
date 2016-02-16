@@ -139,6 +139,14 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 	console.log('getDemandUrl from app.js', getDemandUrl);
 
 
+
+
+
+
+
+
+
+
 	getDemandDetails = function(id, _turn, _stage){
 
 		return $http({
@@ -452,8 +460,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.isMapClicked=false;
 	vm.e=-10;
 	vm.map={};
-	vm.retailersRemaining=[];
 	vm.profit=0;
+	vm.retailersRemaining=[];
+
+	for(order of vm.products[0].orders){
+		vm.retailersRemaining.push(order.from);
+	}
+
+	
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
@@ -802,6 +816,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
     	var tono = $("#tono").val();
     	console.log('tono', tono);
+    	vm.profit=0;
     	vm.remaining=vm.factoryDetails.data.factory_1.inventory;
     	//vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
     	//vm.factoryDetails.data.factory_1.profit = 0;
@@ -815,23 +830,22 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		console.log('vm.products inside confirmorder', vm.products);
 
+		
 
 		for(order of vm.products[0].orders){
-			if(order.to_no===0){
-				if(vm.retailersRemaining.indexOf(order.from)===-1){
-					vm.retailersRemaining.push(order.from);
-				}
-				
-			}
-			else{
+			if(order.to_no!=0){
 				var index=vm.retailersRemaining.indexOf(order.from);
 				if(index>-1){
 					vm.retailersRemaining.splice(index,1);
 				}
-				vm.profit+=(order.to_no*40);
-				vm.remaining-=order.to_no;
+
+				vm.profit += order.to_no*40;
+				vm.remaining -= order.to_no;
 			}
 		}
+
+
+
 
 		console.log('retailers remaining', vm.retailersRemaining);
 
@@ -898,3 +912,51 @@ app.controller('ZoneController',function(){
 
 
 })();
+
+
+(function($) {
+	
+    $.fn.drags = function(opt) {
+
+        opt = $.extend({handle:"",cursor:"move"}, opt);
+
+        if(opt.handle === "") {
+            var $el = this;
+        } else {
+            var $el = this.find(opt.handle);
+        }
+
+        return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
+            if(opt.handle === "") {
+                var $drag = $(this).addClass('draggable');
+            } else {
+                var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+            }
+            var z_idx = $drag.css('z-index'),
+                drg_h = $drag.outerHeight(),
+                drg_w = $drag.outerWidth(),
+                pos_y = $drag.offset().top + drg_h - e.pageY,
+                pos_x = $drag.offset().left + drg_w - e.pageX;
+            $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
+                $('.draggable').offset({
+                    top:e.pageY + pos_y - drg_h,
+                    left:e.pageX + pos_x - drg_w
+                }).on("mouseup", function() {
+                    $(this).removeClass('draggable').css('z-index', z_idx);
+                });
+            });
+            e.preventDefault(); // disable selection
+        }).on("mouseup", function() {
+            if(opt.handle === "") {
+                $(this).removeClass('draggable');
+            } else {
+                $(this).removeClass('active-handle').parent().removeClass('draggable');
+            }
+        });
+
+    }
+})(jQuery);
+
+
+$('#man').drags();
+

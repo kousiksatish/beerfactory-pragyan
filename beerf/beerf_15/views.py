@@ -9,7 +9,7 @@ from django.utils.decorators import decorator_from_middleware
 from beerf_15.models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from beerf_algo.beerf_algo import algo
+from beerf_algo.beerf_algo import algo as algo
 from utilities import money
 from utilities import inventory
 import random
@@ -553,8 +553,8 @@ def getCapacityDetails(request):
 	if id and user:
 		stat = status.objects.get(pid = id)
 		cur_capacity = capacity.objects.get(fid = user.factory, turn = stat.turn).capacity
-		next_upgrade_capacity = calculate_next_capacity(cur_capacity)
-		upgrade_cost = calculate_money(cur_capacity)
+		next_upgrade_capacity = algo.calculate_next_capacity(cur_capacity)
+		upgrade_cost = algo.calculate_money(cur_capacity)
 		json = {}
 		json["status"] = 200
 		data = {}
@@ -887,16 +887,6 @@ def updateSellingPrice(request):
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
-def calculate_next_capacity(cap):
-	cap_array = [200, 400, 700, 1000, 1400, 1800, 2300];
-	cap_index = cap_array.index(cap)
-	return cap_array[cap_index + 1]
-
-def calculate_money(cap):
-	cap_array = [200, 400, 700, 1000, 1400, 1800, 2300];
-	cap_index = cap_array.index(cap)
-	cap_money = [2000, 8000, 12000, 18000, 18000, 18000, 18000];
-	return cap_money[cap_index + 1]
 
 @csrf_exempt
 @decorator_from_middleware(middleware.SessionPIDAuth)
@@ -922,13 +912,15 @@ def updateCapacity(request):
 					flag = request.POST.get("flag")
 					cap_old = capacity.objects.get(turn = int(turn), fid_id = user.factory_id).capacity
 					if(int(flag)==1):
-						cost = calculate_money(cap_old)
+						cost = algo.calculate_money(cap_old)
+						if cost==0:
+							return JsonResponse({"status":"107", "data":{"description":"No More Upgrades"}})
 						cur_money = money.getMoney(user.factory_id)
 						if(cur_money < cost):
 							return JsonResponse({"status":"106", "data":{"description":"Not enough money for upgrade!"}})
 
 						cap = capacity(turn = int(turn)+1 , fid_id = user.factory_id)
-						cap.capacity = calculate_next_capacity(cap_old)
+						cap.capacity = algo.calculate_next_capacity(cap_old)
 						cap.save()
 						money.moneyDecrease(user.factory_id, cost, int(turn))
 					else:
@@ -1053,6 +1045,7 @@ def graph_back(request):
 							new['turn']=turn
 							new['demand']=int(demand.quantity)
 							demands[retailer].append(new)
+
 			retailer = 0			
 			for frid in unlocked_frids:
 				retailer=retailer+1
@@ -1064,7 +1057,7 @@ def graph_back(request):
 						turn = int(supply.turn)
 						if turn > (zone-1)*5:
 							demands[retailer][turn-(zone-1)*5-1]['supply'] = int(supply.quantity)
-
+			
 			return JsonResponse({"status":"200", "data":{"history":demands}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
@@ -1119,3 +1112,24 @@ def graph_opp_back(request):
 			return JsonResponse({"status":"200", "data":{"history":demands}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
+
+
+@decorator_from_middleware(middleware.SessionPIDAuth)
+@csrf_exempt
+def getScore(request):
+	user_id = int(request.POST.get("user_id"))
+	user = users.objects.get(pk=user_id)
+	turn = int(request.POST.get("turn"))
+	scr = score.objects.get(pid = user, turn = turn).score
+	return JsonResponse({"status":"200", "data":{"description":"Success!","turn":turn,"score":scr}})
+
+@decorator_from_middleware(middleware.SessionPIDAuth)
+@csrf_exempt
+def getTotalScore(request):
+	user_id = int(request.POST.get("user_id"))
+	user = users.objects.get(pk=user_id)
+	scores = score.objects.filter(pid = user)
+	sum_of_scores = 0
+	for scr in scores:
+		sum_of_scores += scr.score
+	return JsonResponse({"status":"200", "data":{"description":"Success!","score":sum_of_scores}})

@@ -29,6 +29,16 @@
 	<div id="ag9"></div>
 	<div id="cont10"></div>
 	<div id="ag10"></div>
+	<div id="cont11"></div>
+	<div id="ag11"></div>
+	<div id="cont12"></div>
+	<div id="ag12"></div>
+	<div id="cont13"></div>
+	<div id="ag13"></div>
+	<div id="cont14"></div>
+	<div id="ag14"></div>
+	<div id="cont15"></div>
+	<div id="ag15"></div>
 </div>
 
 <div class="col-md-6">
@@ -98,7 +108,7 @@ $('#plot').click(function() {
 		$('#ag'+i).empty()
 		req = dat.data.history[i];
 
-		Morris.Area({
+		Morris.Line({
 		  element: 'ag'+i,
 		  data: req,
 		  parseTime: false,
@@ -141,7 +151,7 @@ $('#plot_opp').click(function() {
 		$('#agopp'+i).empty()
 		req = dat_opp.data.history[i];
 
-		Morris.Area({
+		Morris.Line({
 		  element: 'agopp'+i,
 		  data: req,
 		  parseTime: false,

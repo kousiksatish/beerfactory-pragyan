@@ -107,7 +107,7 @@ class inventory_log(models.Model):
 class popularity_log(models.Model):
 	popid = models.AutoField(primary_key=True)
 	turn = models.IntegerField()
-	popularity = models.IntegerField()
+	popularity = models.DecimalField(null=True,max_digits=11, decimal_places=10)
 	frid = models.ForeignKey(factory_retailer)
 
 class score(models.Model):
