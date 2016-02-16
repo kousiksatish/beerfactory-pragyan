@@ -78,6 +78,8 @@ def login(request,error=''):
 def home(request):
 	id = request.session["user_id"]
 	user  = users.objects.get(pk=id)
+	if user.factory:
+		return redirect(beerf_15.views.testhome)
 	return render(request, "home.html", {"name" : user.prag_fullname})
 
 def logout(request):
