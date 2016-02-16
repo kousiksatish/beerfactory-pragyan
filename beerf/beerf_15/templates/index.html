@@ -19,7 +19,12 @@
 
 <body ng-cloak>
 
+
 <div ng-controller = "StoreController as store">
+    <div id="loading">
+
+    </div>
+
 	<nav class="navbar navbar-default navbar-fixed-top nav-container">
 	  	<div class="container-fluid"   ng-repeat="product in store.products">
 	   		<div class="navbar-header col-md-3">
@@ -522,6 +527,11 @@ $('#ordertext').keyup(function(){
     else
         $("#price").html("Invalid amount entered!");
 });
+
+$(window).load(function() {
+    $("#loading").fadeOut("slow");
+})
+
 
 </script>
 

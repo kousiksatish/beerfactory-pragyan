@@ -615,6 +615,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 
 	vm.send = function(){
+
+		$("#loading").fadeIn("slow");
+
 		console.log('Initial Products', vm.products);
 		console.log('Supply values', vm.supplyValues);
 		console.log('vm.level', vm.level);
@@ -663,6 +666,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			TurnStageBasedFunctions.supply(id, supply, vm.status.data.turn, vm.status.data.stage).success(function(json){
 				console.log('Response for supply', json);
 				if(json.status === "200" || json.status === 200){
+					$("#loading").fadeOut("slow");
 					var stage = parseInt(vm.status.data.stage)+1;
 					vm.status.data.stage = stage.toString();
 					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
@@ -701,7 +705,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.placeOrder = function(){
 		
-		
+		$("#loading").fadeIn("slow");
+
 		console.log('order is ', vm.order);
 
 		if(! /^\+?(0|[1-9]\d*)$/.test(vm.order))
@@ -715,6 +720,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			TurnStageBasedFunctions.placeOrder(id, vm.order, vm.status.data.turn, vm.status.data.stage).success(function(json){
 				console.log('Response for place order', json);
 				if(json.status === "200" || json.status === 200){
+					$("#loading").fadeOut("slow");
 					vm.status.data.stage = '3';
 
 					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
@@ -750,11 +756,13 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.upgradeFactory = function(flag){
 
 		vm.flag=flag;
+		$("#loading").fadeIn("slow");
 
 		TurnStageBasedFunctions.upgradeFactory(id, vm.status.data.turn, vm.status.data.stage, vm.flag).success(function(json){
 			console.log('Respose from updateCapacity', json);
 
 			if(json.status === "200" || json.status === 200){
+				$("#loading").fadeOut("slow");
 				var turn = parseInt(vm.status.data.turn) + 1;
 				vm.status.data.turn = turn.toString();
 				vm.status.data.stage = '0';
