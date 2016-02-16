@@ -22,7 +22,7 @@
 		top:15%;
 		padding: 2%;
 		border: 1px solid grey;
-		font-size: 1.2rem;
+		font-size: 1.0rem;
 	}
 	</style>
 </head>
@@ -129,7 +129,7 @@ Press the right arrow key to continue.
 	window.addEventListener("keydown", showinfo, false);
 
 	function showinfo(e){
-		if(e.keyCode == 39 && i<10)
+		if(e.keyCode == 39 && i<11)
 			i++;
 		else if(e.keyCode == 37 && i>0)
 			i--;
@@ -139,14 +139,18 @@ Press the right arrow key to continue.
 			document.body.style.backgroundImage = "url(\"{% static 'images/screen2.png' %}\")";
 		if(i==9)
 			document.body.style.backgroundImage = "url(\"{% static 'images/Screen3.png' %}\")";
-
-
+		if(i==11)
+		{
+			
+    		window.location.replace("/home");
+		}
 		var b = document.getElementById("bubble");
 		b.style.top = j[i].top;
 		b.style.left = j[i].left;
 		b.innerHTML = j[i].info;
 		b.style.height = j[i].height;
 		b.style.borderRadius = j[i].borderRadius;
+
 		
 	}
 	
