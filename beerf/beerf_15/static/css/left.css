@@ -276,7 +276,6 @@ input{
 	bottom:0%;
 }
 
-
 .oval-thought {
   position:relative;
   width:270px;
@@ -361,4 +360,14 @@ input{
   -webkit-border-radius:15px;
   -moz-border-radius:15px;
   border-radius:15px;
+}
+
+#loading {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url('/static/images/page-loader.gif') 50% 50% no-repeat rgb(249,249,249);
 }
