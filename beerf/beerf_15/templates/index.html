@@ -242,9 +242,9 @@
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="order in store.products[0].orders|limitTo:(Math.floor((store.status.data.turn-1)/5)+1)*3 track by $index">
-                                            <td class="col-md-3"> {$order.from$}</td>
-                                            <td class="col-md-3"> {$order.order_no$}</td>
-                                            <td class="col-md-3"> {$order.to_no$} </td>
+                                            <td class="col-md-3"><center> {$order.from$} </center></td>
+                                            <td class="col-md-3"><center> {$order.order_no$}</center></td>
+                                            <td class="col-md-3"><center> {$order.to_no$} </center></td>
                                             <!-- <td>{$(Math.floor((store.status.data.turn-1)/5-1)+1)*3$}</td> -->
                                         </tr>
                                     </tbody>
