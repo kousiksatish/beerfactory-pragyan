@@ -992,11 +992,14 @@ def mapp(request):
 def testmap(request):
 	return render(request, "map_test.html")
 
+
 @decorator_from_middleware(middleware.loggedIn)
 def testhome(request):
 	id = request.session["user_id"]
 	user = users.objects.get(pid = id)
-	return render(request, "index.html",{ "name" : user.name })
+	if user.factory:
+		return render(request, "index.html",{ "name" : user.prag_fullname })
+	return redirect(beerf_15.views.home)
 def instructions(request):
 	return render(request,"instructions.html")
 
@@ -1052,7 +1055,7 @@ def graph_back(request):
 						turn = int(supply.turn)
 						if turn > (zone-1)*5:
 							demands[retailer][turn-(zone-1)*5-1]['supply'] = int(supply.quantity)
-			
+
 			return JsonResponse({"status":"200", "data":{"history":demands}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
@@ -1128,3 +1131,13 @@ def getTotalScore(request):
 	for scr in scores:
 		sum_of_scores += scr.score
 	return JsonResponse({"status":"200", "data":{"description":"Success!","score":sum_of_scores}})
+
+@decorator_from_middleware(middleware.loggedIn)
+def review(request):
+	user = users.objects.get(pk=request.session['user_id'])
+	if not user.factory:
+		return redirect(beerf_15.views.home)
+	turn = status.objects.get(pid=user).turn
+	if turn<=25:
+		return redirect(beerf_15.views.testhome)
+	return render(request, "review.html")

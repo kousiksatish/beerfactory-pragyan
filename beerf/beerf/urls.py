@@ -19,7 +19,7 @@ from beerf_15 import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^register/$',views.register, name="register"),
+    # url(r'^register/$',views.register, name="register"),
     url(r'^$', views.login, name="login"),
     # url(r'^$', views.locked, name="locked"),
     url(r'^home$', views.home, name="home"),
@@ -46,7 +46,8 @@ urlpatterns = [
     url(r'^history$',views.history, name='history'),
     url(r'^graph$',views.graph, name='graph'),
     url(r'^graph_back$',views.graph_back, name='graph_back'),
-    url(r'^graph_opp_back$',views.graph_opp_back, name='graph_opp_back')
+    url(r'^graph_opp_back$',views.graph_opp_back, name='graph_opp_back'),
+    url(r'^review$',views.review, name='review')
     # url(r'^getScore$',views.getScore, name='getScore'),
     # url(r'^getTotalScore$',views.getTotalScore, name='getTotalScore')
 ]

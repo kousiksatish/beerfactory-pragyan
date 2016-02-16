@@ -142,6 +142,8 @@ input{
     text-align: center;
     font-size: 1.5rem;
     opacity: 2.0;
+    border:3px solid white;
+    background: #3C3C3C;
  
 }
 #demandpopup table th{
@@ -274,6 +276,7 @@ input{
 	bottom:0%;
 }
 
+
 #loading {
 	position: fixed;
 	left: 0px;
@@ -282,4 +285,90 @@ input{
 	height: 100%;
 	z-index: 9999;
 	background: url('/static/images/page-loader.gif') 50% 50% no-repeat rgb(249,249,249);
+}
+
+.oval-thought {
+  position:relative;
+  width:270px;
+  padding:50px 40px;
+  margin:0.5em auto 40px;
+  margin-left:-120px;
+  text-align:center;
+  color:#fff;
+  background:#A79154;
+  /* css3 */
+  background:-webkit-gradient(linear, 0 0, 0 100%, from(#DEC26E), to(#92792D));
+  background:-moz-linear-gradient(#DEC26E, #92792D);
+  background:-o-linear-gradient(#DEC26E, #92792D);
+  background:linear-gradient(#DEC26E, #92792D);
+  /*
+  NOTES:
+  -webkit-border-radius:220px 120px; // produces oval in safari 4 and chrome 4
+  -webkit-border-radius:220px / 120px; // produces oval in chrome 4 (again!) but not supported in safari 4
+  Not correct application of the current spec, therefore, using longhand to avoid future problems with webkit corrects this
+  */
+  -webkit-border-top-left-radius:220px 120px;
+  -webkit-border-top-right-radius:220px 120px;
+  -webkit-border-bottom-right-radius:220px 120px;
+  -webkit-border-bottom-left-radius:220px 120px;
+  -moz-border-radius:220px / 120px;
+  border-radius:220px / 120px;
+}
+
+.oval-thought p {font-size:1.25em;}
+
+
+/*.oval-thought:before {
+  content:"";
+  position:absolute;
+  margin-left:50px;
+  bottom:-40px;
+  left:50px;
+  width:30px;
+  height:30px;
+  background:#A79154;
+  -webkit-border-radius:30px;
+  -moz-border-radius:30px;
+  border-radius:30px;
+}
+
+.oval-thought:after {
+  content:"";
+  position:absolute;
+  margin-left:50px;
+  bottom:-50px;
+  left:30px;
+  width:15px;
+  height:15px;
+  background:#A79154;
+  -webkit-border-radius:15px;
+  -moz-border-radius:15px;
+  border-radius:15px;
+}*/
+
+
+.oval-thought:before {
+  content:"";
+  position:absolute;
+  bottom:-40px;
+  left:100px;
+  width:30px;
+  height:30px;
+  background:#A79154;
+  -webkit-border-radius:30px;
+  -moz-border-radius:30px;
+  border-radius:30px;
+}
+
+.oval-thought:after {
+  content:"";
+  position:absolute;
+  bottom:-50px;
+  left:130px;
+  width:15px;
+  height:15px;
+  background:#A79154;
+  -webkit-border-radius:15px;
+  -moz-border-radius:15px;
+  border-radius:15px;
 }
