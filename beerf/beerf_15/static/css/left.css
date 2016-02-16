@@ -44,18 +44,27 @@
 	position: relative;
 	top: 1.5rem;
 	display: inline;
+	height: 3rem;
 }
+
+/*#right_half ul{
+	position: fixed;
+	margin-bottom: 5rem;
+}*/
 
 .top-info li{
 	float: left;
 }
 #progressbartop{
-	position: absolute;
-	top:5rem;
+	position: fixed;
+	top:6rem;
+	font-size: 1.5rem;
+	z-index: 999;
+	vertical-align: middle;
 }
 #main-content{
 	position: absolute;
-	top:7.2rem;
+	top:11rem;
 	width: 100%;
 }
 #map_left
