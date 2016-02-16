@@ -315,7 +315,7 @@
                             </tr>
                             <tr>
                                 <td>PRODUCTION CAPACITY</td>
-                                <td>{$ store.factoryDetails.data.factory_1.capacity $}</td>
+                                <td id="cur_capacity">{$ store.factoryDetails.data.factory_1.capacity $}</td>
                             </tr>
                             <tr>
                                 <td>PRICE PER UNIT</td>
@@ -443,7 +443,7 @@
                                                 <tr ng-repeat="demand in day.demand track by $index">
                                                     <td class="col-md-3"><center> R{$ $index+1 $} </center></td>
                                                     <td class="col-md-3"><center> {$ demand $} </center></td>
-                                                    <td class="col-md-3"><center> {$ day.supply[$index] $} </center></td>
+                                                    <td class="col-md-3"><center> {$ l.supply[$index] $} </center></td>
                                                 </tr>
                                             </tbody>
 
@@ -518,7 +518,7 @@ $('#ordertext').keyup(function(){
             else
                 $("#price").html("Not enough cash!");
         else
-            $("#price").html("Exceeded capacity of factory!");
+            $("#price").html("Exceeded capacity!");
     else
         $("#price").html("Invalid amount entered!");
 });
