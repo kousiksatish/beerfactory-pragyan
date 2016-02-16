@@ -237,29 +237,6 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
 	};
 
-	capacityDetails = function(id){
-
-		return $http({
-	   		 	method: 'POST',
-	    		url: capacityDetailsUrl,
-	    		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-	    		transformRequest: function(obj) {
-	    		    var str = [];
-	        		for(var p in obj)
-	        		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-	        		return str.join("&");
-	    		},
-	    		data: {user_id: id}
-				})
-				.success(function(json) {
-	    					return json;
-	  					})
-	  			.error(function(err) {
-	    					return err;
-	  					});
-
-	};
-
 	upgradeFactory = function(id, _turn, _stage, flag){
 
 		return $http({
@@ -288,8 +265,7 @@ app.factory('TurnStageBasedFunctions', ['$http', function($http){
 		viewDemandDetails: viewDemandDetails,
 		supply: supply,
 		placeOrder: placeOrder,
-		upgradeFactory: upgradeFactory,
-		capacityDetails: capacityDetails
+		upgradeFactory: upgradeFactory
 	};
 
 }]);
@@ -471,10 +447,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		vm.supplyValues.push(order.to_no);
 	}
 
-	TurnStageBasedFunctions.capacityDetails(id).success(function(json){
+/*	TurnStageBasedFunctions.capacityDetails(id).success(function(json){
 		vm.capacityDetails = json.data;
 		console.log('vm.capacity details', vm.capacityDetails);
-	});
+	});*/
 
 	AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 		vm.history = json.data.history;
@@ -488,8 +464,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		if(json.status === '200' || json.status === 200)
 		{
 			toastr.success('Factory details obtained successfully!');
-			vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
-        	vm.factoryDetails.data.factory_1.profit = 0;
 		}
 		else
 		{
@@ -693,9 +667,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 
 		
-
-
-
 		console.log('New products is', vm.products);
 	};
 
@@ -727,11 +698,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 						vm.history = json.data.history;
 						console.log('vm.history', vm.history);
 						console.log('history', json.data);
-					});
-
-					TurnStageBasedFunctions.capacityDetails(id).success(function(json){
-						vm.capacityDetails = json.data;
-						console.log('vm.capacity details', vm.capacityDetails);
 					});
 
 					var progressbar = angular.element(progressbartop);
