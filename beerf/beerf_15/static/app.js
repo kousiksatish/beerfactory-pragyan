@@ -403,7 +403,39 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			to_no:0,
 			transport:"none",
 			zone:5
-		}]
+		}],
+
+		inventory: [
+		{
+			day:0,
+			no_produced:0,
+			no_sold:0,
+			no_inv:0
+		},
+		{
+			day:1,
+			no_produced:0,
+			no_sold:0,
+			no_inv:0
+		}
+		],
+
+		backlog:[
+		{
+			day:0,
+			no_produced:0,
+			no_ord:0,
+			no_to:0,
+			no_back:0
+		},
+		{
+			day:1,
+			no_produced:0,
+			no_ord:0,
+			no_to:0,
+			no_back:0
+		}
+		]
 	}];
 
 	vm.factoryDetails = {};
@@ -420,6 +452,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.isMapClicked=false;
 	vm.e=-10;
 	vm.map={};
+	vm.retailersRemaining=[];
+	vm.profit=0;
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
@@ -509,6 +543,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			for(var order of vm.products[0].orders){
 				if(i<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
 					order.order_no = vm.demandDetails.data.demand[i];
+					order.to_no = 0;
 					i++;
 				}
 						
@@ -766,24 +801,55 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('IN CONFIRM ORDER');
 
     	var tono = $("#tono").val();
-    	vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
-    	vm.factoryDetails.data.factory_1.profit = 0;
+    	console.log('tono', tono);
+    	vm.remaining=vm.factoryDetails.data.factory_1.inventory;
+    	//vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
+    	//vm.factoryDetails.data.factory_1.profit = 0;
     	if(tono>0&&tono<=vm.products[0].orders[x-1].order_no){
     		vm.products[0].orders[x-1].to_no = parseInt(tono);
     	}
-    		
+
 		else{
 			vm.products[0].orders[x-1].to_no = 0;	
 		} 
 
-    	for(i=0;i<=(Math.floor((vm.status.data.turn-1)/5)+1)*3;i++){
+		console.log('vm.products inside confirmorder', vm.products);
+
+
+		for(order of vm.products[0].orders){
+			if(order.to_no===0){
+				if(vm.retailersRemaining.indexOf(order.from)===-1){
+					vm.retailersRemaining.push(order.from);
+				}
+				
+			}
+			else{
+				var index=vm.retailersRemaining.indexOf(order.from);
+				if(index>-1){
+					vm.retailersRemaining.splice(index,1);
+				}
+				vm.profit+=(order.to_no*40);
+				vm.remaining-=order.to_no;
+			}
+		}
+
+		console.log('retailers remaining', vm.retailersRemaining);
+
+
+    	/*for(i=0;i<=(Math.floor((vm.status.data.turn-1)/5)+1)*3;i++){
         	vm.products[0].orders[x-1] = vm.products[0].orders[i];
         	vm.factoryDetails.data.factory_1.inventory_remaining -= vm.products[0].orders[x-1].to_no;
         	vm.factoryDetails.data.factory_1.profit += vm.products[0].orders[x-1].to_no*40;
         	console.log("remaining in inventory",i,vm.factoryDetails.data.factory_1.inventory_remaining);
     	}
+    	*/
+
     	console.log("products",vm.products);
     	console.log("supply values", vm.supplyvalues);
+	}
+
+	vm.getPopPercent = function(p){
+		return Math.floor(p*50);
 	}
 
 }]);
