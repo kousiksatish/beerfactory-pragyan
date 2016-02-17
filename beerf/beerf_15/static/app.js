@@ -423,7 +423,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}];
 
 	vm.factoryDetails = {};
-	vm.instructor = {"bubble":true,"content":"abcd"};
+	vm.instructor = {"bubble":false,"content":"Welcome to Beer Factory!"};
 	vm.status = {};
 	vm.demandDetails = {};
 	vm.mapDetails={};
@@ -591,7 +591,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.send = function(){
 
-		$("#loading").fadeIn("slow");
 
 		console.log('Initial Products', vm.products);
 		console.log('Supply values', vm.supplyValues);
@@ -606,7 +605,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		var supply = '';
 		
-
+		
 		console.log('level', vm.level);
 		sum_of_supply = 0;
 		checkint_flag = 0;
@@ -638,6 +637,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 		else
 		{
+			$("#loading").fadeIn("slow");
 			TurnStageBasedFunctions.supply(id, supply, vm.status.data.turn, vm.status.data.stage).success(function(json){
 				console.log('Response for supply', json);
 				if(json.status === "200" || json.status === 200){
@@ -652,12 +652,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					var progressbar = angular.element(progressbartop);
 			   		progressbar.css('width','75%');
 			    	progressbar.html("Stage 3 of 4");
+			    	vm.sendToInstructor('My suggestion is to buy the maximum or save money for the next upgrade if you plan to upgrade next round.');
 			    	angular.element(demandpopup).css('display','none');
 					toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
 
 				}
 				else
 				{
+					$("#loading").fadeOut("slow");
 					toastr.warning(json.data.description);
 				}
 				AnyTimeFunctions.getFactoryDetails(id).success(function(json){
@@ -677,18 +679,20 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.placeOrder = function(){
 		
-		$("#loading").fadeIn("slow");
-
 		console.log('order is ', vm.order);
 
 		if(! /^\+?(0|[1-9]\d*)$/.test(vm.order))
 			toastr.warning('Invalid Quantity. It must be a positive integer!');
 		else if(vm.order > vm.factoryDetails.data.factory_1.capacity)
+		{
 			toastr.warning('Quantity exceeded capacity of the factory');
+			vm.sendToInstructor("Quantity exceeded capacity of the factory");
+		}
 		else if(vm.order * 40 > vm.factoryDetails.data.factory_1.money)
 			toastr.warning('Not enough cash!');
 		else
 		{
+			$("#loading").fadeIn("slow");
 			TurnStageBasedFunctions.placeOrder(id, vm.order, vm.status.data.turn, vm.status.data.stage).success(function(json){
 				console.log('Response for place order', json);
 				if(json.status === "200" || json.status === 200){
@@ -705,10 +709,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			   		progressbar.css('width','100%');
 			    	progressbar.html("Stage 4 of 4");
 					toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
-					
+					if(vm.factoryDetails.data.factory_1.money - 40*vm.order > vm.factoryDetails.data.factory_1.next_upgrade_capacity)
+						vm.sendToInstructor('You have lots of money.. Its time to go for an upgrade :)')
 				}
 				else
 				{
+					$("#loading").fadeOut("slow");
 					toastr.warning(json.data.description);
 				}
 
@@ -754,6 +760,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			}
 			else
 			{
+				$("#loading").fadeOut("slow");
 				toastr.warning(json.data.description);
 			}
 
@@ -851,6 +858,21 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
     	console.log("supply values", vm.supplyvalues);
 	}
 
+	vm.closeInstructor = function() {
+		console.log("dsdc");
+		console.log(vm.instructor.bubble);
+		vm.instructor.bubble=true;
+		console.log(vm.instructor.bubble);
+	}
+
+	vm.sendToInstructor = function(content) {
+		vm.instructor.bubble=0;
+		vm.instructor.content = content;
+		var delay=1000;
+		setTimeout(function(){
+		  vm.instructor.bubble=true;
+		}, delay); 
+	}
 	vm.getPopPercent = function(p){
 		return Math.floor(p*50);
 	}
@@ -901,51 +923,4 @@ app.controller('ZoneController',function(){
 
 
 })();
-
-
-(function($) {
-	
-    $.fn.drags = function(opt) {
-
-        opt = $.extend({handle:"",cursor:"move"}, opt);
-
-        if(opt.handle === "") {
-            var $el = this;
-        } else {
-            var $el = this.find(opt.handle);
-        }
-
-        return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
-            if(opt.handle === "") {
-                var $drag = $(this).addClass('draggable');
-            } else {
-                var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
-            }
-            var z_idx = $drag.css('z-index'),
-                drg_h = $drag.outerHeight(),
-                drg_w = $drag.outerWidth(),
-                pos_y = $drag.offset().top + drg_h - e.pageY,
-                pos_x = $drag.offset().left + drg_w - e.pageX;
-            $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
-                $('.draggable').offset({
-                    top:e.pageY + pos_y - drg_h,
-                    left:e.pageX + pos_x - drg_w
-                }).on("mouseup", function() {
-                    $(this).removeClass('draggable').css('z-index', z_idx);
-                });
-            });
-            e.preventDefault(); // disable selection
-        }).on("mouseup", function() {
-            if(opt.handle === "") {
-                $(this).removeClass('draggable');
-            } else {
-                $(this).removeClass('active-handle').parent().removeClass('draggable');
-            }
-        });
-
-    }
-})(jQuery);
-
-
-$('#man').drags();
 

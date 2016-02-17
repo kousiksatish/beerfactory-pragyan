@@ -301,7 +301,7 @@
                 
                 <ul id="ordertabs" class="nav nav-tabs" role="tablist">
                     <li class="active">
-                        <a href="#ordertab" role="tab" data-toggle="tab"> ORDER </a>
+                        <a href="#ordertab" role="tab" data-toggle="tab"> PRODUCE </a>
                     </li>
                     <li>
                     <a href="#history2tab" role="tab" data-toggle="tab"> HISTORY </a>
@@ -328,7 +328,7 @@
                                 <td>40</td>
                             </tr>
                             <tr>
-                                <td>AMOUNT TO BE ORDERED</td>
+                                <td>AMOUNT TO BE PRODUCED</td>
                                 <td><input id='ordertext' type="number" placeholder="Place the order for the next round here!" ng-model="store.order">
                                 </td>
                             </tr>
@@ -476,14 +476,14 @@
 
         </div>
 
-    </div>
-    <div id="movable" style="z-index:1000; width:10%; position:fixed; bottom:10%; left:80%">
-    <p ng-hide="{$ store.instructor.bubble $}" class="oval-thought">
-        {$ store.instructor.content $}
-    </p>
-    <img src="{% static  "genius.svg" %}" width="100%">
 </div>
-
+<div ng-hide="{$ store.instructor.bubble $}" id="bub" style="z-index:1000; position:fixed; bottom:15%; right:1%">
+<p  class="example-obtuse">
+{$ store.instructor.content $}
+</p>
+</div>
+<div ng-click="store.closeInstructor()" id="movable" style="z-index:1000; width:10%; position:fixed; bottom:-20%; right:1%;margin-right:1%">
+<img src="{% static  "genius.svg" %}" width="150px">
 </div>
 <script>
 // script to feed in ids and necessary urls to app.js
@@ -559,22 +559,34 @@ $(window).load(function() {
         return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
             if(opt.handle === "") {
                 var $drag = $(this).addClass('draggable');
+                var $drag1 = $("#bub").addClass('draggable');
+                $("#bub").css('bottom', '14%');
             } else {
                 var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+                var $drag1 = $("#bub").addClass('active-handle').parent().addClass('draggable');
+                $("#bub").css('bottom', '14%');
             }
             var z_idx = $drag.css('z-index'),
                 drg_h = $drag.outerHeight(),
                 drg_w = $drag.outerWidth(),
                 pos_y = $drag.offset().top + drg_h - e.pageY,
                 pos_x = $drag.offset().left + drg_w - e.pageX;
+            var z_idx1 = $drag1.css('z-index'),
+                drg_h1 = $drag1.outerHeight(),
+                drg_w1 = $drag1.outerWidth();
+                pos_y1 = $drag1.offset().top + drg_h1 - e.pageY,
+                pos_x1 = $drag1.offset().left + drg_w1 - e.pageX;
+
             $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
                 $('.draggable').offset({
                     top:e.pageY + pos_y - drg_h,
                     left:e.pageX + pos_x - drg_w
                 }).on("mouseup", function() {
                     $(this).removeClass('draggable').css('z-index', z_idx);
+                    $("#bub").removeClass('draggable').css('z-index', z_idx);
                 });
             });
+           
             e.preventDefault(); // disable selection
         }).on("mouseup", function() {
             if(opt.handle === "") {
@@ -586,7 +598,7 @@ $(window).load(function() {
 
     }
 })(jQuery);
-$('#movable').drags();
+//$('#movable').drags();
 </script>
 
 </body>
