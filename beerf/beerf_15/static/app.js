@@ -657,6 +657,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				}
 				else
 				{
+					$("#loading").fadeOut("slow");
 					toastr.warning(json.data.description);
 				}
 				AnyTimeFunctions.getFactoryDetails(id).success(function(json){
@@ -708,6 +709,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				}
 				else
 				{
+					$("#loading").fadeOut("slow");
 					toastr.warning(json.data.description);
 				}
 
@@ -753,6 +755,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			}
 			else
 			{
+				$("#loading").fadeOut("slow");
 				toastr.warning(json.data.description);
 			}
 
