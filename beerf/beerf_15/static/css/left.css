@@ -55,6 +55,26 @@
 .top-info li{
 	float: left;
 }
+
+#stage{
+	cursor: pointer;
+}
+
+.stageinfo{
+	position: fixed;
+	border-radius: 0 10% 10% 10%;
+	left:75%;
+	top:6rem;
+	min-height: 5rem;
+	height: auto;
+	min-width:20rem;
+	width: auto;
+	background-color: #272727;
+	border: 3px solid white;
+	color: white;
+	z-index: 999;
+}
+
 #progressbartop{
 	position: fixed;
 	top:6rem;
