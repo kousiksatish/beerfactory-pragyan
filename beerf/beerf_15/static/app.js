@@ -423,6 +423,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}];
 
 	vm.factoryDetails = {};
+	vm.instructor = {"bubble":true,"content":"abcd"};
 	vm.status = {};
 	vm.demandDetails = {};
 	vm.mapDetails={};
@@ -770,7 +771,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		// vm.getDemand();
 		vm.e=e;
 		console.log('MAP CLICKED ', e);
-
 		vm.map.check1 = (Math.floor((vm.status.data.turn-1)/5)+1)*3;
 		
 		/*if(e>0&&e<=(Math.floor((vm.status.data.turn-1)/5)+1)*3){

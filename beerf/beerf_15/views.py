@@ -309,6 +309,8 @@ def fac_details(request):
 			factory1 = user.factory
 			capacity1 = capacity.objects.get(fid = factory1.fid,turn = turn)
 			points = score.objects.filter(pid = user).aggregate(Sum('score'))['score__sum']
+			if not points:
+				points = 0
 			json = {}
 			json["status"] ="200"
 			data = {}
@@ -1000,6 +1002,9 @@ def testhome(request):
 	id = request.session["user_id"]
 	user = users.objects.get(pid = id)
 	if user.factory:
+		stat = status.objects.get(pid = user)
+		if(stat.turn > 25):
+			return redirect(beerf_15.views.review) 
 		return render(request, "index.html",{ "name" : user.prag_fullname })
 	return redirect(beerf_15.views.home)
 def instructions(request):

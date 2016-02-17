@@ -32,11 +32,11 @@
 	   		</div>
 	    		
 	   		<ul class="top-info col-md-9">
-	   		  <li class="col-md-2"> DAY: {$ store.status.data.turn $} </li>
+	   		  <li class="col-md-2"> DAY: {$ store.status.data.turn $}/25 </li>
+              <li class="col-md-2"> SCORE: {$ store.factoryDetails.data.factory_1.score $}</li>
+              <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
+              <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
 	   		  <li class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
-			  <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
-			  <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
-             <li class="col-md-2"> SCORE: {$ store.factoryDetails.data.factory_1.score $}</li>
 			  <li class="col-md-2"> Hi {{ name }} </li>	
 	   		</ul>
 		</div>
@@ -409,7 +409,7 @@
 
                             <br>
         
-                            <div ng-if="store.factoryDetails.data.factory_1.upgrade_cost < store.factoryDetails.data.factory_1.money">
+                            <div ng-if="store.factoryDetails.data.factory_1.upgrade_cost < store.factoryDetails.data.factory_1.money && store.factoryDetails.data.factory_1.upgrade_cost!=0">
                                 <h3><center> Do you want to upgrade your factory? </center></h3>
                                 <button type="button" class="btn btn-primary" style="position: relative; left: 150px;" ng-click="store.upgradeFactory(1)"> Yes! </button>
                                 <button type="button" class="btn btn-primary" style="position: relative; left: 250px;" ng-click="store.upgradeFactory(0)"> No thanks! </button>
@@ -477,13 +477,13 @@
         </div>
 
     </div>
+    <div id="movable" style="z-index:1000; width:10%; position:fixed; bottom:10%; left:80%">
+    <p ng-hide="{$ store.instructor.bubble $}" class="oval-thought">
+        {$ store.instructor.content $}
+    </p>
+    <img src="{% static  "genius.svg" %}" width="100%">
 </div>
-</div>
-<div id="movable" style="z-index:1000; width:10%; position:fixed; bottom:10%; left:80%">
-<p ng-hide="0" class="oval-thought">
-    DASjsak<br>asdssasd<br>snkjdsans<br><sjnksjandkaknd<br>
-</p>
-<img src="{% static  "genius.svg" %}" width="100%">
+
 </div>
 <script>
 // script to feed in ids and necessary urls to app.js
