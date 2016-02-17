@@ -36,7 +36,7 @@
               <li class="col-md-2"> SCORE: {$ store.factoryDetails.data.factory_1.score $}</li>
               <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
               <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
-	   		  <li class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
+	   		  <li id ="stage" class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
 			  <li class="col-md-2"> Hi {{ name }} </li>	
 	   		</ul>
 		</div>
@@ -49,6 +49,10 @@
 	    Stage 1 of 3
 	  </div>
 	</div>
+    <div ng-show="store.status.data.stage=='1'" class="stageinfo">SUPPLY TO THE RETAILERS<br>CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
+    <div ng-show="store.status.data.stage=='2'" class="stageinfo">PLACE ORDER FOR BEER<br>CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
+    <div ng-show="store.status.data.stage=='3'" class="stageinfo">UPGRADE YOUR FACTORY<br>CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
+
 	<!-- LEFTTTT -->
 	<div id="main-content">
 		<div id = "map_left">
@@ -128,7 +132,6 @@
 
         <div id="right_half">
             <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'">
-
                 <ul id="demandtabs" class="nav nav-tabs" role="tablist">
                     <li class="active">
                         <a href="#demandtab" role="tab" data-toggle="tab"> DEMAND </a>
@@ -298,7 +301,6 @@
 
             <!-- stage 2 placing order stage-->
             <div ng-show="store.status.data.stage=='2'">
-                
                 <ul id="ordertabs" class="nav nav-tabs" role="tablist">
                     <li class="active">
                         <a href="#ordertab" role="tab" data-toggle="tab"> ORDER </a>
@@ -518,6 +520,7 @@ console.log('updateCapacityUrl is', updateCapacityUrl );
 var historyUrl = "{% url 'history' %}";
 console.log('historyUrl is', historyUrl );
 
+var stageclickcount=0;
 
 $('#ordertext').keyup(function(){
     var x = this.value;
@@ -535,10 +538,20 @@ $('#ordertext').keyup(function(){
     else
         $("#price").html("Invalid amount entered!");
 });
+$(document).ready(function(){
+$("#stage").click(function() {
+    stageclickcount=!stageclickcount;
+    console.log("STAGEEEEEE", stageclickcount);
+    if(stageclickcount!=0)
+        $(".stageinfo").css("display","none");
+    else
+        $(".stageinfo").css("display","block");
+});
+});
 
 $(window).load(function() {
     $("#loading").fadeOut("slow");
-})
+});
 
 
 </script>
