@@ -738,10 +738,17 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				console.log('vm.history', vm.history);
 				console.log('history', json.data);
 				});
+
+				//to update popularity without the need to reload
+				AnyTimeFunctions.getMapDetails(id).success(function(json){
+				vm.mapDetails = json;
+				console.log('map details', vm.mapDetails);
+				});
 				
 				var progressbar = angular.element(progressbartop);
 		   		progressbar.css('width','25%');
 		    	progressbar.html("Stage 1 of 4");
+		    	
 		    	if(vm.flag==0)
 		    		toastr.success('Postponed for later!', 'Upgrade');
 		    	else
