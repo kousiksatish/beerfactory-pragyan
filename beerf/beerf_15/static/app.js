@@ -287,106 +287,120 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:1
+			zone:1,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R2",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:1
+			zone:1,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R3",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:1
+			zone:1,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R4",
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:2
+			zone:2,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R5",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:2
+			zone:2,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R6",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:2
+			zone:2,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R7",
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:3
+			zone:3,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R8",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:3
+			zone:3,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R9",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:3
+			zone:3,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R10",
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:4
-
+			zone:4,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R11",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:4
+			zone:4,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R12",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:4
+			zone:4,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R13",
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:5
+			zone:5,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R14",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:5
+			zone:5,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R15",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:5
+			zone:5,
+			isConfirmClicked:false
 		}],
 
 		inventory: [
@@ -705,6 +719,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			sum_of_supply += vm.supplyValues[i];
 		}
 
+		var confirm_flag=0;
+		var j=0;
+
+		for(order of vm.products[0].orders){
+			if(!order.isConfirmClicked && j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+				confirm_flag=1;
+			}
+			j++;
+		}
+
 		supply = supply.substr(0, supply.length-1);
 
 		console.log('Supply to be sent', supply);
@@ -720,6 +744,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		else if(lessthandemand_flag == 1)
 		{
 			toastr.warning('Invalid supply quantity. Supply should not be greater than demand');
+		}
+		else if(confirm_flag == 1){
+			toastr.warning('Click confirm atleast once to every retailer! ');
 		}
 		else
 		{
@@ -881,6 +908,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		console.log('IN CONFIRM ORDER');
 
+		vm.products[0].orders[x-1].isConfirmClicked=true;
+
+		console.log('vm.products[0].orders ', vm.products);
     	var tono = $("#tono").val();
     	console.log('tono', tono);
     	vm.profit=0;
