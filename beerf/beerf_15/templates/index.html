@@ -32,11 +32,11 @@
 	   		</div>
 	    		
 	   		<ul class="top-info col-md-9">
-	   		  <li class="col-md-2"> DAY: {$ store.status.data.turn $} </li>
-	   		  <li class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
-			  <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
-			  <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
-             <li class="col-md-2"> SCORE: {$ store.factoryDetails.data.factory_1.score $}</li>
+	   		  <li class="col-md-2"> DAY: {$ store.status.data.turn $}/25 </li>
+              <li class="col-md-2"> SCORE: {$ store.factoryDetails.data.factory_1.score $}</li>
+              <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
+              <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
+	   		  <li id ="stage" class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
 			  <li class="col-md-2"> Hi {{ name }} </li>	
 	   		</ul>
 		</div>
@@ -49,6 +49,10 @@
 	    Stage 1 of 3
 	  </div>
 	</div>
+    <div ng-show="store.status.data.stage=='1'" class="stageinfo">SUPPLY TO THE RETAILERS<br>CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
+    <div ng-show="store.status.data.stage=='2'" class="stageinfo">PLACE ORDER FOR BEER<br>CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
+    <div ng-show="store.status.data.stage=='3'" class="stageinfo">UPGRADE YOUR FACTORY<br>CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
+
 	<!-- LEFTTTT -->
 	<div id="main-content">
 		<div id = "map_left">
@@ -128,7 +132,6 @@
 
         <div id="right_half">
             <div ng-show="store.status.data.stage=='1'||store.status.data.stage=='0'">
-
                 <ul id="demandtabs" class="nav nav-tabs" role="tablist">
                     <li class="active">
                         <a href="#demandtab" role="tab" data-toggle="tab"> DEMAND </a>
@@ -227,7 +230,7 @@
                             </span>
                             <br>
                             <span>
-                                Expected profit: {$ store.profit $}
+                                Expected profit: {$ store.profit $} (No. of beers sold * 50)
                             </span>
                         </div>
                         <div id="demandpopup">
@@ -298,10 +301,9 @@
 
             <!-- stage 2 placing order stage-->
             <div ng-show="store.status.data.stage=='2'">
-                
                 <ul id="ordertabs" class="nav nav-tabs" role="tablist">
                     <li class="active">
-                        <a href="#ordertab" role="tab" data-toggle="tab"> ORDER </a>
+                        <a href="#ordertab" role="tab" data-toggle="tab"> PRODUCE </a>
                     </li>
                     <li>
                     <a href="#history2tab" role="tab" data-toggle="tab"> HISTORY </a>
@@ -328,7 +330,7 @@
                                 <td>40</td>
                             </tr>
                             <tr>
-                                <td>AMOUNT TO BE ORDERED</td>
+                                <td>AMOUNT TO BE PRODUCED</td>
                                 <td><input id='ordertext' type="number" placeholder="Place the order for the next round here!" ng-model="store.order">
                                 </td>
                             </tr>
@@ -409,7 +411,7 @@
 
                             <br>
         
-                            <div ng-if="store.factoryDetails.data.factory_1.upgrade_cost < store.factoryDetails.data.factory_1.money">
+                            <div ng-if="store.factoryDetails.data.factory_1.upgrade_cost < store.factoryDetails.data.factory_1.money && store.factoryDetails.data.factory_1.upgrade_cost!=0">
                                 <h3><center> Do you want to upgrade your factory? </center></h3>
                                 <button type="button" class="btn btn-primary" style="position: relative; left: 150px;" ng-click="store.upgradeFactory(1)"> Yes! </button>
                                 <button type="button" class="btn btn-primary" style="position: relative; left: 250px;" ng-click="store.upgradeFactory(0)"> No thanks! </button>
@@ -476,14 +478,21 @@
 
         </div>
 
+</div>
+<div ng-hide="store.instructor.bubble" id="bub" style="">
+<div ng-bind-html-unsafe="html" class="example-obtuse">
+    <div class="main">
+    {$ store.instructor.tobedisplayed $}
     </div>
+    <center>
+    {$ store.instructor.counter+1 $}/{$ store.instructor.len $}<br>
+    <button class="newer" ng-click="store.nextInstruction()"><</button>
+    <button class="older" ng-click="store.prevInstruction()">></button>
+    </center>
 </div>
 </div>
-<div id="movable" style="z-index:1000; width:10%; position:fixed; bottom:10%; left:80%">
-<p ng-hide="0" class="oval-thought">
-    DASjsak<br>asdssasd<br>snkjdsans<br><sjnksjandkaknd<br>
-</p>
-<img src="{% static  "genius.svg" %}" width="100%">
+<div ng-click="store.closeInstructor()" id="movable" style="z-index:1000; width:10%; position:fixed; bottom:-20%; right:1%;margin-right:1%">
+<img src="{% static  "genius.svg" %}" width="150px">
 </div>
 <script>
 // script to feed in ids and necessary urls to app.js
@@ -518,6 +527,7 @@ console.log('updateCapacityUrl is', updateCapacityUrl );
 var historyUrl = "{% url 'history' %}";
 console.log('historyUrl is', historyUrl );
 
+var stageclickcount=0;
 
 $('#ordertext').keyup(function(){
     var x = this.value;
@@ -535,10 +545,20 @@ $('#ordertext').keyup(function(){
     else
         $("#price").html("Invalid amount entered!");
 });
+$(document).ready(function(){
+$("#stage").click(function() {
+    stageclickcount=!stageclickcount;
+    console.log("STAGEEEEEE", stageclickcount);
+    if(stageclickcount!=0)
+        $(".stageinfo").css("display","none");
+    else
+        $(".stageinfo").css("display","block");
+});
+});
 
 $(window).load(function() {
     $("#loading").fadeOut("slow");
-})
+});
 
 
 </script>
@@ -559,22 +579,34 @@ $(window).load(function() {
         return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
             if(opt.handle === "") {
                 var $drag = $(this).addClass('draggable');
+                var $drag1 = $("#bub").addClass('draggable');
+                $("#bub").css('bottom', '14%');
             } else {
                 var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+                var $drag1 = $("#bub").addClass('active-handle').parent().addClass('draggable');
+                $("#bub").css('bottom', '14%');
             }
             var z_idx = $drag.css('z-index'),
                 drg_h = $drag.outerHeight(),
                 drg_w = $drag.outerWidth(),
                 pos_y = $drag.offset().top + drg_h - e.pageY,
                 pos_x = $drag.offset().left + drg_w - e.pageX;
+            var z_idx1 = $drag1.css('z-index'),
+                drg_h1 = $drag1.outerHeight(),
+                drg_w1 = $drag1.outerWidth();
+                pos_y1 = $drag1.offset().top + drg_h1 - e.pageY,
+                pos_x1 = $drag1.offset().left + drg_w1 - e.pageX;
+
             $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
                 $('.draggable').offset({
                     top:e.pageY + pos_y - drg_h,
                     left:e.pageX + pos_x - drg_w
                 }).on("mouseup", function() {
                     $(this).removeClass('draggable').css('z-index', z_idx);
+                    $("#bub").removeClass('draggable').css('z-index', z_idx);
                 });
             });
+           
             e.preventDefault(); // disable selection
         }).on("mouseup", function() {
             if(opt.handle === "") {
@@ -586,7 +618,7 @@ $(window).load(function() {
 
     }
 })(jQuery);
-$('#movable').drags();
+//$('#movable').drags();
 </script>
 
 </body>

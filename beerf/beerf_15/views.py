@@ -34,7 +34,7 @@ def register(request):
 			return redirect(beerf_15.views.home)
 	else:
 		form = userForm()
-		return render(request, "register.html", {"form" : form})
+		return redirect(beerf_15.views.home)
 	
 def login(request,error=''):
 	if request.method == 'POST':
@@ -78,11 +78,13 @@ def login(request,error=''):
 def home(request):
 	id = request.session["user_id"]
 	user  = users.objects.get(pk=id)
+	if user.factory:
+		return redirect(beerf_15.views.testhome)
 	return render(request, "home.html", {"name" : user.prag_fullname})
 
 def logout(request):
 	request.session.flush()
-	return render(request, "login.html", {"error" : "Successfully logged out"})
+	return redirect(beerf_15.views.login)
 
 
 '''
@@ -155,7 +157,7 @@ def unlockRetailers(id,turn,stage):
 		#return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 #@csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth))	
+#@decorator_from_middleware(middleware.SessionPIDAuth)
 def updateInventory(id,turn,stage):
 	
 	#if request.method == 'POST':
@@ -307,6 +309,8 @@ def fac_details(request):
 			factory1 = user.factory
 			capacity1 = capacity.objects.get(fid = factory1.fid,turn = turn)
 			points = score.objects.filter(pid = user).aggregate(Sum('score'))['score__sum']
+			if not points:
+				points = 0
 			json = {}
 			json["status"] ="200"
 			data = {}
@@ -356,6 +360,7 @@ def map(request):
 			rcode = []
 			zone = []
 			popularity = []
+			opp_popularity = []
 			unlocked = []
 			for retailer in retailers1:
 				retailer_details = retailers.objects.get(pk=retailer.rid_id)
@@ -364,12 +369,16 @@ def map(request):
 				unlocked.append(retailer_details.unlocked)
 				popularity.append(retailer.popularity)
 			
+			retailers1 = factory_retailer.objects.filter(fid=opponents[0].fac2)
+			for retailer in retailers1:
+				opp_popularity.append(retailer.popularity)
 			json={}
 			json["status"] = "200"
 			data = {}
 			data["fcode"] = fcode
 			data["rcode"] = rcode
 			data["popularity"] = popularity
+			data["opponent_popularity"] = opp_popularity
 			json["data"] = data
 			json["zone"] = zone
 			json["unlocked"] = unlocked
@@ -998,16 +1007,22 @@ def testhome(request):
 	id = request.session["user_id"]
 	user = users.objects.get(pid = id)
 	if user.factory:
+		stat = status.objects.get(pid = user)
+		if(stat.turn > 25):
+			return redirect(beerf_15.views.review) 
 		return render(request, "index.html",{ "name" : user.prag_fullname })
 	return redirect(beerf_15.views.home)
 def instructions(request):
 	return render(request,"instructions.html")
 
+@decorator_from_middleware(middleware.loggedIn)
 def locked(request):
 	return render(request, "locked.html")
 
 def graph(request):
-	return render(request, "graph.html")
+	user_id = request.session["user_id"]
+	user = users.objects.get(pid = user_id)
+	return render(request, "graph.html", {"name":user.prag_username, "user_id":user_id})
 
 @decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt

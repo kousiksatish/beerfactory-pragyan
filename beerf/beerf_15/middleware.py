@@ -19,12 +19,14 @@ class SessionPIDAuth(object):
 		if(int(request.session.get('user_id')) != int(request.POST.get("user_id"))):
 		 	return JsonResponse({"status":"102", "data":{"description":"Failed! Session mismatch"}})
 		user = users.objects.get(pk=request.session['user_id'])
-		turn = status.objects.get(pid=user).turn
-		if(turn>25):
-			return redirect(beerf_15.views.review)
+		if user.factory:
+			turn = status.objects.get(pid=user).turn
+			if(turn>25):
+				return redirect(beerf_15.views.review)
 		return None
 
 class loggedIn(object):
 	def process_request(self, request):
 		if 'user_id' not in request.session:
 			return redirect(beerf_15.views.login)
+

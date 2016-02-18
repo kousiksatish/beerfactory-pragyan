@@ -55,6 +55,26 @@
 .top-info li{
 	float: left;
 }
+
+#stage{
+	cursor: pointer;
+}
+
+.stageinfo{
+	position: fixed;
+	border-radius: 0 10% 10% 10%;
+	left:75%;
+	top:6rem;
+	min-height: 5rem;
+	height: auto;
+	min-width:20rem;
+	width: auto;
+	background-color: #272727;
+	border: 3px solid white;
+	color: white;
+	z-index: 999;
+}
+
 #progressbartop{
 	position: fixed;
 	top:6rem;
@@ -276,23 +296,13 @@ input{
 	bottom:0%;
 }
 
-
-#loading {
-	position: fixed;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-	z-index: 9999;
-	background: url('/static/images/page-loader.gif') 50% 50% no-repeat rgb(249,249,249);
-}
-
 .oval-thought {
-  position:relative;
+  position:absolute;
   width:270px;
   padding:50px 40px;
   margin:0.5em auto 40px;
   margin-left:-120px;
+  margin-top:-110px;
   text-align:center;
   color:#fff;
   background:#A79154;
@@ -371,4 +381,86 @@ input{
   -webkit-border-radius:15px;
   -moz-border-radius:15px;
   border-radius:15px;
+}
+
+#loading {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url('/static/images/page-loader.gif') 50% 50% no-repeat rgb(249,249,249);
+}
+
+
+/* ============================================================================================================================
+== BLOCKQUOTE WITH OBTUSE TRIANGLE
+** ============================================================================================================================ */
+#bub {
+	z-index:1000; 
+	position:fixed; 
+	width:20%;
+
+	bottom:15%; 
+	right:1%;
+}
+
+
+.left-arrow
+{
+	right:0;
+	width:auto;
+}
+.example-obtuse {
+  position:relative;
+  padding:15px 30px;
+  margin:0;
+  color:#000;
+  min-width:40%;
+  min-height:20%;
+  background:#f3961c; /* default background for browsers without gradient support */
+  /* css3 */
+  background:-webkit-gradient(linear, 0 0, 0 100%, from(#f9d835), to(#f3961c));
+  background:-moz-linear-gradient(#f9d835, #f3961c);
+  background:-o-linear-gradient(#f9d835, #f3961c);
+  background:linear-gradient(#f9d835, #f3961c);
+  /* Using longhand to avoid inconsistencies between Safari 4 and Chrome 4 */
+  -webkit-border-top-left-radius:25px 50px;
+  -webkit-border-top-right-radius:25px 50px;
+  -webkit-border-bottom-right-radius:25px 50px;
+  -webkit-border-bottom-left-radius:25px 50px;
+  -moz-border-radius:25px / 50px;
+  border-radius:25px / 50px;
+}
+
+/* display of quote author (alternatively use a class on the element following the blockquote) */
+.example-obtuse + p {margin:10px 150px 2em 0; text-align:right; font-style:italic;}
+
+/* creates the larger triangle */
+.example-obtuse:before {
+  content:"";
+  position:absolute;
+  bottom:-30px;
+  right:80px;
+  border-width:0 0 30px 50px;
+  border-style:solid;
+  border-color:transparent #f3961c;
+  /* reduce the damage in FF3.0 */
+  display:block;
+  width:0;
+}
+
+/* creates the smaller triangle */
+.example-obtuse:after {
+  content:"";
+  position:absolute;
+  bottom:-30px;
+  right:110px;
+  border-width:0 0 30px 20px;
+  border-style:solid;
+  border-color:transparent #222;
+  /* reduce the damage in FF3.0 */
+  display:block;
+  width:0;
 }
