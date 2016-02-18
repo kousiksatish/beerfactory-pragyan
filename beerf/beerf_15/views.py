@@ -357,9 +357,11 @@ def map(request):
 				fcode.append(opponent_fac.fcode) 
 
 			retailers1 = factory_retailer.objects.filter(fid_id=user.factory_id)
+			retailers2 = factory_retailer.objects.filter(fid_id=opponent.fac2_id)
 			rcode = []
 			zone = []
 			popularity = []
+			opopularity = []
 			unlocked = []
 			for retailer in retailers1:
 				retailer_details = retailers.objects.get(pk=retailer.rid_id)
@@ -367,6 +369,8 @@ def map(request):
 				zone.append(retailer_details.zone)
 				unlocked.append(retailer_details.unlocked)
 				popularity.append(retailer.popularity)
+			for retailer in retailers2:
+				opopularity.append(retailer.popularity)
 			
 			json={}
 			json["status"] = "200"
@@ -374,6 +378,7 @@ def map(request):
 			data["fcode"] = fcode
 			data["rcode"] = rcode
 			data["popularity"] = popularity
+			data["opopularity"] = opopularity
 			json["data"] = data
 			json["zone"] = zone
 			json["unlocked"] = unlocked
