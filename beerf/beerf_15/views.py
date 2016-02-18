@@ -16,7 +16,7 @@ from django.db.models import Sum
 import random
 import urllib
 import json
-
+from operator import itemgetter
 '''
 INITIAL FUNCTIONS
 1. /register
@@ -1155,3 +1155,16 @@ def review(request):
 	if turn<=25:
 		return redirect(beerf_15.views.testhome)
 	return render(request, "review.html")
+
+@decorator_from_middleware(middleware.SessionPIDAuth)
+@csrf_exempt
+def leaderBoard(request):
+	distinctUsers = score.objects.values_list('pid',flat = True).distinct()
+	points = []
+	for user in distinctUsers:
+		details = users.objects.get(pk=user)
+		points.append({'pid': user , 'score' : score.objects.filter(pid = user).aggregate(Sum('score'))['score__sum'] , 'name' : details.prag_fullname})
+		
+	highScores = sorted(points, key=itemgetter('score'), reverse=True)[:10]
+
+	return JsonResponse({"status":"200", "data":{"description":"Success!","details":highScores}})

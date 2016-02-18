@@ -442,6 +442,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	no_of_demand = 7;
 	no_of_order = 2;
 	no_of_capacity = 1;
+	vm.retailerToNameMap={};
 	
 	demand_messages = [
 		"Welcome to Beer Factory! I am your instructor! Please read through the first few instructions!",
@@ -468,15 +469,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			vm.sendToInstructor(demand_messages[i]);
 		}
 	}
+	
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
 	}
 
-/*	TurnStageBasedFunctions.capacityDetails(id).success(function(json){
-		vm.capacityDetails = json.data;
-		console.log('vm.capacity details', vm.capacityDetails);
-	});*/
 
 	
 	AnyTimeFunctions.getHistoryDetails(id).success(function(json){
@@ -530,12 +528,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			}
 			toastr.success('Status of user obtained successfully!');
 			var j=0;
-		for(order of vm.products[0].orders){
-			if(j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
-				vm.retailersRemaining.push(order.from);
+			for(order of vm.products[0].orders){
+				if(j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+					vm.retailersRemaining.push(order.from);
+				}
+				j++;
 			}
-			j++;
-		}
+
+			console.log('retailers remaining', vm.retailersRemaining);
 
 		}
 		else
@@ -570,7 +570,21 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	AnyTimeFunctions.getMapDetails(id).success(function(json){
 		vm.mapDetails = json;
 		console.log('map details', vm.mapDetails);
+
+		var i=0;
+		for(order of vm.products[0].orders){
+			vm.retailerToNameMap[order.from] = vm.mapDetails.data.rcode[i];	
+			i++;
+		}
+
+		console.log('ret to name map,', vm.retailerToNameMap);		
 	});
+
+
+	vm.showDemand = function(){
+		var x = angular.element(demandpopup);
+		x.css('display','block');
+	}
 
 	vm.getDemand = function(){
 
@@ -607,7 +621,19 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			   		progressbar.css('width','50%');
 			    	progressbar.html("Stage 2 of 4");
 					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
-					vm.remaining = vm.factoryDetails.data.factory_1.inventory
+					vm.remaining = vm.factoryDetails.data.factory_1.inventory;
+
+					var j=0;
+					for(order of vm.products[0].orders){
+						var index = vm.retailersRemaining.indexOf(order.from);
+						if(index<=-1){
+							if(j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+								vm.retailersRemaining.push(order.from);
+							}
+						}
+						j++;
+					}
+
 					if (sum>vm.factoryDetails.data.factory_1.inventory)
 						vm.sendToInstructor('Oh! Total demand '+sum+'is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
 
@@ -647,7 +673,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 
 	}
-
+	
 	vm.send = function(){
 
 
@@ -660,6 +686,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		for(i=0;i<3*vm.level;i++){
 			vm.supplyValues[i]=vm.products[0].orders[i].to_no;
 		}
+
 
 
 		var supply = '';
@@ -806,10 +833,17 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				console.log('vm.history', vm.history);
 				console.log('history', json.data);
 				});
+
+				//to update popularity without the need to reload
+				AnyTimeFunctions.getMapDetails(id).success(function(json){
+				vm.mapDetails = json;
+				console.log('map details', vm.mapDetails);
+				});
 				
 				var progressbar = angular.element(progressbartop);
 		   		progressbar.css('width','25%');
 		    	progressbar.html("Stage 1 of 4");
+
 		    	if(vm.flag==0)
 		    		toastr.success('Postponed for later!', 'Upgrade');
 		    	else
@@ -836,35 +870,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}
 
 	vm.mapclicked = function(e){
-		// vm.getDemand();
+
 		vm.e=e;
 		console.log('MAP CLICKED ', e);
 		vm.map.check1 = (Math.floor((vm.status.data.turn-1)/5)+1)*3;
-		
-		/*if(e>0&&e<=(Math.floor((vm.status.data.turn-1)/5)+1)*3){
-			console.log('EEEE',e);
-		var xref='';
-		var ret = vm.products[0].orders[e-1]
-		console.log('ret orders', ret);
-		var name = vm.mapDetails.data.rcode[e-1];
-		var popularity = vm.mapDetails.data.popularity[e-1];
-        xref = "<div>Retailer name : " + name+"</div><div class='progress-bar progress-bar-success progress-bar-striped active' role='progressbar' aria-valuenow='50' aria-valuemin='0' aria-valuemax='100' style='width:"+(popularity*50)+"%; height:2rem;'>POPULARITY: "+Math.floor(popularity*50)+"%</div>"+"<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
 
-		angular.element(selections).html(xref);
-		}
-		else if(e>(Math.floor((vm.status.data.turn-1)/5)+1)*3){
-			var name = vm.mapDetails.data.rcode[e-1];
-			var xref="RETAILER "+name+" NOT UNLOCKED YET!<br>KEEP PLAYING TO UNLOCK THEM!<br>";
-			angular.element(selections).html(xref);
-
-		}
-		else if(e==-1){
-			angular.element(selections).html("YOUR FACTORY");
-		}
-		else if(e==-2){
-			angular.element(selections).html("OPPONENET FACTORY NAME");
-
-		} */
 	}
 
 	vm.confirmorder = function(x){
@@ -875,8 +885,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
     	console.log('tono', tono);
     	vm.profit=0;
     	vm.remaining=vm.factoryDetails.data.factory_1.inventory;
-    	//vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
-    	//vm.factoryDetails.data.factory_1.profit = 0;
+
     	if(tono>0&&tono<=vm.products[0].orders[x-1].order_no){
     		vm.products[0].orders[x-1].to_no = parseInt(tono);
     	}
@@ -905,15 +914,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 
 		console.log('retailers remaining', vm.retailersRemaining);
-
-
-    	/*for(i=0;i<=(Math.floor((vm.status.data.turn-1)/5)+1)*3;i++){
-        	vm.products[0].orders[x-1] = vm.products[0].orders[i];
-        	vm.factoryDetails.data.factory_1.inventory_remaining -= vm.products[0].orders[x-1].to_no;
-        	vm.factoryDetails.data.factory_1.profit += vm.products[0].orders[x-1].to_no*40;
-        	console.log("remaining in inventory",i,vm.factoryDetails.data.factory_1.inventory_remaining);
-    	}
-    	*/
 
     	console.log("products",vm.products);
     	console.log("supply values", vm.supplyvalues);
@@ -980,23 +980,6 @@ app.filter('startFrom', function() {
         return [];
     }
 });
-
-// check this out later. to display day details in reverse order so that player gets to see the most recent day first or ask in reverse order itelf from backend
-
-/*app.filter('orderObjectBy', function() {
-  return function(items, field, reverse) {
-    var filtered = [];
-    angular.forEach(items, function(item) {
-      filtered.push(item);
-    });
-    filtered.sort(function (a, b) {
-      return (a[field] > b[field] ? 1 : -1);
-    });
-    if(reverse) filtered.reverse();
-    return filtered;
-  };
-});*/
-
 
 // controller for the panel
 app.controller('PanelController',function(){         							       
