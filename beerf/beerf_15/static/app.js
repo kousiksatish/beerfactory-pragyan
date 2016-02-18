@@ -718,7 +718,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			supply += (vm.supplyValues[i] + ',');
 			sum_of_supply += vm.supplyValues[i];
 		}
-
 		var confirm_flag=0;
 		var j=0;
 
@@ -737,7 +736,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		{
 			toastr.warning('Invalid Quantity. Quantity must be a positive integer');
 		}
-		else if(vm.factoryDetails.data.inventory  < sum_of_supply)
+		else if(vm.factoryDetails.data.factory_1.inventory  < sum_of_supply)
 		{
 			toastr.warning('Invalid Quantity. supply must be less than inventory');
 		}

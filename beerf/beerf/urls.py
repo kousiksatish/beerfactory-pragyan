@@ -50,6 +50,6 @@ urlpatterns = [
     url(r'^review$',views.review, name='review'),
     # url(r'^getScore$',views.getScore, name='getScore'),
     # url(r'^getTotalScore$',views.getTotalScore, name='getTotalScore')
-    url(r'^leaderBoard$',views.leaderBoard, name='leaderBoard')
+    url(r'^leaderboard$',views.leaderBoard, name='leaderBoard')
 ]
 
