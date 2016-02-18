@@ -157,7 +157,7 @@ def unlockRetailers(id,turn,stage):
 		#return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 #@csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth))	
+#@decorator_from_middleware(middleware.SessionPIDAuth)
 def updateInventory(id,turn,stage):
 	
 	#if request.method == 'POST':
@@ -360,6 +360,7 @@ def map(request):
 			rcode = []
 			zone = []
 			popularity = []
+			opp_popularity = []
 			unlocked = []
 			for retailer in retailers1:
 				retailer_details = retailers.objects.get(pk=retailer.rid_id)
@@ -368,12 +369,16 @@ def map(request):
 				unlocked.append(retailer_details.unlocked)
 				popularity.append(retailer.popularity)
 			
+			retailers1 = factory_retailer.objects.filter(fid=opponents[0].fac2)
+			for retailer in retailers1:
+				opp_popularity.append(retailer.popularity)
 			json={}
 			json["status"] = "200"
 			data = {}
 			data["fcode"] = fcode
 			data["rcode"] = rcode
 			data["popularity"] = popularity
+			data["opponent_popularity"] = opp_popularity
 			json["data"] = data
 			json["zone"] = zone
 			json["unlocked"] = unlocked
