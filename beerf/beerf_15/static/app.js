@@ -496,12 +496,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				vm.goToInitialInstructor();
 			toastr.success('Status of user obtained successfully!');
 			var j=0;
-		for(order of vm.products[0].orders){
-			if(j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
-				vm.retailersRemaining.push(order.from);
+			for(order of vm.products[0].orders){
+				if(j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+					vm.retailersRemaining.push(order.from);
+				}
+				j++;
 			}
-			j++;
-		}
+
+			console.log('retailers remaining', vm.retailersRemaining);
 
 		}
 		else
@@ -587,7 +589,19 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			   		progressbar.css('width','50%');
 			    	progressbar.html("Stage 2 of 4");
 					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
-					vm.remaining = vm.factoryDetails.data.factory_1.inventory
+					vm.remaining = vm.factoryDetails.data.factory_1.inventory;
+
+					var j=0;
+					for(order of vm.products[0].orders){
+						var index = vm.retailersRemaining.indexOf(order.from);
+						if(index<=-1){
+							if(j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+								vm.retailersRemaining.push(order.from);
+							}
+						}
+						j++;
+					}
+
 					if (sum>vm.factoryDetails.data.factory_1.inventory)
 						vm.sendToInstructor('Oh! Total demand '+sum+'is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
 
@@ -640,6 +654,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		for(i=0;i<3*vm.level;i++){
 			vm.supplyValues[i]=vm.products[0].orders[i].to_no;
 		}
+
 
 
 		var supply = '';
@@ -927,23 +942,6 @@ app.filter('startFrom', function() {
         return [];
     }
 });
-
-// check this out later. to display day details in reverse order so that player gets to see the most recent day first or ask in reverse order itelf from backend
-
-/*app.filter('orderObjectBy', function() {
-  return function(items, field, reverse) {
-    var filtered = [];
-    angular.forEach(items, function(item) {
-      filtered.push(item);
-    });
-    filtered.sort(function (a, b) {
-      return (a[field] > b[field] ? 1 : -1);
-    });
-    if(reverse) filtered.reverse();
-    return filtered;
-  };
-});*/
-
 
 // controller for the panel
 app.controller('PanelController',function(){         							       
