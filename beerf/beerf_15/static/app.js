@@ -439,7 +439,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.map={};
 	vm.profit=0;
 	vm.retailersRemaining=[];
-
+	vm.retailerToNameMap={};
 	
 	vm.initialFunction = function(){
 		vm.sendToInstructor("Welcome to Beer Factory! I am your instructor! Please read through the first few instructions!");
@@ -452,15 +452,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		vm.sendToInstructor("The initial capacity of the factory is 200 i.e., you can order a maximum of 200 beers in this round.");
 		vm.sendToInstructor("Predict the next round's demand and order the amount you require. Ordering more than the required amount will lead to unnecessary money and point deductions.");
 	}
+	
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
 	}
 
-/*	TurnStageBasedFunctions.capacityDetails(id).success(function(json){
-		vm.capacityDetails = json.data;
-		console.log('vm.capacity details', vm.capacityDetails);
-	});*/
 
 	
 	AnyTimeFunctions.getHistoryDetails(id).success(function(json){
@@ -539,7 +536,21 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	AnyTimeFunctions.getMapDetails(id).success(function(json){
 		vm.mapDetails = json;
 		console.log('map details', vm.mapDetails);
+
+		var i=0;
+		for(order of vm.products[0].orders){
+			vm.retailerToNameMap[order.from] = vm.mapDetails.data.rcode[i];	
+			i++;
+		}
+
+		console.log('ret to name map,', vm.retailerToNameMap);		
 	});
+
+
+	vm.showDemand = function(){
+		var x = angular.element(demandpopup);
+		x.css('display','block');
+	}
 
 	vm.getDemand = function(){
 
@@ -616,7 +627,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 
 	}
-
+	
 	vm.send = function(){
 
 
@@ -773,10 +784,17 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				console.log('vm.history', vm.history);
 				console.log('history', json.data);
 				});
+
+				//to update popularity without the need to reload
+				AnyTimeFunctions.getMapDetails(id).success(function(json){
+				vm.mapDetails = json;
+				console.log('map details', vm.mapDetails);
+				});
 				
 				var progressbar = angular.element(progressbartop);
 		   		progressbar.css('width','25%');
 		    	progressbar.html("Stage 1 of 4");
+
 		    	if(vm.flag==0)
 		    		toastr.success('Postponed for later!', 'Upgrade');
 		    	else
@@ -803,35 +821,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}
 
 	vm.mapclicked = function(e){
-		// vm.getDemand();
+
 		vm.e=e;
 		console.log('MAP CLICKED ', e);
 		vm.map.check1 = (Math.floor((vm.status.data.turn-1)/5)+1)*3;
-		
-		/*if(e>0&&e<=(Math.floor((vm.status.data.turn-1)/5)+1)*3){
-			console.log('EEEE',e);
-		var xref='';
-		var ret = vm.products[0].orders[e-1]
-		console.log('ret orders', ret);
-		var name = vm.mapDetails.data.rcode[e-1];
-		var popularity = vm.mapDetails.data.popularity[e-1];
-        xref = "<div>Retailer name : " + name+"</div><div class='progress-bar progress-bar-success progress-bar-striped active' role='progressbar' aria-valuenow='50' aria-valuemin='0' aria-valuemax='100' style='width:"+(popularity*50)+"%; height:2rem;'>POPULARITY: "+Math.floor(popularity*50)+"%</div>"+"<br>DEMAND: "+ret.order_no+"<br>SUPPLIED: <input id='tono' type='number' value='"+ret.to_no+"' ng-model='store.supplyValues[$index]'></input><br><button class='btn btn-default' value='confirm' onclick='confirmorder("+e+")'>CONFIRM</button>";
 
-		angular.element(selections).html(xref);
-		}
-		else if(e>(Math.floor((vm.status.data.turn-1)/5)+1)*3){
-			var name = vm.mapDetails.data.rcode[e-1];
-			var xref="RETAILER "+name+" NOT UNLOCKED YET!<br>KEEP PLAYING TO UNLOCK THEM!<br>";
-			angular.element(selections).html(xref);
-
-		}
-		else if(e==-1){
-			angular.element(selections).html("YOUR FACTORY");
-		}
-		else if(e==-2){
-			angular.element(selections).html("OPPONENET FACTORY NAME");
-
-		} */
 	}
 
 	vm.confirmorder = function(x){
@@ -842,8 +836,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
     	console.log('tono', tono);
     	vm.profit=0;
     	vm.remaining=vm.factoryDetails.data.factory_1.inventory;
-    	//vm.factoryDetails.data.factory_1.inventory_remaining = vm.factoryDetails.data.factory_1.inventory;
-    	//vm.factoryDetails.data.factory_1.profit = 0;
+
     	if(tono>0&&tono<=vm.products[0].orders[x-1].order_no){
     		vm.products[0].orders[x-1].to_no = parseInt(tono);
     	}
@@ -872,15 +865,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 
 		console.log('retailers remaining', vm.retailersRemaining);
-
-
-    	/*for(i=0;i<=(Math.floor((vm.status.data.turn-1)/5)+1)*3;i++){
-        	vm.products[0].orders[x-1] = vm.products[0].orders[i];
-        	vm.factoryDetails.data.factory_1.inventory_remaining -= vm.products[0].orders[x-1].to_no;
-        	vm.factoryDetails.data.factory_1.profit += vm.products[0].orders[x-1].to_no*40;
-        	console.log("remaining in inventory",i,vm.factoryDetails.data.factory_1.inventory_remaining);
-    	}
-    	*/
 
     	console.log("products",vm.products);
     	console.log("supply values", vm.supplyvalues);
