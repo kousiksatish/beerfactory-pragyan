@@ -1015,7 +1015,6 @@ def testhome(request):
 def instructions(request):
 	return render(request,"instructions.html")
 
-@decorator_from_middleware(middleware.loggedIn)
 def locked(request):
 	return render(request, "locked.html")
 
