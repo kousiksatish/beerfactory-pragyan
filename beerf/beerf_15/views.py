@@ -13,6 +13,7 @@ from beerf_algo.beerf_algo import algo as algo
 from utilities import money
 from utilities import inventory
 from django.db.models import Sum
+from django.db.models import Max
 import random
 import urllib
 import json
@@ -1156,9 +1157,15 @@ def review(request):
 		return redirect(beerf_15.views.testhome)
 	return render(request, "review.html")
 
-@decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
 def leaderBoard(request):
+	#finding whether there is a logged in user
+	try:
+		logged_in_user = request.session["user_id"]
+	except Exception, e:
+		logged_in_user = None
+
+	#Sum of scores of all rounds in descending order
 	distinctUsers = score.objects.values_list('pid',flat = True).distinct()
 	points = []
 	for user in distinctUsers:
@@ -1166,5 +1173,45 @@ def leaderBoard(request):
 		points.append({'pid': user , 'score' : score.objects.filter(pid = user).aggregate(Sum('score'))['score__sum'] , 'name' : details.prag_fullname})
 		
 	highScores = sorted(points, key=itemgetter('score'), reverse=True)[:10]
+	user_in_highscores = 0
 
+	#add details like rank and no of turns played
+	for highScore in highScores:
+		user_in_highscores += 1 if highScore['pid'] == logged_in_user else 0
+		rounds = min(score.objects.filter(pid = highScore['pid']).aggregate(Max('turn'))['turn__max'],25)
+		highScore['rounds'] = rounds
+		highScore['rank'] = highScores.index(highScore) + 1
+
+	#if the user is in the top 10 return the results
+	if user_in_highscores:
+		return JsonResponse({"status":"200", "data":{"description":"Success!","details":highScores}})
+
+	#if the user not in the top 10. Caluclate his rank and append to list to highscores and return
+	user_details = users.objects.get(pk=logged_in_user)
+	user_score_obj = {}
+	user_score_obj['pid'] = logged_in_user
+	user_score_obj['name'] = user_details.prag_fullname
+
+	#calculate user score and rank. Set rank to '-' and rounds to '-' if he has not started playing.
+	user_score = score.objects.filter(pid = logged_in_user).aggregate(Sum('score'))['score__sum']
+	print "user score : ",user_score
+	if user_score == None:
+		user_rank = '-'
+		user_rounds = '-'
+		user_score = 0
+	else:
+		user_rounds = min(score.objects.filter(pid = highScore['pid']).aggregate(Max('turn'))['turn__max'],25)
+		points = sorted(points, key=itemgetter('score'), reverse=True)
+		user_rank = 1
+		for point in points:
+			if point['score'] > user_score or (point['score'] == user_score and logged_in_user > point['pid']):
+				user_rank += 1;
+			elif point['score'] < user_score:
+				break
+	user_score_obj['score'] = user_score
+	user_score_obj['ranking'] = user_rank
+	user_score_obj['rounds'] = user_rounds
+
+	#append user_score_obj to highscores and then return the JSON
+	highScores.append(user_score_obj)
 	return JsonResponse({"status":"200", "data":{"description":"Success!","details":highScores}})
