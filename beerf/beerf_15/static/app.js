@@ -423,7 +423,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}];
 
 	vm.factoryDetails = {};
-	vm.instructor = {"bubble":false,"tobedisplayed":"Welcome to Beer Factory! I am your instructor!","content":["ss","abcd","bcda"], "counter" :0, "len":3};
+	vm.instructor = {"bubble":false,"tobedisplayed":"Welcome to Beer Factory! I am your instructor!","content":[], "counter" :0, "len":0};
 	vm.status = {};
 	vm.demandDetails = {};
 	vm.mapDetails={};
@@ -441,8 +441,17 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.retailersRemaining=[];
 
 	
-
-	
+	vm.initialFunction = function(){
+		vm.sendToInstructor("Welcome to Beer Factory! I am your instructor! Please read through the first few instructions!");
+		vm.sendToInstructor("In this factory,On a specific day, first we get the demand of our retailers");
+		vm.sendToInstructor("We have got the demand of our retailers");
+		vm.sendToInstructor("Based on the demand, we should distribute our inventory to different retailers, try doing this by click on the retailers in the map.");
+		vm.sendToInstructor("Caution : The next rounds demand depends your popularity among the retailers, which depends upon your supply this round. You know where to check popularity :P");
+		vm.sendToInstructor("Caution : Supplying very less quantities to retailers will decrease your popularity among them.");
+		vm.sendToInstructor("Caution : Supply as much as you can, as points will be detected for backlog.");
+		vm.sendToInstructor("The initial capacity of the factory is 200 i.e., you can order a maximum of 200 beers in this round.");
+		vm.sendToInstructor("Predict the next round's demand and order the amount you require. Ordering more than the required amount will lead to unnecessary money and point deductions.");
+	}
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
@@ -453,6 +462,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('vm.capacity details', vm.capacityDetails);
 	});*/
 
+	
 	AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 		vm.history = json.data.history;
 		console.log('vm.history', vm.history);
@@ -474,89 +484,19 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
         
 	});
 
-	vm.getDemand = function(){
-
-		if(vm.status.data.stage === '0'){
-
-			TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
-			vm.demandDetails = json;
-			console.log('id from getDemand', id);
-			console.log('demand details', vm.demandDetails);
-			var x = angular.element(demandpopup);
-			x.css('display','block');
-			console.log("DEMAND POPUP",x);
-			var i=0;
-			var sum=0;
-			for(var order of vm.products[0].orders){
-				if(i<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
-					order.order_no = vm.demandDetails.data.demand[i];
-					order.to_no = 0;
-					sum += vm.demandDetails.data.demand[i];
-					i++;
-				}
-						
-				}
-				console.log('order when getDemanded', order)
-				if(json.status === "200" || json.status === 200){
-					var stage = parseInt(vm.status.data.stage)+1;
-					vm.status.data.stage = stage.toString();
-					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
-					vm.history = json.data.history;
-					console.log('vm.history', vm.history);
-					console.log('history', json.data);
-					});
-					var progressbar = angular.element(progressbartop);
-			   		progressbar.css('width','50%');
-			    	progressbar.html("Stage 2 of 4");
-					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
-					if (sum>vm.factoryDetails.data.factory_1.inventory)
-						vm.sendToInstructor('Oh! Total demand '+sum+'is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
-
-				}
-				else
-				{
-					toastr.warning(json.data.description);
-				}
-
-			});
-		}
-
-		else{
-			console.log(vm.status.data.stage)	
-
-			TurnStageBasedFunctions.viewDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
-			vm.demandDetails = json;
-			console.log('id from getDemand', id);
-			console.log('demand details', vm.demandDetails);
-			var x = angular.element(demandpopup);
-			x.css('display','block');
-			var sum = 0;
-			console.log("DEMAND POPUP",x);			
-				var i=0;
-				for(var order of vm.products[0].orders){
-					order.order_no = vm.demandDetails.data.demand[i];
-					console.log(vm.demandDetails.data.demand[i]);
-					if(vm.demandDetails.data.demand[i])
-					sum+= parseInt(vm.demandDetails.data.demand[i]);
-					i++;
-				}
-				console.log('ss'+sum);
-				if (sum>vm.factoryDetails.data.factory_1.inventory)
-					vm.sendToInstructor('Oh! Total demand '+sum+' is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
-			});
-			
-		}
-
-	}
-
 	AnyTimeFunctions.getStatusDetails(id).success(function(json){
 		vm.status = json;
 		console.log('status details', vm.status);
 		var progressbar = angular.element(progressbartop);
 		console.log(vm.status.data.stage);
 		if(json.status === '200' || json.status === 200){
+			vm.initialFunction();
 			if(vm.status.data.stage=="0" || vm.status.data.stage=="1")
 				vm.getDemand();
+			if(vm.status.data.turn=="1")
+				vm.goToInitialInstructor();
+			if(vm.status.data.turn=="1")
+				vm.goToInitialInstructor();
 			toastr.success('Status of user obtained successfully!');
 			var j=0;
 		for(order of vm.products[0].orders){
@@ -601,6 +541,81 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		console.log('map details', vm.mapDetails);
 	});
 
+	vm.getDemand = function(){
+
+		if(vm.status.data.stage === '0'){
+
+			TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
+			vm.demandDetails = json;
+			console.log('id from getDemand', id);
+			console.log('demand details', vm.demandDetails);
+			var x = angular.element(demandpopup);
+			x.css('display','block');
+			console.log("DEMAND POPUP",x);
+			var i=0;
+			var sum=0;
+			for(var order of vm.products[0].orders){
+				if(i<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+					order.order_no = vm.demandDetails.data.demand[i];
+					order.to_no = 0;
+					sum += vm.demandDetails.data.demand[i];
+					i++;
+				}
+						
+				}
+				console.log('order when getDemanded', order)
+				if(json.status === "200" || json.status === 200){
+					var stage = parseInt(vm.status.data.stage)+1;
+					vm.status.data.stage = stage.toString();
+					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
+					vm.history = json.data.history;
+					console.log('vm.history', vm.history);
+					console.log('history', json.data);
+					});
+					var progressbar = angular.element(progressbartop);
+			   		progressbar.css('width','50%');
+			    	progressbar.html("Stage 2 of 4");
+					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
+					vm.remaining = vm.factoryDetails.data.factory_1.inventory
+					if (sum>vm.factoryDetails.data.factory_1.inventory)
+						vm.sendToInstructor('Oh! Total demand '+sum+'is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
+
+				}
+				else
+				{
+					toastr.warning(json.data.description);
+				}
+
+			});
+		}
+
+		else{
+			console.log(vm.status.data.stage)	
+
+			TurnStageBasedFunctions.viewDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
+			vm.demandDetails = json;
+			console.log('id from getDemand', id);
+			console.log('demand details', vm.demandDetails);
+			var x = angular.element(demandpopup);
+			x.css('display','block');
+			var sum = 0;
+			console.log("DEMAND POPUP",x);			
+				var i=0;
+				for(var order of vm.products[0].orders){
+					order.order_no = vm.demandDetails.data.demand[i];
+					console.log(vm.demandDetails.data.demand[i]);
+					if(vm.demandDetails.data.demand[i])
+					sum+= parseInt(vm.demandDetails.data.demand[i]);
+					i++;
+				}
+				console.log('ss'+sum);
+				if (sum>vm.factoryDetails.data.factory_1.inventory)
+					vm.sendToInstructor('Oh! Total demand '+sum+' is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
+			});
+			
+		}
+
+	}
 
 	vm.send = function(){
 
@@ -902,7 +917,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}
 
 
-
+	vm.goToInitialInstructor = function() {
+		vm.instructor.bubble=0;
+		vm.instructor.counter = 0;
+		vm.instructor.tobedisplayed = vm.instructor.content[0];
+	}
 
 	vm.sendToInstructor = function(content) {
 		vm.instructor.bubble=0;

@@ -65,6 +65,16 @@
 	<div id="agopp9"></div>
 	<div id="contopp10"></div>
 	<div id="agopp10"></div>
+	<div id="contopp11"></div>
+	<div id="agopp11"></div>
+	<div id="contopp12"></div>
+	<div id="agopp12"></div>
+	<div id="contopp13"></div>
+	<div id="agopp13"></div>
+	<div id="contopp14"></div>
+	<div id="agopp14"></div>
+	<div id="contopp15"></div>
+	<div id="agopp15"></div>
 </div>
 </body>
 
@@ -81,7 +91,7 @@
 var dat;
 
 $("#clk").click(function() {
-	dataString = 'user_id=15';
+	dataString = 'user_id={{user_id}}';
 
 	$.ajax({
                     type: "POST",
@@ -123,7 +133,7 @@ $('#plot').click(function() {
 });
 var dat_opp;
 $("#clk_opp").click(function() {
-	dataString = 'user_id=15';
+	dataString = 'user_id={{user_id}}';
 
 	$.ajax({
                     type: "POST",
