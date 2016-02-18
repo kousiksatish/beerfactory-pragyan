@@ -166,6 +166,16 @@
                                         </div>
                                     </div>
 
+                                      <div class="row">
+                                        <div class="col-md-3 col-md-offset-2">
+                                            OPP POPULARITY: 
+                                        </div>
+                                        <div class="col-md-6" style="vertical-align:baseline;"> 
+                                            <div class='progress-bar progress-bar-warning progress-bar-striped' role='progressbar' aria-valuenow='50' aria-valuemin='0' aria-valuemax='100' ng-style="{width: (store.getPopPercent(store.mapDetails.data.opopularity[store.e-1])+'%')}" style="height: 2rem"> {$ Math.floor(store.mapDetails.data.opopularity[store.e-1]*50) $} %
+                                            </div> 
+                                        </div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-md-3 col-md-offset-2"> DEMAND: </div> <div class="col-md-6"> {$ store.products[0].orders[store.e-1].order_no $} </div>
                                     </div>

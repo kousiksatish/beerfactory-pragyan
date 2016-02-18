@@ -197,8 +197,8 @@ ALLOCATION
 #creates a retailer for factory fac1 and its opponent factory
 def retailer_allocate(fac1, zone, unlocked, retailer_no):
 	#create the retailer
-	rcodes = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o']
-	retDetails = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o']
+	rcodes = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O']
+	retDetails = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O']
 	initial_demands = [[70,75,80][random.randint(0,2)] for i in range(2)]
 	ret = retailers(rcode = rcodes[retailer_no], zone = zone, details = retDetails[retailer_no], unlocked=unlocked)
 	ret.save()
@@ -362,6 +362,7 @@ def map(request):
 			zone = []
 			popularity = []
 			opp_popularity = []
+			opopularity = []
 			unlocked = []
 			for retailer in retailers1:
 				retailer_details = retailers.objects.get(pk=retailer.rid_id)
@@ -379,7 +380,7 @@ def map(request):
 			data["fcode"] = fcode
 			data["rcode"] = rcode
 			data["popularity"] = popularity
-			data["opponent_popularity"] = opp_popularity
+			data["opopularity"] = opp_popularity
 			json["data"] = data
 			json["zone"] = zone
 			json["unlocked"] = unlocked
