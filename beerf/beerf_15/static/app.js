@@ -438,6 +438,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.map={};
 	vm.profit=0;
 	vm.retailersRemaining=[];
+	vm.retailerToNameMap={};
 	
 
 	for(var order of vm.products[0].orders){
@@ -541,6 +542,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		if(json.status === '200' || json.status === 200){
 			if(vm.status.data.stage=="0" || vm.status.data.stage=="1")
 				vm.getDemand();
+
+			//redirects to thank you page
+			if(vm.status.turn>25)
+				location.reload(true);
+
 			toastr.success('Status of user obtained successfully!');
 			var j=0;
 		for(order of vm.products[0].orders){
@@ -583,6 +589,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	AnyTimeFunctions.getMapDetails(id).success(function(json){
 		vm.mapDetails = json;
 		console.log('map details', vm.mapDetails);
+
+		var i=0;
+		for(order of vm.products[0].orders){
+			vm.retailerToNameMap[order.from] = vm.mapDetails.data.rcode[i];	
+			i++;
+		}
+
+		console.log('ret to name map,', vm.retailerToNameMap);		
 	});
 
 
@@ -748,7 +762,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				var progressbar = angular.element(progressbartop);
 		   		progressbar.css('width','25%');
 		    	progressbar.html("Stage 1 of 4");
-		    	
+
 		    	if(vm.flag==0)
 		    		toastr.success('Postponed for later!', 'Upgrade');
 		    	else
