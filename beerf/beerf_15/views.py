@@ -34,7 +34,7 @@ def register(request):
 			return redirect(beerf_15.views.home)
 	else:
 		form = userForm()
-		return render(request, "register.html", {"form" : form})
+		return redirect(beerf_15.views.home)
 	
 def login(request,error=''):
 	if request.method == 'POST':
@@ -84,7 +84,7 @@ def home(request):
 
 def logout(request):
 	request.session.flush()
-	return render(request, "login.html", {"error" : "Successfully logged out"})
+	return redirect(beerf_15.views.login)
 
 
 '''

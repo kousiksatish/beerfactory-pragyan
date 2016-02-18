@@ -423,7 +423,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}];
 
 	vm.factoryDetails = {};
-	vm.instructor = {"bubble":false,"content":"Welcome to Beer Factory!"};
+	vm.instructor = {"bubble":false,"tobedisplayed":"Welcome to Beer Factory! I am your instructor!","content":["ss","abcd","bcda"], "counter" :0, "len":3};
 	vm.status = {};
 	vm.demandDetails = {};
 	vm.mapDetails={};
@@ -486,10 +486,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			x.css('display','block');
 			console.log("DEMAND POPUP",x);
 			var i=0;
+			var sum=0;
 			for(var order of vm.products[0].orders){
 				if(i<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
 					order.order_no = vm.demandDetails.data.demand[i];
 					order.to_no = 0;
+					sum += vm.demandDetails.data.demand[i];
 					i++;
 				}
 						
@@ -507,6 +509,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			   		progressbar.css('width','50%');
 			    	progressbar.html("Stage 2 of 4");
 					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
+					if (sum>vm.factoryDetails.data.factory_1.inventory)
+						vm.sendToInstructor('Oh! Total demand '+sum+'is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
+
 				}
 				else
 				{
@@ -525,13 +530,21 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			console.log('demand details', vm.demandDetails);
 			var x = angular.element(demandpopup);
 			x.css('display','block');
+			var sum = 0;
 			console.log("DEMAND POPUP",x);			
 				var i=0;
 				for(var order of vm.products[0].orders){
 					order.order_no = vm.demandDetails.data.demand[i];
+					console.log(vm.demandDetails.data.demand[i]);
+					if(vm.demandDetails.data.demand[i])
+					sum+= parseInt(vm.demandDetails.data.demand[i]);
 					i++;
 				}
+				console.log('ss'+sum);
+				if (sum>vm.factoryDetails.data.factory_1.inventory)
+					vm.sendToInstructor('Oh! Total demand '+sum+' is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
 			});
+			
 		}
 
 	}
@@ -859,19 +872,42 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}
 
 	vm.closeInstructor = function() {
-		console.log("dsdc");
-		console.log(vm.instructor.bubble);
-		vm.instructor.bubble=true;
-		console.log(vm.instructor.bubble);
+		if (vm.instructor.bubble)
+		{
+			vm.instructor.tobedisplayed = vm.instructor.content[vm.instructor.len-1];
+			vm.instructor.counter = vm.instructor.len-1;
+			vm.instructor.bubble=false;
+		}
+		else
+			vm.instructor.bubble = true;
 	}
+
+	vm.nextInstruction = function() {
+		console.log('next');
+		console.log(vm.instructor.counter);
+		if (vm.instructor.counter<vm.instructor.len-1)
+		{
+			vm.instructor.counter++;
+			vm.instructor.tobedisplayed = vm.instructor.content[vm.instructor.counter];
+		}
+	}
+	vm.prevInstruction = function() {
+		console.log('prev');
+		console.log(vm.instructor.counter);
+		if (vm.instructor.counter>0)
+		{
+			vm.instructor.counter--;
+			vm.instructor.tobedisplayed = vm.instructor.content[vm.instructor.counter];
+		}
+	}
+
+
+
 
 	vm.sendToInstructor = function(content) {
 		vm.instructor.bubble=0;
-		vm.instructor.content = content;
-		var delay=1000;
-		setTimeout(function(){
-		  vm.instructor.bubble=true;
-		}, delay); 
+		vm.instructor.content[vm.instructor.len] = content;
+		vm.instructor.len++;
 	}
 	vm.getPopPercent = function(p){
 		return Math.floor(p*50);

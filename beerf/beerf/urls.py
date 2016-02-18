@@ -20,8 +20,8 @@ from beerf_15 import views
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^register/$',views.register, name="register"),
-    url(r'^$', views.login, name="login"),
-    # url(r'^$', views.locked, name="locked"),
+    url(r'^usethistologin$', views.login, name="login"),
+    url(r'^$', views.locked, name="locked"),
     url(r'^home$', views.home, name="home"),
     url(r'^assign_factory$', views.assign, name="assign_factory"),
     url(r'^logout$', views.logout, name="logout"),
