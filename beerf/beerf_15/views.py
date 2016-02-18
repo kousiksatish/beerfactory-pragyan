@@ -1010,11 +1010,14 @@ def testhome(request):
 def instructions(request):
 	return render(request,"instructions.html")
 
+@decorator_from_middleware(middleware.loggedIn)
 def locked(request):
 	return render(request, "locked.html")
 
 def graph(request):
-	return render(request, "graph.html")
+	user_id = request.session["user_id"]
+	user = users.objects.get(pid = user_id)
+	return render(request, "graph.html", {"name":user.prag_username, "user_id":user_id})
 
 @decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
