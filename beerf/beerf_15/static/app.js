@@ -438,19 +438,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.map={};
 	vm.profit=0;
 	vm.retailersRemaining=[];
-
-	
-
 	
 
 	for(var order of vm.products[0].orders){
 		vm.supplyValues.push(order.to_no);
 	}
 
-/*	TurnStageBasedFunctions.capacityDetails(id).success(function(json){
-		vm.capacityDetails = json.data;
-		console.log('vm.capacity details', vm.capacityDetails);
-	});*/
 
 	AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 		vm.history = json.data.history;
@@ -472,6 +465,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		
         
 	});
+
+	vm.showDemand = function(){
+		var x = angular.element(demandpopup);
+		x.css('display','block');
+	}
 
 	vm.getDemand = function(){
 
