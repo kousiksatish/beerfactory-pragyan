@@ -1071,36 +1071,15 @@ def graph_back(request):
 						turn = int(supply.turn)
 						if turn > (zone-1)*5:
 							demands[retailer][turn-(zone-1)*5-1]['supply'] = int(supply.quantity)
-
-			return JsonResponse({"status":"200", "data":{"history":demands}})
-	else:
-		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
-
-@decorator_from_middleware(middleware.SessionPIDAuth)
-@csrf_exempt
-def graph_opp_back(request):
-	if request.method == 'POST':
-		id = request.POST.get("user_id")
-		try:
-			user = users.objects.get(pk=id)
-		except users.DoesNotExist:
-			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
-			user = None
-		
-		# after all verification is done.
-		if id and user:
-			fid = user.factory
 			opponent_fac = factory_factory.objects.get(fac1=fid).fac2
 			retailers = dict
-			demands = dict()
-			supplies = dict()
-			popularity = dict()
+			demands2 = dict()
 			frids = [f.frid for f in factory_retailer.objects.filter(fid=opponent_fac)]
 			unlocked_frids = unlocked_ret(frids, opponent_fac)
 			retailer = 0
 			for frid in unlocked_frids:
 				retailer=retailer+1
-				demands[retailer] = []
+				demands2[retailer] = []
 				fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid)]
 				for fac_ret in fac_ret_demands:
 					for demand in fac_ret:
@@ -1110,23 +1089,11 @@ def graph_opp_back(request):
 							new = dict()
 							new['turn']=turn
 							new['demand']=int(demand.quantity)
-							demands[retailer].append(new)
-			retailer = 0			
-			for frid in unlocked_frids:
-				retailer=retailer+1
-				supplies[retailer] = []
-				fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid)]
-				for fac_ret in fac_ret_supplies:
-					for supply in fac_ret:
-						zone = int(supply.frid.rid.zone)
-						turn = int(supply.turn)
-						if turn > (zone-1)*5:
-							demands[retailer][turn-(zone-1)*5-1]['supply'] = int(supply.quantity)
+							demands2[retailer].append(new)
 
-			return JsonResponse({"status":"200", "data":{"history":demands}})
+			return JsonResponse({"status":"200", "data":{"history":demands,"opp_history":demands2}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
-
 
 @decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt

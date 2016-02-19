@@ -46,7 +46,6 @@ urlpatterns = [
     url(r'^history$',views.history, name='history'),
     url(r'^graph$',views.graph, name='graph'),
     url(r'^graph_back$',views.graph_back, name='graph_back'),
-    url(r'^graph_opp_back$',views.graph_opp_back, name='graph_opp_back'),
     url(r'^review$',views.review, name='review'),
     # url(r'^getScore$',views.getScore, name='getScore'),
     # url(r'^getTotalScore$',views.getTotalScore, name='getTotalScore')
