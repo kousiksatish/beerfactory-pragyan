@@ -1,0 +1,77 @@
+{% load staticfiles %}
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
+		<title>Beerfactory 16 LeaderBoard</title>
+		<style>
+			.panel-title>a,.panel-title>a:hover,.panel-title>a:active,.panel-title>a:visited
+			{
+				text-decoration: none;
+				color : white;
+			}
+			.panel-heading [data-toggle="collapse"]:after {
+		        font-family: 'Glyphicons Halflings';
+		        content: "»"; /* "play" icon */
+		        float: right;
+		        color: orange;
+		        font-size: 18px;
+		        line-height: 22px;
+		        /* rotate "play" icon from > (right arrow) to down arrow */
+		        -webkit-transform: rotate(-90deg);
+		        -moz-transform: rotate(-90deg);
+		        -ms-transform: rotate(-90deg);
+		        -o-transform: rotate(-90deg);
+		        transform: rotate(-90deg);
+		    }
+
+		    .panel-heading [data-toggle="collapse"].collapsed:after {
+		        /* rotate "play" icon from > (right arrow) to ^ (up arrow) */
+		        -webkit-transform: rotate(90deg);
+		        -moz-transform: rotate(90deg);
+		        -ms-transform: rotate(90deg);
+		        -o-transform: rotate(90deg);
+		        transform: rotate(90deg);
+		        color: yellow;
+		    }
+		</style>
+	</head>
+	<body>
+		<br><br>
+		<div class="container">
+			<center><h1 class="text-info">Beer Factory '16</h1></center>
+			<center><h1 class="text-info">FAQs</h1></center>
+			<br><br>
+			<div class="panel-group" id="accordion">
+			  {% for faq in faqs %}
+				  <div class="panel panel-default">
+				    <div class="panel-heading">
+				    	<h4 class="panel-title">
+				        <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse{{faq.faq_id}}">{{faq.question}}</a>
+				        </h4>
+				    </div>
+				    <div id="collapse{{faq.faq_id}}" class="panel-collapse collapse">
+				      <div class="panel-body">{{faq.answer}}</div>
+				    </div>
+				  </div>
+			  {% endfor %}
+			</div>
+				<ul class="pagination">
+				    {% if faqs.has_previous %}
+				    <li>
+				            <a href="?page={{ faqs.previous_page_number }}">previous</a>
+				    </li>
+				    {% endif %}
+			        <li class="active">
+			            <a>Page {{ faqs.number }} of {{ faqs.paginator.num_pages }}</a>
+			        </li>
+			        {% if faqs.has_next %}
+			        <li>
+				            <a href="?page={{ faqs.next_page_number }}">next</a>
+				    </li>
+				    {% endif %}
+				</ul>
+		</div>
+	</body>
+	    <script src="{% static "js/jquery.min.js" %}"></script>
+		<script src="{% static "bootstrap-3.3.6-dist/js/bootstrap.min.js" %}"></script>
+</html>

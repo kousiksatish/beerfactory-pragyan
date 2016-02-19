@@ -18,6 +18,7 @@ import random
 import urllib
 import json
 from operator import itemgetter
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 '''
 INITIAL FUNCTIONS
 1. /register
@@ -1192,3 +1193,19 @@ def leaderBoard(request):
 	#append user_score_obj to highscores and then render the view.
 	highScores.append(user_score_obj)
 	return render(request,'leaderboard.html',{'highScores':highScores})
+
+#Query all the faqs and arrange them in desc order of their priority and paginate
+@csrf_exempt
+def FAQ(request):
+	faqs = FAQs.objects.filter().order_by('-priority')
+	paginator = Paginator(faqs, 10)
+	page = request.GET.get('page')
+	try:
+		faqs = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver first page.
+		faqs = paginator.page(1)
+	except EmptyPage:
+		# If page is out of range (e.g. 9999), deliver last page of results.
+		faqs = paginator.page(paginator.num_pages)
+	return render(request,'faq.html',{'faqs':faqs})

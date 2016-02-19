@@ -117,6 +117,12 @@ class score(models.Model):
 	score = models.IntegerField()
 	opp_score = models.IntegerField(default =0)
 
+class FAQs(models.Model):
+	faq_id = models.AutoField(primary_key=True)
+	priority = models.IntegerField()
+	question = models.CharField(max_length=200, blank=True, default ='')
+	answer = models.CharField(max_length=200, blank=True, default ='')
+
 
 class userForm(ModelForm):
     class Meta:
