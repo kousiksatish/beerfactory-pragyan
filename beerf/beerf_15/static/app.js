@@ -946,7 +946,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
     	}
 
 		else{
-			toastr.warning('You cannot supply more than demanded!');
+			if(tono!=0)
+				toastr.warning('You cannot supply more than demanded!');
 			vm.products[0].orders[x-1].to_no = 0;	
 		} 
 
