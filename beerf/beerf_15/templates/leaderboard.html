@@ -1,0 +1,110 @@
+{% load staticfiles %}
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
+		<title>Beerfactory 16 LeaderBoard</title>
+		<style>
+		.leaderboard-row
+		{
+			box-sizing: border-box;
+			min-height: 9%;
+			background-color:rgba(255,255,255,0.1);
+			margin-bottom:0.5%;
+			margin-right:0.25%;
+			margin-left:0.25%;
+			font-size:18px;
+			font-weight:500;
+			float : left;
+			display: flex;
+			justify-content: center;
+			align-items: center; 
+			opacity:0.8;
+		}
+		.leaderboard-header
+		{
+			background-color:rgba(13,227,192,0.25);
+		}
+		.leaderboard-leader1
+		{
+			color:rgba(255,215,0,1);
+		}
+		.leaderboard-leader2
+		{
+			color:rgba(192,192,192,1);
+		}
+		.leaderboard-leader3
+		{
+			color:rgba(205,127,50,1);
+		}
+		.leaderboard-currentuser
+		{
+			background-color:rgba(52,152,219,0.2);
+		}
+		.rank-grid
+		{
+			width:10%;
+		}
+		.score-grid
+		{
+			width:27%;
+		}
+		.name-grid
+		{
+
+			width:42%;
+		}
+		.rounds-grid
+		{
+			width:19%;
+		}
+		</style>
+	</head>
+	<body>
+		<br><br>
+		<div class="container">
+			<center><h1 class="text-info">Beer Factory '16</h1></center>
+			<center><h1 class="text-info">Leaderboard</h1></center>
+			<br><br>
+			<div class="row">
+			<div class="leaderboard-row leaderboard-header rank-grid">Position</div>
+			<div class="leaderboard-row leaderboard-header name-grid">Name</div>
+			<div class="leaderboard-row leaderboard-header rounds-grid">Rounds</div>
+			<div class="leaderboard-row leaderboard-header score-grid">Score</div>
+			</div>
+			{% for highScore in highScores  %}
+				<div class="row">
+				<div class="leaderboard-row rank-grid 
+				{%if highScore.rank == 1   %}leaderboard-leader1
+				{%elif highScore.rank == 2   %}leaderboard-leader2
+				{%elif highScore.rank == 3   %}leaderboard-leader3
+				{%endif%}
+				{%if highScore.pid == request.session.user_id  %}leaderboard-currentuser
+				{%endif%}">{{  highScore.rank  }}</div>
+				<div class="leaderboard-row name-grid 
+				{%if highScore.rank == 1   %}leaderboard-leader1
+				{%elif highScore.rank == 2   %}leaderboard-leader2
+				{%elif highScore.rank == 3   %}leaderboard-leader3
+				{%endif%}
+				{%if highScore.pid == request.session.user_id  %}leaderboard-currentuser
+				{%endif%} ">{{  highScore.name }}</div>
+				<div class="leaderboard-row rounds-grid 
+				{%if highScore.rank == 1   %}leaderboard-leader1
+				{%elif highScore.rank == 2   %}leaderboard-leader2
+				{%elif highScore.rank == 3   %}leaderboard-leader3
+				{%endif%}
+				{%if highScore.pid == request.session.user_id  %}leaderboard-currentuser
+				{%endif%} ">{{  highScore.rounds }}</div>
+				<div class="leaderboard-row score-grid 
+				{%if highScore.rank == 1   %}leaderboard-leader1
+				{%elif highScore.rank == 2   %}leaderboard-leader2
+				{%elif highScore.rank == 3   %}leaderboard-leader3
+				{%endif%}
+				{%if highScore.pid == request.session.user_id  %}leaderboard-currentuser
+				{%endif%} ">{{  highScore.score }}</div>
+				</div>
+			{% endfor %}
+		</div>
+	</body>
+	    <script src="{% static "js/jquery.min.js" %}"></script>
+		<script src="{% static "bootstrap-3.3.6-dist/js/bootstrap.min.js" %}"></script>
+</html>
