@@ -126,7 +126,7 @@ def calculate_popularity(retailer_no):
 	return pops[retailer_no]
 
 #@csrf_exempt
-##@decorator_from_middleware(middleware.SessionPIDAuth)
+#@decorator_from_middleware(middleware.SessionPIDAuth)
 def unlockRetailers(id,turn,stage):
 	#if request.method == 'POST':
 		#id = request.POST.get("user_id")
@@ -159,7 +159,7 @@ def unlockRetailers(id,turn,stage):
 		#return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 #@csrf_exempt
-##@decorator_from_middleware(middleware.SessionPIDAuth)
+#@decorator_from_middleware(middleware.SessionPIDAuth)
 def updateInventory(id,turn,stage):
 	
 	#if request.method == 'POST':
@@ -219,7 +219,7 @@ def retailer_allocate(fac1, zone, unlocked, retailer_no):
 	opponent_demand.save()
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def assign(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -281,7 +281,7 @@ ANY TIME FUNCTIONS
 '''
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def getStatus(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -297,7 +297,7 @@ def getStatus(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def fac_details(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -338,7 +338,7 @@ def fac_details(request):
 
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def map(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -390,7 +390,7 @@ def map(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def getPopularity(request):
 	'''
 		Returns popularity of each factory with each retailer.
@@ -475,7 +475,7 @@ def restart(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def history(request):
 	'''
 		Returns the user's game moves history by retrieving all his data from the DB.
@@ -549,7 +549,7 @@ def history(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def getCapacityDetails(request):
 	id = request.POST.get("user_id")
 	try:
@@ -586,7 +586,7 @@ TURN & STAGE BASED OPERATIONS
 '''
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def get_demand(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -635,7 +635,7 @@ def calculate_demand(frid,turn):
 	return 100
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def viewDemand(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -673,7 +673,7 @@ def viewDemand(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def supply(request):
 	
 	if request.method == 'POST':
@@ -738,7 +738,7 @@ def supply(request):
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def viewDemandSupply(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -781,7 +781,7 @@ def viewDemandSupply(request):
 
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def placeOrder(request):
 	'''
 		Places order to produce beer for a particular factory at the second stage, i.e, stage == 1
@@ -844,7 +844,7 @@ def placeOrder(request):
 
 	
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def updateSellingPrice(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -896,7 +896,7 @@ def updateSellingPrice(request):
 
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def updateCapacity(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -949,7 +949,7 @@ OTHERS
 '''
 
 @csrf_exempt
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def get_selling_price(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -1026,7 +1026,7 @@ def graph(request):
 	user = users.objects.get(pid = user_id)
 	return render(request, "graph.html", {"name":user.prag_fullname, "user_id":user_id})
 
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
 def graph_back(request):
 	if request.method == 'POST':
@@ -1096,7 +1096,7 @@ def graph_back(request):
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
 
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
 def getScore(request):
 	user_id = int(request.POST.get("user_id"))
@@ -1105,7 +1105,7 @@ def getScore(request):
 	scr = score.objects.get(pid = user, turn = turn).score
 	return JsonResponse({"status":"200", "data":{"description":"Success!","turn":turn,"score":scr}})
 
-#@decorator_from_middleware(middleware.SessionPIDAuth)
+@decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
 def getTotalScore(request):
 	user_id = int(request.POST.get("user_id"))
