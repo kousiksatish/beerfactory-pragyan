@@ -27,11 +27,11 @@ app.config(function(toastrConfig) {
 // service for any-time functions
 app.factory('AnyTimeFunctions', ['$http', function($http){
 
-	console.log('id from app.js', id);
-	console.log('factoryDetailsUrl from app.js', factoryDetailsUrl);
-	console.log('getStatusUrl from app.js', getStatusUrl);
-	console.log('mapUrl from app.js', mapUrl);
-	console.log('historyUrl from app.js', historyUrl);
+	//console.log('id from app.js', id);
+	//console.log('factoryDetailsUrl from app.js', factoryDetailsUrl);
+	//console.log('getStatusUrl from app.js', getStatusUrl);
+	//console.log('mapUrl from app.js', mapUrl);
+	//console.log('historyUrl from app.js', historyUrl);
 
 
 	getFactoryDetails = function(id) {
@@ -135,8 +135,8 @@ app.factory('AnyTimeFunctions', ['$http', function($http){
 // service for turn/stage based functions
 app.factory('TurnStageBasedFunctions', ['$http', function($http){
 
-	console.log('id from app.js', id);
-	console.log('getDemandUrl from app.js', getDemandUrl);
+	//console.log('id from app.js', id);
+	//console.log('getDemandUrl from app.js', getDemandUrl);
 
 
 
@@ -497,16 +497,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	
 	AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 		vm.history = json.data.history;
-		console.log('vm.history', vm.history);
-		console.log('history', json.data);
+		//console.log('vm.history', vm.history);
+		//console.log('history', json.data);
 	});
 
 	AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 		vm.factoryDetails = json;
-		// console.log('factory details', vm.factoryDetails);
+		// //console.log('factory details', vm.factoryDetails);
 		if(json.status === '200' || json.status === 200)
 		{
-			console.log('success');
+			//console.log('success');
 			// toastr.success('Factory details obtained successfully!');
 		}
 		else
@@ -519,9 +519,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	AnyTimeFunctions.getStatusDetails(id).success(function(json){
 		vm.status = json;
-		console.log('status details', vm.status);
+		//console.log('status details', vm.status);
 		var progressbar = angular.element(progressbartop);
-		console.log(vm.status.data.stage);
+		//console.log(vm.status.data.stage);
 		if(json.status === '200' || json.status === 200){
 			vm.initialFunction();
 			if(vm.status.data.stage=="0" || vm.status.data.stage=="1")
@@ -562,7 +562,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				j++;
 			}
 
-			console.log('retailers remaining', vm.retailersRemaining);
+			//console.log('retailers remaining', vm.retailersRemaining);
 
 		}
 		else
@@ -580,7 +580,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	    		progressbar.html("Stage 1 of 3");
 	    		break;
 	    	case "2":
-	    		console.log("ds");
+	    		//console.log("ds");
 	    		progressbar.css('width','66%');
 	    		progressbar.html("Stage 2 of 3");
 	    		break;
@@ -596,7 +596,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	AnyTimeFunctions.getMapDetails(id).success(function(json){
 		vm.mapDetails = json;
-		console.log('map details', vm.mapDetails);
+		//console.log('map details', vm.mapDetails);
 
 		var i=0;
 		for(order of vm.products[0].orders){
@@ -604,7 +604,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			i++;
 		}
 
-		console.log('ret to name map,', vm.retailerToNameMap);		
+		//console.log('ret to name map,', vm.retailerToNameMap);		
 	});
 
 
@@ -619,11 +619,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 			TurnStageBasedFunctions.getDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			vm.demandDetails = json;
-			console.log('id from getDemand', id);
-			console.log('demand details', vm.demandDetails);
+			//console.log('id from getDemand', id);
+			//console.log('demand details', vm.demandDetails);
 			var x = angular.element(demandpopup);
 			x.css('display','none');
-			console.log("DEMAND POPUP",x);
+			//console.log("DEMAND POPUP",x);
 			var i=0;
 			var sum=0;
 			for(var order of vm.products[0].orders){
@@ -635,14 +635,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				}
 						
 				}
-				console.log('order when getDemanded', order)
+				//console.log('order when getDemanded', order)
 				if(json.status === "200" || json.status === 200){
 					var stage = parseInt(vm.status.data.stage)+1;
 					vm.status.data.stage = stage.toString();
 					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 					vm.history = json.data.history;
-					console.log('vm.history', vm.history);
-					console.log('history', json.data);
+					//console.log('vm.history', vm.history);
+					//console.log('history', json.data);
 					});
 					var progressbar = angular.element(progressbartop);
 			   		progressbar.css('width','33%');
@@ -676,25 +676,25 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 
 		else{
-			console.log(vm.status.data.stage)	
+			//console.log(vm.status.data.stage)	
 
 			TurnStageBasedFunctions.viewDemandDetails(id, vm.status.data.turn, vm.status.data.stage).success(function(json){
 			vm.demandDetails = json;
-			console.log('id from getDemand', id);
-			console.log('demand details', vm.demandDetails);
+			//console.log('id from getDemand', id);
+			//console.log('demand details', vm.demandDetails);
 			var x = angular.element(demandpopup);
 			x.css('display','none');
 			var sum = 0;
-			console.log("DEMAND POPUP",x);			
+			//console.log("DEMAND POPUP",x);			
 				var i=0;
 				for(var order of vm.products[0].orders){
 					order.order_no = vm.demandDetails.data.demand[i];
-					console.log(vm.demandDetails.data.demand[i]);
+					//console.log(vm.demandDetails.data.demand[i]);
 					if(vm.demandDetails.data.demand[i])
 					sum+= parseInt(vm.demandDetails.data.demand[i]);
 					i++;
 				}
-				console.log('ss'+sum);
+				//console.log('ss'+sum);
 				if (sum>vm.factoryDetails.data.factory_1.inventory)
 					vm.sendToInstructor('Oh! Total demand '+sum+' is greater than our inventory. Make wise decisions so that we don\'t lose popularity among our retailers!');
 			});
@@ -706,9 +706,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.send = function(){
 
 
-		console.log('Initial Products', vm.products);
-		console.log('Supply values', vm.supplyValues);
-		console.log('vm.level', vm.level);
+		//console.log('Initial Products', vm.products);
+		//console.log('Supply values', vm.supplyValues);
+		//console.log('vm.level', vm.level);
 		vm.level = Math.floor(parseInt(vm.status.data.turn-1)/5)+1;
 		var i=0;
 
@@ -721,7 +721,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		var supply = '';
 		
 		
-		console.log('level', vm.level);
+		//console.log('level', vm.level);
 		sum_of_supply = 0;
 		checkint_flag = 0;
 		lessthandemand_flag = 0;
@@ -745,8 +745,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		supply = supply.substr(0, supply.length-1);
 
-		console.log('Supply to be sent', supply);
-		console.log('Status before sending', vm.status.data);
+		//console.log('Supply to be sent', supply);
+		//console.log('Status before sending', vm.status.data);
 		if(checkint_flag == 1)
 		{
 			toastr.warning('Invalid Quantity. Quantity must be a positive integer');
@@ -766,15 +766,15 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		{
 			$("#loading").fadeIn("slow");
 			TurnStageBasedFunctions.supply(id, supply, vm.status.data.turn, vm.status.data.stage).success(function(json){
-				console.log('Response for supply', json);
+				//console.log('Response for supply', json);
 				if(json.status === "200" || json.status === 200){
 					$("#loading").fadeOut("slow");
 					var stage = parseInt(vm.status.data.stage)+1;
 					vm.status.data.stage = stage.toString();
 					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 					vm.history = json.data.history;
-					console.log('vm.history', vm.history);
-					console.log('history', json.data);
+					//console.log('vm.history', vm.history);
+					//console.log('history', json.data);
 					});
 					var progressbar = angular.element(progressbartop);
 			   		progressbar.css('width','66%');
@@ -795,13 +795,13 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				}
 				AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 				vm.factoryDetails = json;
-				console.log('factory details after supplying', vm.factoryDetails);
+				//console.log('factory details after supplying', vm.factoryDetails);
 				});
 			});
 		}
 
 		
-		console.log('New products is', vm.products);
+		//console.log('New products is', vm.products);
 	};
 
 	vm.closepopup = function() {
@@ -810,7 +810,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	vm.placeOrder = function(){
 		
-		console.log('order is ', vm.order);
+		//console.log('order is ', vm.order);
 
 		if(! /^\+?(0|[1-9]\d*)$/.test(vm.order))
 			toastr.warning('Invalid Quantity. It must be a positive integer!');
@@ -825,15 +825,15 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		{
 			$("#loading").fadeIn("slow");
 			TurnStageBasedFunctions.placeOrder(id, vm.order, vm.status.data.turn, vm.status.data.stage).success(function(json){
-				console.log('Response for place order', json);
+				//console.log('Response for place order', json);
 				if(json.status === "200" || json.status === 200){
 					$("#loading").fadeOut("slow");
 					vm.status.data.stage = '3';
 
 					AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 						vm.history = json.data.history;
-						console.log('vm.history', vm.history);
-						console.log('history', json.data);
+						//console.log('vm.history', vm.history);
+						//console.log('history', json.data);
 					});
 
 					var progressbar = angular.element(progressbartop);
@@ -860,7 +860,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					vm.goToInstructor(vm.instructor.len-1);
 				AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 				vm.factoryDetails = json;
-				console.log('factory details after placing order', vm.factoryDetails);
+				//console.log('factory details after placing order', vm.factoryDetails);
 				});
 			})
 		}
@@ -872,7 +872,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		$("#loading").fadeIn("slow");
 
 		TurnStageBasedFunctions.upgradeFactory(id, vm.status.data.turn, vm.status.data.stage, vm.flag).success(function(json){
-			console.log('Respose from updateCapacity', json);
+			//console.log('Respose from updateCapacity', json);
 
 			if(json.status === "200" || json.status === 200){
 				$("#loading").fadeOut("slow");
@@ -882,14 +882,14 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				//to update history tab at every stage
 				AnyTimeFunctions.getHistoryDetails(id).success(function(json){
 				vm.history = json.data.history;
-				console.log('vm.history', vm.history);
-				console.log('history', json.data);
+				//console.log('vm.history', vm.history);
+				//console.log('history', json.data);
 				});
 
 				//to update popularity without the need to reload
 				AnyTimeFunctions.getMapDetails(id).success(function(json){
 				vm.mapDetails = json;
-				console.log('map details', vm.mapDetails);
+				//console.log('map details', vm.mapDetails);
 				});
 				
 				var progressbar = angular.element(progressbartop);
@@ -913,7 +913,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 			AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 			vm.factoryDetails = json;
-			console.log('factory details after upgrade factory option', vm.factoryDetails);
+			//console.log('factory details after upgrade factory option', vm.factoryDetails);
 			});
 
 		});
@@ -924,20 +924,20 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.mapclicked = function(e){
 
 		vm.e=e;
-		console.log('MAP CLICKED ', e);
+		//console.log('MAP CLICKED ', e);
 		vm.map.check1 = (Math.floor((vm.status.data.turn-1)/5)+1)*3;
 
 	}
 
 	vm.confirmorder = function(x){
 
-		console.log('IN CONFIRM ORDER');
+		//console.log('IN CONFIRM ORDER');
 
 		vm.products[0].orders[x-1].isConfirmClicked=true;
 
-		console.log('vm.products[0].orders ', vm.products);
+		//console.log('vm.products[0].orders ', vm.products);
     	var tono = $("#tono").val();
-    	console.log('tono', tono);
+    	//console.log('tono', tono);
     	vm.profit=0;
     	vm.remaining=vm.factoryDetails.data.factory_1.inventory;
 
@@ -946,11 +946,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
     	}
 
 		else{
-			toastr.warning('You cannot supply more than demanded!')
+			toastr.warning('You cannot supply more than demanded!');
 			vm.products[0].orders[x-1].to_no = 0;	
 		} 
 
-		console.log('vm.products inside confirmorder', vm.products);
+		//console.log('vm.products inside confirmorder', vm.products);
 
 		
 
@@ -969,10 +969,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 
 
-		console.log('retailers remaining', vm.retailersRemaining);
+		//console.log('retailers remaining', vm.retailersRemaining);
 
-    	console.log("products",vm.products);
-    	console.log("supply values", vm.supplyvalues);
+    	//console.log("products",vm.products);
+    	//console.log("supply values", vm.supplyvalues);
 	}
 
 	vm.closeInstructor = function() {
@@ -985,8 +985,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}
 
 	vm.nextInstruction = function() {
-		console.log('next');
-		console.log(vm.instructor.counter);
+		//console.log('next');
+		//console.log(vm.instructor.counter);
 		if (vm.instructor.counter<vm.instructor.len-1)
 		{
 			vm.instructor.counter++;
@@ -994,8 +994,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		}
 	}
 	vm.prevInstruction = function() {
-		console.log('prev');
-		console.log(vm.instructor.counter);
+		//console.log('prev');
+		//console.log(vm.instructor.counter);
 		if (vm.instructor.counter>0)
 		{
 			vm.instructor.counter--;
