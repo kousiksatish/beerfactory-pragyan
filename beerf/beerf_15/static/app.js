@@ -499,10 +499,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 		vm.factoryDetails = json;
-		console.log('factory details', vm.factoryDetails);
+		// console.log('factory details', vm.factoryDetails);
 		if(json.status === '200' || json.status === 200)
 		{
-			toastr.success('Factory details obtained successfully!');
+			console.log('success');
+			// toastr.success('Factory details obtained successfully!');
 		}
 		else
 		{
@@ -540,7 +541,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					vm.goToInstructor(no_of_demand+no_of_capacity);
 				}
 			}
-			toastr.success('Status of user obtained successfully!');
+			//toastr.success('Status of user obtained successfully!');
 			var j=0;
 			for(order of vm.products[0].orders){
 				if(j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){

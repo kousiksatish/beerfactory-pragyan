@@ -5,6 +5,7 @@
 <head> 
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
+	<link rel="stylesheet" type="text/css" href="{% static "css/left.css" %}" />
     <style>
 	.panel-yellow {
 		border-color: #f1c40f;
@@ -34,7 +35,9 @@
 </head>
 
 <body>
+<div id="loading">
 
+</div>
 <div>
 	<nav class="navbar navbar-default navbar-fixed-top nav-container">
 	  	<div class="container-fluid"   ng-repeat="product in store.products">
@@ -74,9 +77,11 @@
 {% load staticfiles %}
 <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
 <script type="text/javascript">
+	$("#loading").fadeOut("slow");
 	var url = "{% url 'assign_factory' %}";
 	$("#assign_factories").click(AssignFactories);
 	function AssignFactories() {
+		$("#loading").fadeIn("slow");
 	    console.log("Assign Factory is working!")
 	    var id = "{{request.session.user_id}}";
 	    $.ajax({
@@ -87,6 +92,7 @@
 	        	var status;
 	        	if(json.status == "200")
 	        	{
+	        		$("#loading").fadeOut("slow");
 	        		status = "Success !!";
 
 	        	}
