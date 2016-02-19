@@ -1015,12 +1015,14 @@ def testhome(request):
 			return redirect(beerf_15.views.review) 
 		return render(request, "index.html",{ "name" : user.prag_fullname })
 	return redirect(beerf_15.views.home)
+
 def instructions(request):
 	return render(request,"instructions.html")
 
 def locked(request):
 	return render(request, "locked.html")
 
+@decorator_from_middleware(middleware.SessionPIDAuth)
 def graph(request):
 	user_id = request.session["user_id"]
 	user = users.objects.get(pid = user_id)

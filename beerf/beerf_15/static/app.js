@@ -781,6 +781,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			    	progressbar.html("Stage 2 of 3");
 			    	angular.element(demandpopup).css('display','none');
 					toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
+					if (vm.status.data.turn == '1' || vm.status.data.turn == 1)
+					{
+						for(i=0;i<no_of_order;i++)
+							vm.sendToInstructor(order_messages[i]);
+						vm.nextInstruction();
+					}
 				}
 				else
 				{
@@ -834,9 +840,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			   		progressbar.css('width','100%');
 			    	progressbar.html("Stage 3 of 3");
 					toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
-					for(i=0;i<no_of_capacity;i++)
-						vm.sendToInstructor(capacity_messages[i]);
-					vm.nextInstruction();
+					if (vm.status.data.turn == '1' || vm.status.data.turn == 1)
+					{
+						for(i=0;i<no_of_capacity;i++)
+							vm.sendToInstructor(capacity_messages[i]);
+						vm.nextInstruction();
+					}
 				}
 				else
 				{
