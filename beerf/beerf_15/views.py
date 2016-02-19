@@ -1023,7 +1023,7 @@ def locked(request):
 def graph(request):
 	user_id = request.session["user_id"]
 	user = users.objects.get(pid = user_id)
-	return render(request, "graph.html", {"name":user.prag_username, "user_id":user_id})
+	return render(request, "graph.html", {"name":user.prag_fullname, "user_id":user_id})
 
 @decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
@@ -1123,7 +1123,16 @@ def review(request):
 	turn = status.objects.get(pid=user).turn
 	if turn<=25:
 		return redirect(beerf_15.views.testhome)
-	return render(request, "review.html")
+	scores_obj = score.objects.filter(pid = user)
+	sum_of_scores = 0
+	scores = []
+	eachscr = dict()
+	for scr in scores_obj:
+		eachscr['turn'] = scr.turn
+		eachscr['score'] = scr.score
+		sum_of_scores += scr.score
+		scores.append(scr)
+	return render(request, "review.html", {"scores":scores, "total_score":sum_of_scores, "name":user.prag_fullname})
 
 @csrf_exempt
 def leaderBoard(request):
