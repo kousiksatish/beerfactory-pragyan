@@ -103,6 +103,53 @@
 				{%endif%} ">{{  highScore.score }}</div>
 				</div>
 			{% endfor %}
+				{%if userScore %}
+				<div class="row">
+				<div class="leaderboard-row rank-grid 
+				{%if userScore.rank == 1   %}leaderboard-leader1
+				{%elif userScore.rank == 2   %}leaderboard-leader2
+				{%elif userScore.rank == 3   %}leaderboard-leader3
+				{%endif%}
+				{%if userScore.pid == request.session.user_id  %}leaderboard-currentuser
+				{%endif%}">{{  userScore.rank  }}</div>
+				<div class="leaderboard-row name-grid 
+				{%if userScore.rank == 1   %}leaderboard-leader1
+				{%elif userScore.rank == 2   %}leaderboard-leader2
+				{%elif userScore.rank == 3   %}leaderboard-leader3
+				{%endif%}
+				{%if userScore.pid == request.session.user_id  %}leaderboard-currentuser
+				{%endif%} ">{{  userScore.name }}</div>
+				<div class="leaderboard-row rounds-grid 
+				{%if userScore.rank == 1   %}leaderboard-leader1
+				{%elif userScore.rank == 2   %}leaderboard-leader2
+				{%elif userScore.rank == 3   %}leaderboard-leader3
+				{%endif%}
+				{%if userScore.pid == request.session.user_id  %}leaderboard-currentuser
+				{%endif%} ">{{  userScore.rounds }}</div>
+				<div class="leaderboard-row score-grid 
+				{%if userScore.rank == 1   %}leaderboard-leader1
+				{%elif userScore.rank == 2   %}leaderboard-leader2
+				{%elif userScore.rank == 3   %}leaderboard-leader3
+				{%endif%}
+				{%if userScore.pid == request.session.user_id  %}leaderboard-currentuser
+				{%endif%} ">{{  userScore.score }}</div>
+				</div>
+				{% endif %}
+			<ul class="pagination">
+				    {% if highScores.has_previous %}
+				    <li>
+				            <a href="?page={{ highScores.previous_page_number }}">previous</a>
+				    </li>
+				    {% endif %}
+			        <li class="active">
+			            <a>Page {{ highScores.number }} of {{ highScores.paginator.num_pages }}</a>
+			        </li>
+			        {% if highScores.has_next %}
+			        <li>
+				            <a href="?page={{ highScores.next_page_number }}">next</a>
+				    </li>
+				    {% endif %}
+				</ul>
 		</div>
 	</body>
 	    <script src="{% static "js/jquery.min.js" %}"></script>

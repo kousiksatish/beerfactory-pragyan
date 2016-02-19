@@ -36,3 +36,11 @@ class loggedIn(object):
 		if 'user_id' not in request.session:
 			return redirect(beerf_15.views.login)
 
+class loggedInSession(object):
+	def process_request(self, request):
+		if 'user_id' not in request.session:
+			return redirect(beerf_15.views.login)
+		if 'user_id' not in request.POST:
+			return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong Request"}})
+		if(int(request.session.get('user_id')) != int(request.POST.get("user_id"))):
+		 	return JsonResponse({"status":"102", "data":{"description":"Failed! Session mismatch"}})

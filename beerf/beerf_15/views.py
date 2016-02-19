@@ -1022,14 +1022,21 @@ def instructions(request):
 def locked(request):
 	return render(request, "locked.html")
 
-@decorator_from_middleware(middleware.SessionPIDAuth)
 def graph(request):
+	if 'user_id' not in request.session:
+		return redirect(beerf_15.views.login)
+	user = users.objects.get(pk=request.session['user_id'])
+	if not user.factory:
+		return redirect(beerf_15.views.home)
+	turn = status.objects.get(pid=user).turn
+	if turn<=25:
+		return redirect(beerf_15.views.testhome)
 	user_id = request.session["user_id"]
 	user = users.objects.get(pid = user_id)
 	return render(request, "graph.html", {"name":user.prag_fullname, "user_id":user_id})
 
-@decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
+@decorator_from_middleware(middleware.loggedInSession)
 def graph_back(request):
 	if request.method == 'POST':
 		id = request.POST.get("user_id")
@@ -1152,18 +1159,27 @@ def leaderBoard(request):
 		details = users.objects.get(pk=user)
 		points.append({'pid': user , 'score' : score.objects.filter(pid = user).aggregate(Sum('score'))['score__sum'] , 'name' : details.prag_fullname})
 		
-	highScores = sorted(points, key=itemgetter('score'), reverse=True)[:10]
+	highScores = sorted(points, key=itemgetter('score'), reverse=True)
 	user_in_highscores = 0
 
 	#add details like rank and no of turns played
 	for highScore in highScores:
-		user_in_highscores += 1 if highScore['pid'] == logged_in_user else 0
+		# user_in_highscores += 1 if highScore['pid'] == logged_in_user else 0
 		rounds = min(score.objects.filter(pid = highScore['pid']).aggregate(Max('turn'))['turn__max'],25)
 		highScore['rounds'] = rounds
 		highScore['rank'] = highScores.index(highScore) + 1
-
+	paginator = Paginator(highScores, 10)
+	page = request.GET.get('page')
+	try:
+		highScores = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver first page.
+		highScores = paginator.page(1)
+	except EmptyPage:
+		# If page is out of range (e.g. 9999), deliver last page of results.
+		highScores = paginator.page(paginator.num_pages)
 	#if the user is in the top 10 render the view
-	if user_in_highscores or not logged_in_user:
+	if not logged_in_user:
 		return render(request,'leaderboard.html',{'highScores':highScores})
 
 	#if the user not in the top 10. Caluclate his rank and append to list to highscores and return
@@ -1192,9 +1208,7 @@ def leaderBoard(request):
 	user_score_obj['rank'] = user_rank
 	user_score_obj['rounds'] = user_rounds
 
-	#append user_score_obj to highscores and then render the view.
-	highScores.append(user_score_obj)
-	return render(request,'leaderboard.html',{'highScores':highScores})
+	return render(request,'leaderboard.html',{'highScores':highScores, 'userScore':user_score_obj})
 
 #Query all the faqs and arrange them in desc order of their priority and paginate
 @csrf_exempt
