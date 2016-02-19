@@ -115,6 +115,7 @@ class score(models.Model):
 	pid = models.ForeignKey(users)
 	turn = models.IntegerField()
 	score = models.IntegerField()
+	opp_score = models.IntegerField(default =0)
 
 
 class userForm(ModelForm):

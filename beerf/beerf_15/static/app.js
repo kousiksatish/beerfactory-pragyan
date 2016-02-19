@@ -287,106 +287,120 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:1
+			zone:1,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R2",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:1
+			zone:1,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R3",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:1
+			zone:1,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R4",
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:2
+			zone:2,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R5",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:2
+			zone:2,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R6",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:2
+			zone:2,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R7",
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:3
+			zone:3,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R8",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:3
+			zone:3,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R9",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:3
+			zone:3,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R10",
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:4
-
+			zone:4,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R11",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:4
+			zone:4,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R12",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:4
+			zone:4,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R13",
 			order_no:100,
 			to_no:0,
 			transport:"none",
-			zone:5
+			zone:5,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R14",
 			order_no:150,
 			to_no:0,
 			transport:"none",
-			zone:5
+			zone:5,
+			isConfirmClicked:false
 		},
 		{	
 			from:"R15",
 			order_no:200,
 			to_no:0,
 			transport:"none",
-			zone:5
+			zone:5,
+			isConfirmClicked:false
 		}],
 
 		inventory: [
@@ -439,18 +453,35 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.map={};
 	vm.profit=0;
 	vm.retailersRemaining=[];
+	no_of_demand = 7;
+	no_of_order = 2;
+	no_of_capacity = 1;
 	vm.retailerToNameMap={};
 	
+	demand_messages = [
+		"Welcome to Beer Factory! I am your instructor! Please read through the first few instructions!",
+		"In this factory,On a specific day, first we get the demand of our retailers",
+		"We have got the demand of our retailers",
+		"Based on the demand, we should distribute our inventory to different retailers, try doing this by click on the retailers in the map.",
+		"Caution : The next rounds demand depends your popularity among the retailers, which depends upon your supply this round. You know where to check popularity :P",
+		"Caution : Supplying very less quantities to retailers will decrease your popularity among them.",
+		"Caution : Supply as much as you can, as points will be detected for backlog."
+	];
+
+	order_messages = [
+		"The initial capacity of the factory is 200 i.e., you can order a maximum of 200 beers in this round.",
+		"Predict the next round's demand and order the amount you require. Ordering more than the required amount will lead to unnecessary money and point deductions."
+	];
+
+	capacity_messages = [
+		"If you feel that the orders of next round will be more than your capacity, make sure you upgrade your factory's capcity",
+	];
+
 	vm.initialFunction = function(){
-		vm.sendToInstructor("Welcome to Beer Factory! I am your instructor! Please read through the first few instructions!");
-		vm.sendToInstructor("In this factory,On a specific day, first we get the demand of our retailers");
-		vm.sendToInstructor("We have got the demand of our retailers");
-		vm.sendToInstructor("Based on the demand, we should distribute our inventory to different retailers, try doing this by click on the retailers in the map.");
-		vm.sendToInstructor("Caution : The next rounds demand depends your popularity among the retailers, which depends upon your supply this round. You know where to check popularity :P");
-		vm.sendToInstructor("Caution : Supplying very less quantities to retailers will decrease your popularity among them.");
-		vm.sendToInstructor("Caution : Supply as much as you can, as points will be detected for backlog.");
-		vm.sendToInstructor("The initial capacity of the factory is 200 i.e., you can order a maximum of 200 beers in this round.");
-		vm.sendToInstructor("Predict the next round's demand and order the amount you require. Ordering more than the required amount will lead to unnecessary money and point deductions.");
+		for(i=0;i<no_of_demand;i++)
+		{
+			vm.sendToInstructor(demand_messages[i]);
+		}
 	}
 	
 
@@ -468,10 +499,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 	AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 		vm.factoryDetails = json;
-		console.log('factory details', vm.factoryDetails);
+		// console.log('factory details', vm.factoryDetails);
 		if(json.status === '200' || json.status === 200)
 		{
-			toastr.success('Factory details obtained successfully!');
+			console.log('success');
+			// toastr.success('Factory details obtained successfully!');
 		}
 		else
 		{
@@ -491,10 +523,25 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			if(vm.status.data.stage=="0" || vm.status.data.stage=="1")
 				vm.getDemand();
 			if(vm.status.data.turn=="1")
+			{
 				vm.goToInitialInstructor();
-			if(vm.status.data.turn=="1")
+				if(vm.status.data.stage=="2")
+				{
+					for(i=0;i<no_of_order;i++)
+						vm.sendToInstructor(order_messages[i]);
+					vm.goToInstructor(no_of_demand);
+				}
 				vm.goToInitialInstructor();
-			toastr.success('Status of user obtained successfully!');
+				if(vm.status.data.stage=="3")
+				{
+					for(i=0;i<no_of_order;i++)
+						vm.sendToInstructor(order_messages[i]);
+					for(i=0;i<no_of_capacity;i++)
+						vm.sendToInstructor(capacity_messages[i]);
+					vm.goToInstructor(no_of_demand+no_of_capacity);
+				}
+			}
+			//toastr.success('Status of user obtained successfully!');
 			var j=0;
 			for(order of vm.products[0].orders){
 				if(j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
@@ -672,6 +719,15 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			supply += (vm.supplyValues[i] + ',');
 			sum_of_supply += vm.supplyValues[i];
 		}
+		var confirm_flag=0;
+		var j=0;
+
+		for(order of vm.products[0].orders){
+			if(!order.isConfirmClicked && j<(Math.floor((vm.status.data.turn-1)/5)+1)*3){
+				confirm_flag=1;
+			}
+			j++;
+		}
 
 		supply = supply.substr(0, supply.length-1);
 
@@ -681,13 +737,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		{
 			toastr.warning('Invalid Quantity. Quantity must be a positive integer');
 		}
-		else if(vm.factoryDetails.data.inventory  < sum_of_supply)
+		else if(vm.factoryDetails.data.factory_1.inventory  < sum_of_supply)
 		{
 			toastr.warning('Invalid Quantity. supply must be less than inventory');
 		}
 		else if(lessthandemand_flag == 1)
 		{
 			toastr.warning('Invalid supply quantity. Supply should not be greater than demand');
+		}
+		else if(confirm_flag == 1){
+			toastr.warning('Click confirm atleast once to every retailer! ');
 		}
 		else
 		{
@@ -706,10 +765,11 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					var progressbar = angular.element(progressbartop);
 			   		progressbar.css('width','75%');
 			    	progressbar.html("Stage 3 of 4");
-			    	vm.sendToInstructor('My suggestion is to buy the maximum or save money for the next upgrade if you plan to upgrade next round.');
 			    	angular.element(demandpopup).css('display','none');
 					toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
-
+					for(i=0;i<no_of_order;i++)
+						vm.sendToInstructor(order_messages[i]);
+					vm.goToInstructor(vm.instructor.counter+1);
 				}
 				else
 				{
@@ -763,8 +823,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			   		progressbar.css('width','100%');
 			    	progressbar.html("Stage 4 of 4");
 					toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
-					if(vm.factoryDetails.data.factory_1.money - 40*vm.order > vm.factoryDetails.data.factory_1.next_upgrade_capacity)
-						vm.sendToInstructor('You have lots of money.. Its time to go for an upgrade :)')
+					for(i=0;i<no_of_capacity;i++)
+						vm.sendToInstructor(capacity_messages[i]);
+					vm.nextInstruction();
 				}
 				else
 				{
@@ -847,6 +908,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 		console.log('IN CONFIRM ORDER');
 
+		vm.products[0].orders[x-1].isConfirmClicked=true;
+
+		console.log('vm.products[0].orders ', vm.products);
     	var tono = $("#tono").val();
     	console.log('tono', tono);
     	vm.profit=0;
@@ -888,8 +952,6 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.closeInstructor = function() {
 		if (vm.instructor.bubble)
 		{
-			vm.instructor.tobedisplayed = vm.instructor.content[vm.instructor.len-1];
-			vm.instructor.counter = vm.instructor.len-1;
 			vm.instructor.bubble=false;
 		}
 		else
@@ -920,6 +982,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		vm.instructor.bubble=0;
 		vm.instructor.counter = 0;
 		vm.instructor.tobedisplayed = vm.instructor.content[0];
+	}
+
+	vm.goToInstructor = function(counter) {
+		vm.instructor.bubble=0;
+		vm.instructor.counter = counter;
+		vm.instructor.tobedisplayed = vm.instructor.content[vm.instructor.counter];
 	}
 
 	vm.sendToInstructor = function(content) {

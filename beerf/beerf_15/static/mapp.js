@@ -112,8 +112,8 @@ singleSelect: false,
     {
 
         altImages:{
-            color: 'static/images/map1.gif',
-            black: 'static/images/mapblack.gif'
+            color: 'static/images/map4.gif',
+            black: 'static/images/map4.gif'
         },
         
 
@@ -142,7 +142,7 @@ singleSelect: false,
         var myArray = [];
         if(x.key<=(Math.floor((scope.store.status.data.turn-1)/5)+1)*3){
         if(stage==0||stage==1)
-            {hovered = name+"<br>POPULARITY<br>DEMAND:"+ret.order_no;
+            {hovered = name+"<br>POPULARITY:"+(scope.store.getPopPercent(scope.store.mapDetails.data.popularity[x.key-1]))+"%<br>DEMAND:"+ret.order_no;
              myArray.push({
                 key: x.key,
                 toolTip: hovered,

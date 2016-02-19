@@ -13,6 +13,7 @@ from beerf_algo.beerf_algo import algo as algo
 from utilities import money
 from utilities import inventory
 from django.db.models import Sum
+from django.db.models import Max
 import random
 import urllib
 import json
@@ -196,8 +197,8 @@ ALLOCATION
 #creates a retailer for factory fac1 and its opponent factory
 def retailer_allocate(fac1, zone, unlocked, retailer_no):
 	#create the retailer
-	rcodes = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o']
-	retDetails = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o']
+	rcodes = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O']
+	retDetails = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O']
 	initial_demands = [[70,75,80][random.randint(0,2)] for i in range(2)]
 	ret = retailers(rcode = rcodes[retailer_no], zone = zone, details = retDetails[retailer_no], unlocked=unlocked)
 	ret.save()
@@ -361,6 +362,7 @@ def map(request):
 			zone = []
 			popularity = []
 			opp_popularity = []
+			opopularity = []
 			unlocked = []
 			for retailer in retailers1:
 				retailer_details = retailers.objects.get(pk=retailer.rid_id)
@@ -378,7 +380,7 @@ def map(request):
 			data["fcode"] = fcode
 			data["rcode"] = rcode
 			data["popularity"] = popularity
-			data["opponent_popularity"] = opp_popularity
+			data["opopularity"] = opp_popularity
 			json["data"] = data
 			json["zone"] = zone
 			json["unlocked"] = unlocked
@@ -1021,7 +1023,7 @@ def locked(request):
 def graph(request):
 	user_id = request.session["user_id"]
 	user = users.objects.get(pid = user_id)
-	return render(request, "graph.html", {"name":user.prag_username, "user_id":user_id})
+	return render(request, "graph.html", {"name":user.prag_fullname, "user_id":user_id})
 
 @decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
@@ -1069,36 +1071,15 @@ def graph_back(request):
 						turn = int(supply.turn)
 						if turn > (zone-1)*5:
 							demands[retailer][turn-(zone-1)*5-1]['supply'] = int(supply.quantity)
-
-			return JsonResponse({"status":"200", "data":{"history":demands}})
-	else:
-		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
-
-@decorator_from_middleware(middleware.SessionPIDAuth)
-@csrf_exempt
-def graph_opp_back(request):
-	if request.method == 'POST':
-		id = request.POST.get("user_id")
-		try:
-			user = users.objects.get(pk=id)
-		except users.DoesNotExist:
-			return JsonResponse({"status":"103", "data":{"description":"Failed! User does not exist"}})
-			user = None
-		
-		# after all verification is done.
-		if id and user:
-			fid = user.factory
 			opponent_fac = factory_factory.objects.get(fac1=fid).fac2
 			retailers = dict
-			demands = dict()
-			supplies = dict()
-			popularity = dict()
+			demands2 = dict()
 			frids = [f.frid for f in factory_retailer.objects.filter(fid=opponent_fac)]
 			unlocked_frids = unlocked_ret(frids, opponent_fac)
 			retailer = 0
 			for frid in unlocked_frids:
 				retailer=retailer+1
-				demands[retailer] = []
+				demands2[retailer] = []
 				fac_ret_demands = [fac_ret_demand.objects.filter(frid=frid)]
 				for fac_ret in fac_ret_demands:
 					for demand in fac_ret:
@@ -1108,23 +1089,11 @@ def graph_opp_back(request):
 							new = dict()
 							new['turn']=turn
 							new['demand']=int(demand.quantity)
-							demands[retailer].append(new)
-			retailer = 0			
-			for frid in unlocked_frids:
-				retailer=retailer+1
-				supplies[retailer] = []
-				fac_ret_supplies = [fac_ret_supply.objects.filter(frid=frid)]
-				for fac_ret in fac_ret_supplies:
-					for supply in fac_ret:
-						zone = int(supply.frid.rid.zone)
-						turn = int(supply.turn)
-						if turn > (zone-1)*5:
-							demands[retailer][turn-(zone-1)*5-1]['supply'] = int(supply.quantity)
+							demands2[retailer].append(new)
 
-			return JsonResponse({"status":"200", "data":{"history":demands}})
+			return JsonResponse({"status":"200", "data":{"history":demands,"opp_history":demands2}})
 	else:
 		return JsonResponse({"status":"100", "data":{"description":"Failed! Wrong type of request"}})
-
 
 @decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
@@ -1154,11 +1123,26 @@ def review(request):
 	turn = status.objects.get(pid=user).turn
 	if turn<=25:
 		return redirect(beerf_15.views.testhome)
-	return render(request, "review.html")
+	scores_obj = score.objects.filter(pid = user)
+	sum_of_scores = 0
+	scores = []
+	eachscr = dict()
+	for scr in scores_obj:
+		eachscr['turn'] = scr.turn
+		eachscr['score'] = scr.score
+		sum_of_scores += scr.score
+		scores.append(scr)
+	return render(request, "review.html", {"scores":scores, "total_score":sum_of_scores, "name":user.prag_fullname})
 
-@decorator_from_middleware(middleware.SessionPIDAuth)
 @csrf_exempt
 def leaderBoard(request):
+	#finding whether there is a logged in user
+	try:
+		logged_in_user = request.session["user_id"]
+	except Exception, e:
+		logged_in_user = None
+
+	#Sum of scores of all rounds in descending order
 	distinctUsers = score.objects.values_list('pid',flat = True).distinct()
 	points = []
 	for user in distinctUsers:
@@ -1166,5 +1150,45 @@ def leaderBoard(request):
 		points.append({'pid': user , 'score' : score.objects.filter(pid = user).aggregate(Sum('score'))['score__sum'] , 'name' : details.prag_fullname})
 		
 	highScores = sorted(points, key=itemgetter('score'), reverse=True)[:10]
+	user_in_highscores = 0
 
-	return JsonResponse({"status":"200", "data":{"description":"Success!","details":highScores}})
+	#add details like rank and no of turns played
+	for highScore in highScores:
+		user_in_highscores += 1 if highScore['pid'] == logged_in_user else 0
+		rounds = min(score.objects.filter(pid = highScore['pid']).aggregate(Max('turn'))['turn__max'],25)
+		highScore['rounds'] = rounds
+		highScore['rank'] = highScores.index(highScore) + 1
+
+	#if the user is in the top 10 render the view
+	if user_in_highscores or not logged_in_user:
+		return render(request,'leaderboard.html',{'highScores':highScores})
+
+	#if the user not in the top 10. Caluclate his rank and append to list to highscores and return
+	user_details = users.objects.get(pk=logged_in_user)
+	user_score_obj = {}
+	user_score_obj['pid'] = logged_in_user
+	user_score_obj['name'] = user_details.prag_fullname
+
+	#calculate user score and rank. Set rank to '-' and rounds to '-' if he has not started playing.
+	user_score = score.objects.filter(pid = logged_in_user).aggregate(Sum('score'))['score__sum']
+	print "user score : ",user_score
+	if user_score == None:
+		user_rank = '-'
+		user_rounds = '-'
+		user_score = 0
+	else:
+		user_rounds = min(score.objects.filter(pid = highScore['pid']).aggregate(Max('turn'))['turn__max'],25)
+		points = sorted(points, key=itemgetter('score'), reverse=True)
+		user_rank = 1
+		for point in points:
+			if point['score'] > user_score or (point['score'] == user_score and logged_in_user > point['pid']):
+				user_rank += 1;
+			elif point['score'] < user_score:
+				break
+	user_score_obj['score'] = user_score
+	user_score_obj['rank'] = user_rank
+	user_score_obj['rounds'] = user_rounds
+
+	#append user_score_obj to highscores and then render the view.
+	highScores.append(user_score_obj)
+	return render(request,'leaderboard.html',{'highScores':highScores})

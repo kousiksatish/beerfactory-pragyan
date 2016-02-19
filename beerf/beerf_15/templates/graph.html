@@ -3,12 +3,30 @@
 <head>
 <link rel="stylesheet" type="text/css" href="{% static "bootstrap-3.3.6-dist/css/bootstrap.min.css" %}" />
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+<style>
+#loading {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url('/static/images/page-loader.gif') 50% 50% no-repeat rgb(249,249,249);
+}
+
+</style>
 </head>
 <body>
+<div id="loading">
+
+</div>
+<div class="container">
+<div class="row">
+<h1>Stats in graph form</h1>
+<button class="btn btn-primary" id="clk">Click here to view!</button>
+</div>
 <div class="col-md-6">
 	<h1>User</h1>
-	<button class="btn" id="clk">Click me!</button>
-	<button class="btn" id="plot">Plot</button>
 	<div id="cont1"></div>
 	<div id="ag1"></div>
 	<div id="cont2"></div>
@@ -43,8 +61,6 @@
 
 <div class="col-md-6">
 	<h1>Opponent</h1>
-	<button class="btn" id="clk_opp">Click me!</button>
-	<button class="btn" id="plot_opp">Plot</button>
 	<div id="contopp1"></div>
 	<div id="agopp1"></div>
 	<div id="contopp2"></div>
@@ -76,6 +92,7 @@
 	<div id="contopp15"></div>
 	<div id="agopp15"></div>
 </div>
+</div>
 </body>
 
 
@@ -89,8 +106,9 @@
 
 <script>
 var dat;
-
+$("#loading").fadeOut("slow");
 $("#clk").click(function() {
+	$("#loading").fadeIn("slow");
 	dataString = 'user_id={{user_id}}';
 
 	$.ajax({
@@ -98,81 +116,57 @@ $("#clk").click(function() {
                     url: "graph_back",
                     data: dataString,
                     success: function(data){
+                    	$("#loading").fadeOut("slow");
                         if(data)
                         {
                         	dat = data;
-                        }
+                        	ret_det = dat.data.history;
+							i=1;
+							for(req1 in ret_det)
+							{
+								$("#cont"+i).html('Retailer' + i);
+								$('#ag'+i).empty()
+								req = dat.data.history[i];
+
+								Morris.Line({
+								  element: 'ag'+i,
+								  data: req,
+								  parseTime: false,
+								  xkey: 'turn',
+								  xLabels: 'Turn',
+								  ykeys: ['supply', 'demand'],
+								  labels: ['Supply', 'Demand']
+								});
+								i++;
+							}
+
+
+
+							opp_det = dat.data.opp_history;
+							console.log(dat);
+							i=1;
+							for(req1 in ret_det)
+							{
+								$("#contopp"+i).html('Retailer' + i);
+								$('#agopp'+i).empty()
+								req = dat.data.opp_history[i];
+
+								Morris.Line({
+								  element: 'agopp'+i,
+								  data: req,
+								  parseTime: false,
+								  xkey: 'turn',
+								  xLabels: 'Turn',
+								  ykeys: ['demand'],
+								  labels: ['Demand']
+								});
+								i++;
+							}
+						}
 
                     }
 
                 });
-});
-
-$('#plot').click(function() {
-	ret_det = dat.data.history;
-	
-	i=1;
-	for(req1 in ret_det)
-	{
-		$("#cont"+i).html('Retailer' + i);
-		$('#ag'+i).empty()
-		req = dat.data.history[i];
-
-		Morris.Line({
-		  element: 'ag'+i,
-		  data: req,
-		  parseTime: false,
-		  xkey: 'turn',
-		  xLabels: 'Turn',
-		  ykeys: ['supply', 'demand'],
-		  labels: ['Supply', 'Demand']
-		});
-		i++;
-	}
-
-});
-var dat_opp;
-$("#clk_opp").click(function() {
-	dataString = 'user_id={{user_id}}';
-
-	$.ajax({
-                    type: "POST",
-                    url: "graph_opp_back",
-                    data: dataString,
-                    success: function(data){
-                        if(data)
-                        {
-                        	dat_opp = data;
-                        	console.log(dat_opp)
-                        }
-
-                    }
-
-                });
-});
-
-$('#plot_opp').click(function() {
-	ret_det = dat_opp.data.history;
-	console.log(dat_opp);
-	i=1;
-	for(req1 in ret_det)
-	{
-		$("#contopp"+i).html('Retailer' + i);
-		$('#agopp'+i).empty()
-		req = dat_opp.data.history[i];
-
-		Morris.Line({
-		  element: 'agopp'+i,
-		  data: req,
-		  parseTime: false,
-		  xkey: 'turn',
-		  xLabels: 'Turn',
-		  ykeys: ['supply', 'demand'],
-		  labels: ['Supply', 'Demand']
-		});
-		i++;
-	}
-
 });
 /*
 Morris.Area({
