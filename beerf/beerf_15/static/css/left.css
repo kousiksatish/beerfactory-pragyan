@@ -153,7 +153,6 @@ input{
     width: 70%;
 }
 #demandpopup{
-    display: none;
     width: 70%;
     position: absolute;
     left:15%;
@@ -297,12 +296,11 @@ input{
 }
 
 .oval-thought {
-  position:absolute;
+  position:relative;
   width:270px;
   padding:50px 40px;
   margin:0.5em auto 40px;
   margin-left:-120px;
-  margin-top:-110px;
   text-align:center;
   color:#fff;
   background:#A79154;

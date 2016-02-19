@@ -96,11 +96,11 @@
 				</div>
 
 				<div id="zone5">
-		    		<area alt="" title="ret13" name="13" href="#" shape="poly" click="store.mapclicked(13)" coords="494,2902,492,2803,472,2804,508,2744,603,2746,604,2716,624,2714,624,2746,650,2746,680,2803,659,2804,658,2900" />
+		    		<area alt="" title="ret13" name="13" href="#" shape="poly" ng-click="store.mapclicked(13)" coords="494,2902,492,2803,472,2804,508,2744,603,2746,604,2716,624,2714,624,2746,650,2746,680,2803,659,2804,658,2900" />
 
-		    		<area alt="" title="ret14" name="14" href="#" shape="poly" click="store.mapclicked(14)" coords="744,2988,743,2848,710,2848,762,2764,898,2764,898,2724,926,2724,926,2764,963,2764,1008,2848,976,2848,976,2922,962,2932,956,2944,955,2959,954,2972,964,2984,966,2986" />
+		    		<area alt="" title="ret14" name="14" href="#" shape="poly" ng-click="store.mapclicked(14)" coords="744,2988,743,2848,710,2848,762,2764,898,2764,898,2724,926,2724,926,2764,963,2764,1008,2848,976,2848,976,2922,962,2932,956,2944,955,2959,954,2972,964,2984,966,2986" />
 
-		    		<area alt="" title="ret15" name="15" href="#" shape="poly" click="store.mapclicked(15)" coords="270,3136,276,3121,276,3100,268,3084,265,3078,266,3052,247,3053,276,3002,354,3004,356,2978,370,2978,372,3001,394,3001,420,3052,402,3052,402,3135" />
+		    		<area alt="" title="ret15" name="15" href="#" shape="poly" ng-click="store.mapclicked(15)" coords="270,3136,276,3121,276,3100,268,3084,265,3078,266,3052,247,3053,276,3002,354,3004,356,2978,370,2978,372,3001,394,3001,420,3052,402,3052,402,3135" />
 				</div>
 			</map>
 
@@ -145,19 +145,15 @@
                         <div id="selections" class="rightcontent">
                             <div class="well" ng-hide="store.e>0"><center>CLICK ON A RETAILER OR FACTORY TO SEE THE DEMAND</center></div>
 
-                            <div class="jumbotron">
+                            <div class="">
                                 <div ng-show="store.e>0 && store.e<=store.map.check1">
                                     
                                     <div class="row">
-                                        <div class="col-md-3 col-md-offset-2"> RETAILER NAME:</div> <div class="col-md-6"> {$ store.mapDetails.data.rcode[store.e-1] $} </div> 
+                                        <div class="col-md-3 col-md-offset-1"> RETAILER NAME:</div> <div class="col-md-6"> {$ store.mapDetails.data.rcode[store.e-1] $} </div> 
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-3 col-md-offset-2"> STORY: </div> <div class="col-md-6"> </div> 
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-3 col-md-offset-2">
+                                        <div class="col-md-3 col-md-offset-1">
                                             POPULARITY: 
                                         </div>
                                         <div class="col-md-6"> 
@@ -167,7 +163,7 @@
                                     </div>
 
                                       <div class="row">
-                                        <div class="col-md-3 col-md-offset-2">
+                                        <div class="col-md-3 col-md-offset-1">
                                             OPP POPULARITY: 
                                         </div>
                                         <div class="col-md-6" style="vertical-align:baseline;"> 
@@ -177,15 +173,15 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-3 col-md-offset-2"> DEMAND: </div> <div class="col-md-6"> {$ store.products[0].orders[store.e-1].order_no $} </div>
+                                        <div class="col-md-3 col-md-offset-1"> DEMAND: </div> <div class="col-md-6"> {$ store.products[0].orders[store.e-1].order_no $} </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-3 col-md-offset-2"> SUPPLIED: </div> <div class="col-md-6"> <input id="tono" type="number" ng-model="store.products[0].orders[store.e-1].to_no"> </input> </div>
+                                        <div class="col-md-3 col-md-offset-1"> SUPPLIED: </div> <div class="col-md-6"> <input id="tono" type="number" ng-model="store.products[0].orders[store.e-1].to_no"> </input> </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-3 col-md-offset-2">
+                                        <div class="col-md-3 col-md-offset-1">
                                             <button class='btn btn-default' ng-click='store.confirmorder(store.e)' ng-class="{'success': store.products[0].orders[store.e].isConfirmClicked}"> CONFIRM </button>
                                         </div>
                                     </div>
@@ -193,34 +189,43 @@
 
                                 <div ng-show="store.e>store.map.check1">
                                     <div class="row">
-                                        <div class="col-md-3 col-md-offset-2"> RETAILER {$ store.mapDetails.data.rcode[store.e-1] $} NOT UNLOCKED YET! </div>
+                                        <div class="col-md-3 col-md-offset-1"> RETAILER {$ store.mapDetails.data.rcode[store.e-1] $} NOT UNLOCKED YET! </div>
                                         <br>
-                                        <div class="col-md-3 col-md-offset-2"> KEEP PLAYING TO UNLOCK THEM! </div>
+                                        <div class="col-md-3 col-md-offset-1"> KEEP PLAYING TO UNLOCK THEM! </div>
                                     </div>
 
                                 </div>
 
                                 <div ng-show="store.e==-1">
                                     <div class="row"> 
-                                        <div class="col-md-3 col-md-offset-2"> YOUR FACTORY'S NAME : </div>
+                                        <div class="col-md-12"><p>{{name}} 's FACTORY</p></div>
                                     </div>
                                     <div class="row"> 
-                                        <div class="col-md-3 col-md-offset-2"> FACTORY STORY : </div>
+                                        <div class="col-md-12">
+                                        <p class="text-center" style="font-size:95% line-height:98%;">
+                                        This Factory produces high quality beers that are of great demand in the market. Though the demand is high, right now we don't produce much beers to meet the market demand. It's in your hands to save our factory! <br>
+                                        Beware : We have an opponent producing the same beers! Read his story by clicking on opponent factory... Produce and supply enough to beat him :) 
+                                        </p>
+                                        </div>
                                     </div>
-                                    <div class="row"> 
+                                    <!-- <div class="row"> 
                                         <div class="col-md-3 col-md-offset-2"> FACTORY DETAILS : </div>
-                                    </div>
+                                    </div> -->
+
                                 </div>
 
                                 <div ng-show="store.e==-2">
                                     <div class="row"> 
-                                        <div class="col-md-3 col-md-offset-2"> OPPONENT FACTORY'S NAME : </div>
+                                        <div class="col-md-12"> Hi {{name}}</div>
                                     </div>
                                     <div class="row"> 
-                                        <div class="col-md-3 col-md-offset-2"> OPPONENT FACTORY STORY : </div>
-                                    </div>
-                                    <div class="row"> 
-                                        <div class="col-md-3 col-md-offset-2"> OPPONENT FACTORY DETAILS : </div>
+                                        <div class="col-md-12">
+                                        <p>
+                                        I know you would come!<br>
+                                        My aim is to defeat you muhahaha!
+                                        </p>
+
+                                        </div>
                                     </div>
                                 </div>
 
@@ -235,16 +240,13 @@
                                     &nbsp;&nbsp;
                             </span>
                             <br>
-                            <span>
-                                Amount of beer remaining: {$ store.remaining  $}
-                            </span>
-                            <br>
-                            <span>
-                                Expected profit: {$ store.profit $} (No. of beers sold * 50)
+                            <span style="line-height:20px;">
+                                Amount of beer remaining: {$ store.remaining  $}<br>
+                                Expected profit: Rs: {$ store.profit $} (No. of beers sold * Rs:50) (You would lose Rs:2 as inventory cost for every beer left unsold)
                             </span>
                         </div>
                         <div id="demandpopup">
-                            <div class="close" ng-click="store.closepopup()">close</div>
+                            <div class="close" ng-click="store.closepopup()"><button class="btn btn-danger">X</button></div>
                                 <table class="dtab table table-striped" style="width:100%;"> 
                                     <thead>
                                         <tr> 
@@ -264,7 +266,7 @@
                                 </table>
                                 <button id="send" class="btn btn-default" value = "Send" ng-click="store.send()">SEND</button> 
                         </div>
-                        <button id="getdemand" class = "btn btn-default" value = "Get Demand" ng-click = "store.showDemand()">SHOW DEMAND</button>
+                        <button class = "btn btn-success" value = "Get Demand" ng-click = "store.showDemand()">CONFIRM AND SEND</button>
                     </div>
 
                     <div id = "history1tab" class="tab-pane fade">

@@ -1,4 +1,4 @@
-var path='static/images/map1.gif' ;
+var path='static/images/mapblack.gif' ;
    //var $element = $('#main-content');
      //       var scope = angular.element($element).scope();
 
@@ -46,8 +46,6 @@ function on(n){
     
             
 }
-
-var pathcol = 'black';
     /*
 function colorretailers(){
      // var pathcol = ['black','black','black','black','black','black','black','black','black','black','black','black','black','black','black'];
@@ -114,8 +112,8 @@ singleSelect: false,
     {
 
         altImages:{
-            color: 'static/images/map4.gif',
-            black: 'static/images/map4.gif'
+            color: 'static/images/map1.gif',
+            black: 'static/images/mapblack.gif'
         },
         
 
@@ -131,7 +129,8 @@ singleSelect: false,
         selected:true,
         isSelectable: false,
         fillOpacity: 1,
-        render_select : { altImage : 'black'},
+        render_select : { altImage : 'color'},
+        // render_highlight : { altImage : path},
            
     onMouseover: function(x) {
             
@@ -140,38 +139,61 @@ singleSelect: false,
         var ret = scope.store.products[0].orders[x.key-1];
         var name = scope.store.mapDetails.data.rcode[x.key-1];
         var stage = scope.store.status.data.stage;
+        var myArray = [];
         if(x.key<=(Math.floor((scope.store.status.data.turn-1)/5)+1)*3){
         if(stage==0||stage==1)
-            hovered = name+"<br>POPULARITY:"+(scope.store.getPopPercent(scope.store.mapDetails.data.popularity[x.key-1]))+"%<br>DEMAND:"+ret.order_no;
+            {hovered = name+"<br>POPULARITY:"+(scope.store.getPopPercent(scope.store.mapDetails.data.popularity[x.key-1]))+"%<br>DEMAND:"+ret.order_no;
+    
+            }
         else
             hovered = name+"<br>DEMAND STAGE";
+        myArray.push({
+                key: x.key,
+                toolTip: hovered,
+                render_highlight : { altImage : 'color'}
+            });
         }
-        else if(x.key<15){
+        else if(x.key<=15){
             var $element = $('#main-content');
         var scope = angular.element($element).scope();
             var name = scope.store.mapDetails.data.rcode[x.key-1];
             //if(stage==0||stage==1)
                 hovered = name+"<br>KEEP PLAYING TO UNLOCK!"
+                myArray.push({
+                key: x.key,
+                render_highlight : { altImage : path},
+                toolTip: hovered
+            });
             //else
                 //hovered = name+"<br>DEMAND STAGE";
             }
         else if(x.key=='fact1'){
-            hovered = "FACTORY 1";
+            hovered = "YOUR FACTORY";
+            myArray.push({
+                key: x.key,
+                toolTip: hovered,
+                render_highlight : { altImage : 'color'}
+            });
         }
         else if(x.key=='fact2'){
             hovered = "FACTORY 2";
+            myArray.push({
+                key: x.key,
+                toolTip: hovered,
+                render_highlight : { altImage : 'color'}
+            });
         }
 
+        console.log("myArray", myArray);
+
                  image.mapster('set_options', { 
-                areas: [{
-                    key: x.key,
-                    toolTip: hovered,
-                    }]
+                areas: myArray
                 });
+
         },
         showToolTip: true,
         toolTipClose: ["tooltip-click", "area-click"],
-        areas: (function() {
+        /*areas: (function() {
             // var $element = $('#main-content');
             // var scope = angular.element($element).scope();
             // console.log("areas",scope)
@@ -196,7 +218,7 @@ singleSelect: false,
             }
             return myArray;
         })()
-
+*/
     });
     
 
