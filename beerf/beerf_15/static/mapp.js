@@ -168,7 +168,7 @@ singleSelect: false,
                 //hovered = name+"<br>DEMAND STAGE";
             }
         else if(x.key=='fact1'){
-            hovered = "FACTORY 1";
+            hovered = "YOUR FACTORY";
             myArray.push({
                 key: x.key,
                 toolTip: hovered,

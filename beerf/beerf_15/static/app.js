@@ -610,7 +610,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
 			var x = angular.element(demandpopup);
-			x.css('display','block');
+			x.css('display','none');
 			console.log("DEMAND POPUP",x);
 			var i=0;
 			var sum=0;
@@ -669,7 +669,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 			console.log('id from getDemand', id);
 			console.log('demand details', vm.demandDetails);
 			var x = angular.element(demandpopup);
-			x.css('display','block');
+			x.css('display','none');
 			var sum = 0;
 			console.log("DEMAND POPUP",x);			
 				var i=0;
@@ -921,6 +921,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
     	}
 
 		else{
+			toastr.warning('You cannot supply more than demanded!')
 			vm.products[0].orders[x-1].to_no = 0;	
 		} 
 
@@ -935,7 +936,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					vm.retailersRemaining.splice(index,1);
 				}
 
-				vm.profit += order.to_no*40;
+				vm.profit += order.to_no*50;
 				vm.remaining -= order.to_no;
 			}
 		}
