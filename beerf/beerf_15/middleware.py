@@ -22,10 +22,10 @@ class SessionPIDAuth(object):
 		if user.factory:
 			turn = status.objects.get(pid=user).turn
 			params = []
-			params.append(request.path)
-			params.append(request.POST)
-			print request.POST
-			request_logger = request_log(request = params, uid = user.pid)
+			params.append(request.path_info)
+			params.append(request.body)
+		 	parameters = ",".join(params)
+			request_logger = request_log(request = parameters, uid = user)
 			request_logger.save()
 			if(turn>25):
 				return redirect(beerf_15.views.review)
