@@ -1183,9 +1183,9 @@ def leaderBoard(request):
 		highScore['rounds'] = rounds
 		highScore['rank'] = highScores.index(highScore) + 1
 
-	#if the user is in the top 10 return the results
-	if user_in_highscores:
-		return JsonResponse({"status":"200", "data":{"description":"Success!","details":highScores}})
+	#if the user is in the top 10 render the view
+	if user_in_highscores or not logged_in_user:
+		return render(request,'leaderboard.html',{'highScores':highScores})
 
 	#if the user not in the top 10. Caluclate his rank and append to list to highscores and return
 	user_details = users.objects.get(pk=logged_in_user)
@@ -1210,9 +1210,9 @@ def leaderBoard(request):
 			elif point['score'] < user_score:
 				break
 	user_score_obj['score'] = user_score
-	user_score_obj['ranking'] = user_rank
+	user_score_obj['rank'] = user_rank
 	user_score_obj['rounds'] = user_rounds
 
-	#append user_score_obj to highscores and then return the JSON
+	#append user_score_obj to highscores and then render the view.
 	highScores.append(user_score_obj)
-	return JsonResponse({"status":"200", "data":{"description":"Success!","details":highScores}})
+	return render(request,'leaderboard.html',{'highScores':highScores})
