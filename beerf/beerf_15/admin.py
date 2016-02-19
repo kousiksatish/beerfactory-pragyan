@@ -12,3 +12,10 @@ admin.site.register(capacity)
 admin.site.register(fac_ret_demand)
 admin.site.register(fac_ret_supply)
 admin.site.register(factory_order)
+admin.site.register(money_log)
+admin.site.register(inventory_log)
+admin.site.register(popularity_log)
+admin.site.register(score)
+admin.site.register(FAQs)
+
+

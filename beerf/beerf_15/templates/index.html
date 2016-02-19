@@ -49,7 +49,10 @@
 	    Stage 1 of 3
 	  </div>
 	</div>
-    <div ng-show="store.status.data.stage=='1'" class="stageinfo">SUPPLY TO THE RETAILERS<br>CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
+    <div ng-show="store.status.data.stage=='1'" class="stageinfo">
+    SUPPLY TO THE RETAILERS<br>
+    Click on retailers, fill in supply, confirm and send
+    CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
     <div ng-show="store.status.data.stage=='2'" class="stageinfo">PLACE ORDER FOR BEER<br>CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
     <div ng-show="store.status.data.stage=='3'" class="stageinfo">UPGRADE YOUR FACTORY<br>CLICK ON STAGE TO TOGGLE OPEN/CLOSE</div>
 
@@ -498,8 +501,8 @@
     </div>
     <center>
     {$ store.instructor.counter+1 $}/{$ store.instructor.len $}<br>
-    <button class="newer" ng-click="store.nextInstruction()"><</button>
-    <button class="older" ng-click="store.prevInstruction()">></button>
+    <button class="newer" ng-click="store.prevInstruction()"><</button>
+    <button class="older" ng-click="store.nextInstruction()">></button>
     </center>
 </div>
 </div>
