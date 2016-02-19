@@ -136,3 +136,9 @@ class userLoginForm(ModelForm):
 		model = users
 		fields = ['email']
 
+class request_log(models.Model):
+	lid = models.AutoField(primary_key=True)
+	request = models.CharField(max_length=500, blank=True, default ='')
+	timestamp = models.DateTimeField(auto_now_add = True)
+	uid = models.ForeignKey(users)
+
