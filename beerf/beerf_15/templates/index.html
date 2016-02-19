@@ -29,15 +29,19 @@
 	  	<div class="container-fluid"   ng-repeat="product in store.products">
 	   		<div class="navbar-header col-md-3">
 	   		  <a class="navbar-brand" href="#">BEER-FACTORY</a>
+
+              <li class="col-md-2" style="top: 1.7rem;"><a href="leaderboard">Leaderboard</a></li>   
 	   		</div>
 	    		
 	   		<ul class="top-info col-md-9">
 	   		  <li class="col-md-2"> DAY: {$ store.status.data.turn $}/25 </li>
               <li class="col-md-2"> SCORE: {$ store.factoryDetails.data.factory_1.score $}</li>
+
               <li class="col-md-2"> INVENTORY: {$ store.factoryDetails.data.factory_1.inventory $}</li>
               <li class="col-md-2"> MONEY: {$ store.factoryDetails.data.factory_1.money $}</li>
 	   		  <li id ="stage" class="col-md-2"> STAGE: {$ store.status.data.stage $} </li>
-			  <li class="col-md-2"> Hi {{ name }} </li>	
+			  <li class="col-md-2"> Hi {{ name }} </li>
+              
 	   		</ul>
 		</div>
 	</nav>
@@ -426,7 +430,7 @@
 
                             <br>
         
-                            <div ng-if="store.factoryDetails.data.factory_1.upgrade_cost < store.factoryDetails.data.factory_1.money && store.factoryDetails.data.factory_1.upgrade_cost!=0">
+                            <div ng-if="store.factoryDetails.data.factory_1.upgrade_cost <= store.factoryDetails.data.factory_1.money && store.factoryDetails.data.factory_1.upgrade_cost!=0">
                                 <h3><center> Do you want to upgrade your factory? </center></h3>
                                 <button type="button" class="btn btn-primary" style="position: relative; left: 150px;" ng-click="store.upgradeFactory(1)"> Yes! </button>
                                 <button type="button" class="btn btn-primary" style="position: relative; left: 250px;" ng-click="store.upgradeFactory(0)"> No thanks! </button>

@@ -900,6 +900,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 		    		toastr.success('Postponed for later!', 'Upgrade');
 		    	else
 		    		toastr.success('Factory upgraded to produce more capacity!', 'Upgrade');
+		    	if(vm.status.data.turn == '26' || vm.status.data.turn == 26)
+		    		location.reload();
 
 				//so that user doesnt need to click getDemand unnecessarily at stage 0
 		    	vm.getDemand();
