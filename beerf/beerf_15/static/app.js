@@ -437,7 +437,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	}];
 
 	vm.factoryDetails = {};
-	vm.instructor = {"bubble":false,"tobedisplayed":"Welcome to Beer Factory! I am your instructor!","content":[], "counter" :0, "len":0};
+	vm.instructor = {"bubble":false,"tobedisplayed":"Welcome to Beer Factory! I am your asistant!","content":[], "counter" :0, "len":0};
 	vm.status = {};
 	vm.demandDetails = {};
 	vm.mapDetails={};
@@ -453,28 +453,32 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	vm.map={};
 	vm.profit=0;
 	vm.retailersRemaining=[];
-	no_of_demand = 7;
-	no_of_order = 2;
+	no_of_demand = 9;
+	no_of_order = 4;
 	no_of_capacity = 1;
 	vm.retailerToNameMap={};
 	
 	demand_messages = [
-		"Welcome to Beer Factory! I am your instructor! Please read through the first few instructions!",
-		"In this factory,On a specific day, first we get the demand of our retailers",
-		"We have got the demand of our retailers",
+		"Welcome to Beer Factory! I am your assistant! Please read through the first few instructions!",
+		"To know about what we do try clicking on our factory's image on the map :)",
+		"Hope you got to know about our opponent :(",
+		"In this factory, on a specific day, first we get the demand of our retailers",
+		"You can see the money and inventory of our factory on the top bar",
 		"Based on the demand, we should distribute our inventory to different retailers, try doing this by click on the retailers in the map.",
-		"Caution : The next rounds demand depends your popularity among the retailers, which depends upon your supply this round. You know where to check popularity :P",
-		"Caution : Supplying very less quantities to retailers will decrease your popularity among them.",
-		"Caution : Supply as much as you can, as points will be detected for backlog."
+		"The next day's demand depends on our popularity among the retailers, which depends on the supply we make this day. You know where to check popularity :P",
+		"Supplying very less quantities to retailers will decrease our popularity among them. Please avoid doing it",
+		"We must supply as much as we canso that points and money are not deducted for backlog."
 	];
 
 	order_messages = [
-		"The initial capacity of the factory is 200 i.e., you can order a maximum of 200 beers in this round.",
-		"Predict the next round's demand and order the amount you require. Ordering more than the required amount will lead to unnecessary money and point deductions."
+		"Note the money change due to the profit earned on our supply",
+		"The initial production capacity of our factory is 200 which we can upgrade later, we can produce a maximum of 200 beers on this day.",
+		"Calculate the next day's demand and produce the amount we may require. Ordering more than the required amount will lead to unnecessary money and point deductions.",
+		"Hint : Remember that our next day's demand depends on popularity. ;)"
 	];
 
 	capacity_messages = [
-		"If you feel that the orders of next round will be more than your capacity, make sure you upgrade your factory's capcity",
+		"Like I said earlier, we have a production capacity of 200... We can increase it now by upgrading our factory.",
 	];
 
 	vm.initialFunction = function(){
@@ -538,8 +542,16 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 						vm.sendToInstructor(order_messages[i]);
 					for(i=0;i<no_of_capacity;i++)
 						vm.sendToInstructor(capacity_messages[i]);
-					vm.goToInstructor(no_of_demand+no_of_capacity);
+					vm.goToInstructor(no_of_demand+no_of_order);
 				}
+			}
+			else
+			{
+				for(i=0;i<no_of_order;i++)
+					vm.sendToInstructor(order_messages[i]);
+				for(i=0;i<no_of_capacity;i++)
+					vm.sendToInstructor(capacity_messages[i]);
+				vm.goToInstructor(no_of_demand+no_of_order+no_of_capacity-1);
 			}
 			//toastr.success('Status of user obtained successfully!');
 			var j=0;
@@ -564,17 +576,17 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 	    		progressbar.html("Stage 1 of 4");
 	    		break;
 	    	case "1":
-	    		progressbar.css('width','50%');
-	    		progressbar.html("Stage 2 of 4");
+	    		progressbar.css('width','33%');
+	    		progressbar.html("Stage 1 of 3");
 	    		break;
 	    	case "2":
 	    		console.log("ds");
-	    		progressbar.css('width','75%');
-	    		progressbar.html("Stage 3 of 4");
+	    		progressbar.css('width','66%');
+	    		progressbar.html("Stage 2 of 3");
 	    		break;
 	    	case "3":
 	    		progressbar.css('width','100%');
-	    		progressbar.html("Stage 4 of 4");
+	    		progressbar.html("Stage 3 of 3");
 	    		break;
     	}
 		vm.level = Math.floor(parseInt(vm.status.data.turn-1)/5)+1;
@@ -633,8 +645,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					console.log('history', json.data);
 					});
 					var progressbar = angular.element(progressbartop);
-			   		progressbar.css('width','50%');
-			    	progressbar.html("Stage 2 of 4");
+			   		progressbar.css('width','33%');
+			    	progressbar.html("Stage 1 of 3");
 					toastr.success('Retailers have placed their demands to you!', 'Demand given!');
 					vm.remaining = vm.factoryDetails.data.factory_1.inventory;
 
@@ -650,7 +662,9 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					}
 
 					if (sum>vm.factoryDetails.data.factory_1.inventory)
-						vm.sendToInstructor('Oh! Total demand '+sum+'is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
+						vm.sendToInstructor('Oh! Total demand '+sum+'is greater than our inventory. Make wise decisions so that we don\'t lose popularity among our retailers!');
+					if (vm.status.data.turn != 1 || vm.status.data.turn != "1")
+						vm.goToInstructor(vm.instructor.len -1);
 
 				}
 				else
@@ -682,7 +696,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				}
 				console.log('ss'+sum);
 				if (sum>vm.factoryDetails.data.factory_1.inventory)
-					vm.sendToInstructor('Oh! Total demand '+sum+' is greater than your inventory. Make wise decisions so that you don\'t lose popularity among your retailers!');
+					vm.sendToInstructor('Oh! Total demand '+sum+' is greater than our inventory. Make wise decisions so that we don\'t lose popularity among our retailers!');
 			});
 			
 		}
@@ -763,13 +777,10 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					console.log('history', json.data);
 					});
 					var progressbar = angular.element(progressbartop);
-			   		progressbar.css('width','75%');
-			    	progressbar.html("Stage 3 of 4");
+			   		progressbar.css('width','66%');
+			    	progressbar.html("Stage 2 of 3");
 			    	angular.element(demandpopup).css('display','none');
 					toastr.success('You have supplied ' + supply + ' amount of beers to the respective retailers' , 'Beers sent!');
-					for(i=0;i<no_of_order;i++)
-						vm.sendToInstructor(order_messages[i]);
-					vm.goToInstructor(vm.instructor.counter+1);
 				}
 				else
 				{
@@ -821,7 +832,7 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 
 					var progressbar = angular.element(progressbartop);
 			   		progressbar.css('width','100%');
-			    	progressbar.html("Stage 4 of 4");
+			    	progressbar.html("Stage 3 of 3");
 					toastr.success('Order of ' + vm.order + ' placed!', 'Order Placed!');
 					for(i=0;i<no_of_capacity;i++)
 						vm.sendToInstructor(capacity_messages[i]);
@@ -832,7 +843,12 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 					$("#loading").fadeOut("slow");
 					toastr.warning(json.data.description);
 				}
-
+				if (vm.factoryDetails.data.factory_1.money - 40*vm.order >= vm.factoryDetails.data.factory_1.next_upgrade_capacity)
+				{
+					vm.sendToInstructor('We can make an upgrade now... I leave the decision to you!');
+				}
+				if (vm.status.data.turn != 1 || vm.status.data.turn != "1")
+					vm.goToInstructor(vm.instructor.len-1);
 				AnyTimeFunctions.getFactoryDetails(id).success(function(json){
 				vm.factoryDetails = json;
 				console.log('factory details after placing order', vm.factoryDetails);
@@ -868,8 +884,8 @@ app.controller('StoreController', ['AnyTimeFunctions', 'TurnStageBasedFunctions'
 				});
 				
 				var progressbar = angular.element(progressbartop);
-		   		progressbar.css('width','25%');
-		    	progressbar.html("Stage 1 of 4");
+		   		progressbar.css('width','33%');
+		    	progressbar.html("Stage 1 of 3");
 
 		    	if(vm.flag==0)
 		    		toastr.success('Postponed for later!', 'Upgrade');
