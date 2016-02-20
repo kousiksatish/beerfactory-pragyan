@@ -1196,7 +1196,7 @@ def leaderBoard(request):
 		user_rounds = '-'
 		user_score = 0
 	else:
-		user_rounds = min(score.objects.filter(pid = highScore['pid']).aggregate(Max('turn'))['turn__max'],25)
+		user_rounds = min(score.objects.filter(pid = logged_in_user).aggregate(Max('turn'))['turn__max'],25)
 		points = sorted(points, key=itemgetter('score'), reverse=True)
 		user_rank = 1
 		for point in points:
